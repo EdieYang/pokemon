@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE generatorConfiguration PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN" "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd" >
+<generatorConfiguration>
+	<classPathEntry
+		location="C:/Users/Terry/.m2/repository/mysql/mysql-connector-java/8.0.11/mysql-connector-java-8.0.11.jar" />
+
+
+	<context id="context1">
+		<jdbcConnection driverClass="com.mysql.jdbc.Driver"
+			connectionURL="jdbc:mysql://localhost:3306/pokedata"
+			userId="bean" password="bean1234" />
+		<javaModelGenerator targetPackage="com.pokepet.model"
+			targetProject="pokemon" />
+		<sqlMapGenerator targetPackage="mapper"
+			targetProject="pokemon/src/main/resources" />
+		<javaClientGenerator targetPackage="com.pokepet.dao"
+			targetProject="pokemon" type="XMLMAPPER" />
+
+		<table schema="pokemon" tableName="user_shopping_address"
+			enableCountByExample="false" enableUpdateByExample="false"
+			enableDeleteByExample="false" enableSelectByExample="false"
+			selectByExampleQueryId="false"></table>
+	</context>
+</generatorConfiguration>

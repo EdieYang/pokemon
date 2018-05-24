@@ -1,6 +1,8 @@
 package com.pokepet.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.pokepet.annotation.ResponseResult;
+
 import org.apache.catalina.servlet4preview.http.HttpServletRequest;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
  * this is the controller for pets resources
  */
 
-
+@ResponseResult
 @RestController
 @RequestMapping("/pets")
 public class PetsController {
@@ -37,7 +39,7 @@ public class PetsController {
 
 
 
-
+        return null;
     }
 
 
