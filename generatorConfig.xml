@@ -7,8 +7,8 @@
 
 	<context id="context1">
 		<jdbcConnection driverClass="com.mysql.jdbc.Driver"
-			connectionURL="jdbc:mysql://localhost:3306/pokedata"
-			userId="bean" password="bean1234" />
+			connectionURL="jdbc:mysql://116.62.60.203:3306/pokedata"
+			userId="root" password="PokePet123456!" />
 		<javaModelGenerator targetPackage="com.pokepet.model"
 			targetProject="pokemon" />
 		<sqlMapGenerator targetPackage="mapper"
@@ -16,7 +16,7 @@
 		<javaClientGenerator targetPackage="com.pokepet.dao"
 			targetProject="pokemon" type="XMLMAPPER" />
 
-		<table schema="pokemon" tableName="user_shopping_address"
+		<table schema="pokemon" tableName="pet_like"
 			enableCountByExample="false" enableUpdateByExample="false"
 			enableDeleteByExample="false" enableSelectByExample="false"
 			selectByExampleQueryId="false"></table>

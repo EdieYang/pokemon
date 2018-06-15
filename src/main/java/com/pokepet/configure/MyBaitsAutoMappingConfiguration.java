@@ -25,7 +25,7 @@ public class MyBaitsAutoMappingConfiguration {
     }
 
 
-    /*@Bean(value = "datasource")
+    @Bean(value = "datasource")
     public DataSource dataSource(){
         HikariDataSource hikariDataSource=new HikariDataSource();
         hikariDataSource.setJdbcUrl("jdbc:mysql://116.62.60.203:3306/pokedata?characterEncoding=utf8&useSSL=false");
@@ -39,8 +39,8 @@ public class MyBaitsAutoMappingConfiguration {
         hikariDataSource.setMaxLifetime(1800000);
         return hikariDataSource;
     }
-    */
-    @Bean(value = "datasource")
+    
+    /*@Bean(value = "datasource")
     public DataSource dataSource(){
         HikariDataSource hikariDataSource=new HikariDataSource();
         hikariDataSource.setJdbcUrl("jdbc:mysql://localhost:3306/pokedata?serverTimezone=UTC&characterEncoding=utf8&useSSL=false");
@@ -53,7 +53,7 @@ public class MyBaitsAutoMappingConfiguration {
         hikariDataSource.setMaximumPoolSize(12);
         hikariDataSource.setMaxLifetime(1800000);
         return hikariDataSource;
-    }
+    }*/
 
 
 

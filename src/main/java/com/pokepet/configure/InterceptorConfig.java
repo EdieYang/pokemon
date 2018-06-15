@@ -7,6 +7,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 
 import com.pokepet.interceptor.ResponseResultInterceptor;
 
+@SuppressWarnings("deprecation")
 @Configuration
 public class InterceptorConfig extends WebMvcConfigurerAdapter {
 

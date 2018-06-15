@@ -21,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.pokepet.handler.GlobalExceptionHandler;
 
 /**
  * @desc 请求参数、响应体统一日志打印
@@ -122,9 +123,8 @@ public class RestControllerAspect {
 	 * 判断是否需要记录日志
 	 */
 	private boolean needToLog(Method method) {
-//		return method.getAnnotation(GetMapping.class) == null
-//				&& !method.getDeclaringClass().equals(GlobalExceptionHandler.class);
-		return method.getAnnotation(GetMapping.class) == null;
+		return method.getAnnotation(GetMapping.class) == null
+				&& !method.getDeclaringClass().equals(GlobalExceptionHandler.class);
 	}
 
 	/**

@@ -1,5 +1,7 @@
 package com.pokepet.service.impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +28,19 @@ public class PetManageServiceImpl implements IPetManageService{
 	@Override
 	public boolean uptPet(Pet record) {
 		return petMapper.updateByPrimaryKeySelective(record) == 1;
+	}
+
+	@Override
+	public boolean delPet(String petId) {
+		Pet record = new Pet();
+		record.setPetId(petId);
+		record.setDelFlag("1");
+		return petMapper.updateByPrimaryKeySelective(record) == 1;
+	}
+
+	@Override
+	public List<Pet> getPetListByUserId(String userId) {
+		return petMapper.getPetListByUserId(userId);
 	}
 
 }
