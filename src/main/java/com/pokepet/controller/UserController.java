@@ -1,5 +1,6 @@
 package com.pokepet.controller;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -92,20 +93,11 @@ public class UserController {
 	@PostMapping
 	@RequestMapping(value = "/{userId}/walk/finish",method = RequestMethod.POST,consumes="application/json")
     public JSONObject finishWalk(@RequestBody JSONObject json){
-
-		String historyId = "";
-		int distance = 1000;
 		
-		int petLevel = 3;
-		int petExp = 20;
+		UserWalkHistory record = JSONObject.toJavaObject(json, UserWalkHistory.class);
+		record.setFinishTime(new Date());
 		
-		//计算经验值、活力值
-		int walkExp = PetAlgorithm.getWalkExp(petLevel, distance);
-		
-		//计算等级
-		
-		
-        return null;
+        return walkService.finishWalk(record);
     }
 	
 	/**

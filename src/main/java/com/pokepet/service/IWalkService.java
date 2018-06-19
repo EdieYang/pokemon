@@ -2,6 +2,7 @@ package com.pokepet.service;
 
 import java.util.List;
 
+import com.alibaba.fastjson.JSONObject;
 import com.pokepet.model.UserWalkHistory;
 import com.pokepet.model.UserWalkLocation;
 
@@ -90,6 +91,18 @@ public interface IWalkService {
 	 * @date 2018年6月5日
 	 */
 	int getWalkDistanceByPetId(String petId);
+	
+	/**
+	 * 
+	 * @Description: 结束walk，返回获得的经验及相关等级信息
+	 * @param @param record
+	 * @param @return   
+	 * @return JSONObject  
+	 * @throws
+	 * @author Bean Zhou
+	 * @date 2018年6月19日
+	 */
+	JSONObject finishWalk(UserWalkHistory record);
 	
 
 }
