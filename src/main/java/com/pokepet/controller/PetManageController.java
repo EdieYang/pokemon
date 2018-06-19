@@ -1,6 +1,5 @@
 package com.pokepet.controller;
 
-import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,18 +8,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import com.pokepet.annotation.ResponseResult;
-import com.pokepet.enums.PetLevelEnum;
-import com.pokepet.enums.StarSignEnum;
 import com.pokepet.model.Pet;
 import com.pokepet.service.IPetManageService;
-
-import cpm.pokepet.util.CommonUtil;
 
 @ResponseResult
 @RestController

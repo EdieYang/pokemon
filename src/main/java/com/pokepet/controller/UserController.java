@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.pokepet.algorithm.PetAlgorithm;
 import com.pokepet.annotation.ResponseResult;
 import com.pokepet.enums.PetLevelEnum;
 import com.pokepet.enums.StarSignEnum;
@@ -99,7 +100,7 @@ public class UserController {
 		int petExp = 20;
 		
 		//计算经验值、活力值
-		
+		int walkExp = PetAlgorithm.getWalkExp(petLevel, distance);
 		
 		//计算等级
 		
