@@ -40,5 +40,7 @@ public interface UserMapper {
 	 */
 	int updateByPrimaryKey(User record);
 
-	public int getLit(String id);
+	int getLit(String id);
+
+	User getUserByOpenId(String openId);
 }

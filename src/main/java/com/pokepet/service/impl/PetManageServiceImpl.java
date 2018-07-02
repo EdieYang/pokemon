@@ -2,6 +2,8 @@ package com.pokepet.service.impl;
 
 import java.util.List;
 
+import com.pokepet.dao.PetAlbumMapper;
+import com.pokepet.model.PetAlbum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +16,9 @@ public class PetManageServiceImpl implements IPetManageService{
 
 	@Autowired
 	PetMapper petMapper;
+
+	@Autowired
+	PetAlbumMapper petAlbumMapper;
 	
 	@Override
 	public Pet getPetByPetId(String petId) {
@@ -41,6 +46,11 @@ public class PetManageServiceImpl implements IPetManageService{
 	@Override
 	public List<Pet> getPetListByUserId(String userId) {
 		return petMapper.getPetListByUserId(userId);
+	}
+
+	@Override
+	public List<PetAlbum> getPetAlbumByPetId(String petId) {
+		return petAlbumMapper.selectAlbumByPetId(petId);
 	}
 
 }

@@ -1,12 +1,16 @@
 package com.pokepet.configure;
 
-import com.zaxxer.hikari.HikariDataSource;
+import com.mchange.v2.c3p0.ComboPooledDataSource;
+import com.mchange.v2.c3p0.jboss.C3P0PooledDataSource;
+//import com.zaxxer.hikari.HikariDataSource;
 import org.mybatis.spring.mapper.MapperScannerConfigurer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 
+import javax.naming.NamingException;
 import javax.sql.DataSource;
+import java.beans.PropertyVetoException;
 
 /**
  * Created by Fade on 2016/12/22.
@@ -26,18 +30,18 @@ public class MyBaitsAutoMappingConfiguration {
 
 
     @Bean(value = "datasource")
-    public DataSource dataSource(){
-        HikariDataSource hikariDataSource=new HikariDataSource();
-        hikariDataSource.setJdbcUrl("jdbc:mysql://116.62.60.203:3306/pokedata?characterEncoding=utf8&useSSL=false");
-        hikariDataSource.setUsername("root");
-        hikariDataSource.setPassword("PokePet123456!");
-        hikariDataSource.setReadOnly(false);
-        hikariDataSource.setConnectionTimeout(30000);
-        hikariDataSource.setIdleTimeout(600000);
-        hikariDataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
-        hikariDataSource.setMaximumPoolSize(12);
-        hikariDataSource.setMaxLifetime(1800000);
-        return hikariDataSource;
+    public DataSource dataSource() throws NamingException, PropertyVetoException {
+        ComboPooledDataSource dataSource=new ComboPooledDataSource();
+        dataSource.setJdbcUrl("jdbc:mysql://116.62.60.203:3306/pokedata?characterEncoding=utf8&useSSL=false&autoReconnect=true");
+        dataSource.setUser("root");
+        dataSource.setPassword("PokePet123456!");
+        dataSource.setDriverClass("com.mysql.cj.jdbc.Driver");
+        dataSource.setTestConnectionOnCheckin(false);
+        dataSource.setTestConnectionOnCheckout(true);
+        dataSource.setMaxIdleTime(600000);
+        dataSource.setMaxPoolSize(100);
+        dataSource.setAutoCommitOnClose(false);
+        return dataSource;
     }
     
     /*@Bean(value = "datasource")

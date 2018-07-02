@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pokepet.dao.ActivityMapper">
+
+
+
+      <insert id="insertSelective" parameterType="com.pokepet.model.ActivityStatistic">
+          INSERT  INTO activity_statistics(id,activity_id,user_id,type,create_time)
+          VALUES (#{id},#{activityId},#{userId},#{type},NOW())
+      </insert>
+
+
+      <select id="selectSendCount" parameterType="java.lang.String" resultType="java.lang.Integer">
+
+            SELECT COUNT(1)
+            FROM activity_statistics
+            WHERE type='1'
+
+     </select>
+
+
+
+    <select id="countUserSupport"  parameterType="java.lang.String" resultType="java.lang.Integer">
+
+        SELECT COUNT(1)
+        FROM activity_statistics
+        WHERE type='0'
+        AND
+        <![CDATA[create_time <=(SELECT create_time FROM activity_statistics
+        WHERE user_id=#{userId}
+        AND  type='0')]]>
+    </select>
+
+
+    <select id="selectSupportCount" parameterType="java.lang.String" resultType="java.lang.Integer">
+
+        SELECT COUNT(DISTINCT  user_id)
+        FROM activity_statistics
+
+    </select>
+
+
+
+
+
+
+
+
+
+</mapper>
