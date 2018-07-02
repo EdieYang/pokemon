@@ -65,7 +65,7 @@ public class LoginController {
 
         //用户是否注册
         User user=userMapper.getUserByOpenId(openId);
-        if(user==null){
+        if(user==null && !StringUtils.isEmpty(openId)){
             User newUser=new User();
             String userId=UUID.randomUUID().toString();
             newUser.setOpenId(openId);
@@ -74,7 +74,7 @@ public class LoginController {
             userMapper.insertSelective(newUser);
             map.put("userId",userId);
         }else{
-            map.put("userId",user.getUserId());
+            map.put("userId","");
         }
 
         return map;
