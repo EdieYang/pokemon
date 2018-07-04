@@ -32,8 +32,8 @@ public class PetManageController {
 	@Autowired
 	IPetManageService petManageService;
 
-	@Autowired
-	private UserPetMapper userPetMapper;
+//	@Autowired
+//	private UserPetMapper userPetMapper;
 
 
 	private final static String PIC_SUFFIX=".png";
@@ -72,7 +72,7 @@ public class PetManageController {
 	@RequestMapping(value = "",method = RequestMethod.POST)
     public JSONObject addPet(HttpServletRequest request){
 		JSONObject jsonObject=new JSONObject();
-		String petId=UUID.randomUUID().toString();
+		String petId=petManageService.createPetId("010");//地区ID没传 @杨浩杰
 		String species=request.getParameter("species");
 		String name=request.getParameter("name");
 		String sex=request.getParameter("sex");
@@ -113,11 +113,7 @@ public class PetManageController {
 		}
 
 		//绑定用户宠物关系
-		UserPet userPet=new UserPet();
-		userPet.setUserId(userId);
-		userPet.setPetId(petId);
-		userPet.setDelFlag("0");
-		userPetMapper.insertSelective(userPet);
+		petManageService.bindlingPetToUser(petId, userId);
 
 		jsonObject.put("code",returnFlag);
 		jsonObject.put("petId",petId);
@@ -156,6 +152,12 @@ public class PetManageController {
         return petManageService.delPet(petId);
     }
 	
-	
+	@RequestMapping(value = "/petId",method = RequestMethod.GET,consumes="application/json")
+	public JSONObject createPet(){
+		String areaId = "010";
+		JSONObject js = new JSONObject();
+		js.put("petId", petManageService.createPetId(areaId));
+        return js;
+	}
 
 }

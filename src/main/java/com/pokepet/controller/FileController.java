@@ -2,17 +2,10 @@ package com.pokepet.controller;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Date;
 import java.util.UUID;
 
-import com.alibaba.fastjson.JSONObject;
-import com.aliyun.oss.ClientException;
-import com.aliyun.oss.OSSClient;
-import com.aliyun.oss.OSSException;
-import com.pokepet.dao.PetAlbumMapper;
-import com.pokepet.dao.PetMapper;
-import com.pokepet.model.Pet;
-import com.pokepet.model.PetAlbum;
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,9 +14,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.alibaba.fastjson.JSONObject;
+import com.aliyun.oss.ClientException;
+import com.aliyun.oss.OSSClient;
+import com.aliyun.oss.OSSException;
 import com.pokepet.annotation.ResponseResult;
-
-import javax.servlet.http.HttpServletRequest;
+import com.pokepet.dao.PetAlbumMapper;
+import com.pokepet.dao.PetMapper;
+import com.pokepet.model.Pet;
+import com.pokepet.model.PetAlbum;
 
 @ResponseResult
 @RestController

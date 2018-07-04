@@ -18,5 +18,14 @@ public interface IPetManageService {
 	List<Pet> getPetListByUserId(String userId);
 
 	List<PetAlbum> getPetAlbumByPetId(String petId);
+	
+	/**
+	 * 生成宠物ID，格式为"pt-03+区号+年份（后两位）+00001"
+	 * @param areaId
+	 * @return
+	 */
+	String createPetId(String areaId);
+	
+	boolean bindlingPetToUser(String petId,String userId);
 
 }

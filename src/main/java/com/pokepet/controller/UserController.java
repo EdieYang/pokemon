@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.pokepet.algorithm.PetAlgorithm;
 import com.pokepet.annotation.ResponseResult;
 import com.pokepet.enums.PetLevelEnum;
 import com.pokepet.enums.StarSignEnum;
@@ -24,6 +23,7 @@ import com.pokepet.model.UserWalkHistory;
 import com.pokepet.model.UserWalkLocation;
 import com.pokepet.service.IPetLikeService;
 import com.pokepet.service.IPetManageService;
+import com.pokepet.service.IUserService;
 import com.pokepet.service.IWalkService;
 
 import cpm.pokepet.util.CommonUtil;
@@ -41,6 +41,9 @@ public class UserController {
 	
 	@Autowired
 	IPetLikeService petLikeService;
+	
+	@Autowired
+	IUserService userService;
 	
 	@RequestMapping(value = "/{userId}/pets",method = RequestMethod.GET,consumes="application/json")
 	public JSONArray getPets(@PathVariable String userId){
@@ -154,4 +157,12 @@ public class UserController {
 		result.put("locationList", walkService.getLocationListByHistoryId(historyId));
         return result;
     }
+	
+	@RequestMapping(value = "/userId",method = RequestMethod.GET,consumes="application/json")
+	public JSONObject createUser(){
+		String areaId = "010";
+		JSONObject js = new JSONObject();
+		js.put("userId", userService.createUserId(areaId));
+        return js;
+	}
 }

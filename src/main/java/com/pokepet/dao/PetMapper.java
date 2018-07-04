@@ -2,6 +2,8 @@ package com.pokepet.dao;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.pokepet.model.Pet;
 
 public interface PetMapper {
@@ -43,5 +45,7 @@ public interface PetMapper {
 	int updateByPrimaryKey(Pet record);
 
 	List<Pet> getPetListByUserId(String userId);
+
+	String getMaxPetNo(@Param("petIdStart") String petIdStart,@Param("year") String year);
 	
 }

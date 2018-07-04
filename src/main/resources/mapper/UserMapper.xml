@@ -138,6 +138,8 @@
     where open_id = #{openId}
   </select>
 
-
+	<select id="getMaxUserNo" parameterType="java.lang.String" resultType="java.lang.String">
+		SELECT MAX(SUBSTR(user_id,11,6)) FROM user WHERE user_id LIKE "${userIdStart}%" AND SUBSTR(user_id,9,2) = #{year,jdbcType=VARCHAR};
+	</select>
 
 </mapper>

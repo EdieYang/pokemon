@@ -1,5 +1,7 @@
 package com.pokepet.dao;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.pokepet.model.User;
 
 public interface UserMapper {
@@ -43,4 +45,6 @@ public interface UserMapper {
 	int getLit(String id);
 
 	User getUserByOpenId(String openId);
+	
+	String getMaxUserNo(@Param("userIdStart") String userIdStart,@Param("year") String year);
 }

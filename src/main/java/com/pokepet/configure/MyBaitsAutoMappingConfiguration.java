@@ -1,16 +1,17 @@
 package com.pokepet.configure;
 
-import com.mchange.v2.c3p0.ComboPooledDataSource;
-import com.mchange.v2.c3p0.jboss.C3P0PooledDataSource;
+import java.beans.PropertyVetoException;
+
+import javax.naming.NamingException;
+import javax.sql.DataSource;
+
 //import com.zaxxer.hikari.HikariDataSource;
 import org.mybatis.spring.mapper.MapperScannerConfigurer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 
-import javax.naming.NamingException;
-import javax.sql.DataSource;
-import java.beans.PropertyVetoException;
+import com.mchange.v2.c3p0.ComboPooledDataSource;
 
 /**
  * Created by Fade on 2016/12/22.
