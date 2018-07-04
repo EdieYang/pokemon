@@ -31,7 +31,7 @@ public class UserServiceImpl implements IUserService {
 			return createUserId(areaId);
 		} else {
 			String userIdEnd = "000000" + userIdGrenc++;
-			return "hu-03" + areaId + ("" + year).substring(2, 4)
+			return USER_ID_TEMP.substring(0, 3) + areaId + ("" + year).substring(2, 4)
 					+ userIdEnd.substring(userIdEnd.length() - 6, userIdEnd.length());
 		}
 
