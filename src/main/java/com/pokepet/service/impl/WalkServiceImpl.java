@@ -76,13 +76,16 @@ public class WalkServiceImpl implements IWalkService {
 			int petLevel = pet.getLevel();
 			int petExp = pet.getExp();
 
-			// 计算经验值、活力值
+			// 计算经验值
 			int walkExp = PetAlgorithm.getWalkExp(petLevel, distance);
 
 			result.put("walkExp", walkExp);
-			
-			//活力值。假的
-			result.put("walkVitality", 50);
+			record.setExp(walkExp);
+
+			// 计算活力值
+			int walkVitality = distance / 50;
+			result.put("walkVitality", walkVitality);
+			record.setVitality(walkVitality);
 
 			// 计算等级
 			JSONArray jsArr = new JSONArray();
