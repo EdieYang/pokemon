@@ -118,6 +118,7 @@ public class WalkServiceImpl implements IWalkService {
 			// 保存当前level、exp
 			pet.setLevel(petLevel);
 			pet.setExp(petExp);
+			pet.setEnergyCoin(pet.getEnergyCoin()+walkVitality);//设置活力值
 			petMapper.updateByPrimaryKeySelective(pet);
 
 			// 结束walk
