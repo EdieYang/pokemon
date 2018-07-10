@@ -36,7 +36,7 @@ public class MyBaitsAutoMappingConfiguration {
         dataSource.setJdbcUrl("jdbc:mysql://116.62.60.203:3306/pokedata?characterEncoding=utf8&useSSL=false&autoReconnect=true");
         dataSource.setUser("root");
         dataSource.setPassword("PokePet123456!");
-        dataSource.setDriverClass("com.mysql.cj.jdbc.Driver");
+        dataSource.setDriverClass("com.mysql.jdbc.Driver");
         dataSource.setTestConnectionOnCheckin(false);
         dataSource.setTestConnectionOnCheckout(true);
         dataSource.setMaxIdleTime(600000);

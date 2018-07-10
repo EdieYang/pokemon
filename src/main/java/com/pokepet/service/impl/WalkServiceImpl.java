@@ -80,6 +80,9 @@ public class WalkServiceImpl implements IWalkService {
 			int walkExp = PetAlgorithm.getWalkExp(petLevel, distance);
 
 			result.put("walkExp", walkExp);
+			
+			//活力值。假的
+			result.put("walkVitality", 50);
 
 			// 计算等级
 			JSONArray jsArr = new JSONArray();

@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -78,9 +79,15 @@ public class UserController {
 	 */
 	@PostMapping
 	@RequestMapping(value = "/{userId}/walk/start",method = RequestMethod.POST,consumes="application/json")
-    public boolean startWalk(@RequestBody UserWalkHistory history){
-//		history.setHistoryId(UUID.randomUUID().toString());
-        return walkService.addHistory(history);
+    public JSONObject startWalk(@RequestBody UserWalkHistory history){
+		String historyId = UUID.randomUUID().toString();//生成historyId
+		history.setHistoryId(historyId);//设置historyId
+		history.setStartTime(new Date());//设置开始walk时间
+		walkService.addHistory(history);
+		
+		JSONObject result = new JSONObject();
+		result.put("historyId", historyId);
+        return result;
     }
 	
 	/**
@@ -95,12 +102,11 @@ public class UserController {
 	 */
 	@PostMapping
 	@RequestMapping(value = "/{userId}/walk/finish",method = RequestMethod.POST,consumes="application/json")
-    public JSONObject finishWalk(@RequestBody JSONObject json){
+    public JSONObject finishWalk(@RequestBody UserWalkHistory history){
 		
-		UserWalkHistory record = JSONObject.toJavaObject(json, UserWalkHistory.class);
-		record.setFinishTime(new Date());
+		history.setFinishTime(new Date());
 		
-        return walkService.finishWalk(record);
+        return walkService.finishWalk(history);
     }
 	
 	/**
