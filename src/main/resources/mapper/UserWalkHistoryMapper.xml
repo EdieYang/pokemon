@@ -193,4 +193,52 @@
   <select id="getWalkDistanceByPetId" parameterType="java.lang.String" resultType="java.lang.Integer">
   	SELECT IFNULL(SUM(distance),0) FROM user_walk_history WHERE pet_id = #{petId,jdbcType=VARCHAR} AND del_flag = '0'; 
   </select>
+  
+  <select id="getWalkAround" parameterType="java.lang.String" resultType="java.util.Map">
+  	SELECT 
+	  t_h.history_id AS historyId,
+	  t_h.user_id AS userId,
+	  t_h.pet_id AS petId,
+	  t_l.longitude,
+	  t_l.latitude,
+	  t_l.create_datetime AS createDatetime
+	FROM
+	  user_walk_history t_h,
+	  (SELECT 
+	    * 
+	  FROM
+	    user_walk_location 
+	  WHERE id IN 
+	    (SELECT 
+	      MAX(id) 
+	    FROM
+	      user_walk_location 
+	    GROUP BY history_id 
+	      AND del_flag = '0')) t_l 
+	WHERE t_h.history_id = t_l.history_id 
+	AND t_h.user_id != #{userId,jdbcType=VARCHAR}
+	AND t_h.finish_time IS NULL
+	AND t_l.create_datetime >= DATE_SUB(NOW(),INTERVAL #{minuteAgo,jdbcType=VARCHAR} MINUTE)
+	  AND ROUND(
+	    6378.138 * 2 * ASIN(
+	      SQRT(
+	        POW(
+	          SIN(
+	            (
+	              #{latitude,jdbcType=VARCHAR} * PI() / 180 - t_l.latitude * PI() / 180
+	            ) / 2
+	          ),
+	          2
+	        ) + COS(#{latitude,jdbcType=VARCHAR} * PI() / 180) * COS(t_l.latitude * PI() / 180) * POW(
+	          SIN(
+	            (
+	              #{longitude,jdbcType=VARCHAR} * PI() / 180 - t_l.longitude * PI() / 180
+	            ) / 2
+	          ),
+	          2
+	        )
+	      )
+	    ) * 1000
+	  ) &lt; #{disAround,jdbcType=VARCHAR} 
+  </select>
 </mapper>

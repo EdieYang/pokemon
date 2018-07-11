@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSONArray;
@@ -61,6 +62,9 @@ public class UserController {
 			
 			//点赞数
 			pet.put("likeCount", petLikeService.getLikeCountByPetId(p.getPetId()));
+			
+			//expCanvas @杨浩杰傻逼要的
+			pet.put("expCanvas", "");
 			
 			arr.add(pet);
 		}
@@ -163,6 +167,7 @@ public class UserController {
 		result.put("locationList", walkService.getLocationListByHistoryId(historyId));
         return result;
     }
+
 	
 	@RequestMapping(value = "/userId",method = RequestMethod.GET,consumes="application/json")
 	public JSONObject createUser(){
@@ -171,4 +176,22 @@ public class UserController {
 		js.put("userId", userService.createUserId(areaId));
         return js;
 	}
+	
+	
+	/**
+	 * 获取用户周围walk的其他用户位置
+	 * @Description: TODO
+	 * @param @param userId
+	 * * @param @param longitude
+	 * * @param @param latitude
+	 * @param @return   
+	 * @return Map<String,Object>  
+	 * @throws
+	 * @author Bean Zhou
+	 * @date 2018年6月5日
+	 */
+	@RequestMapping(value = "/{userId}/walk/around",method = RequestMethod.GET,consumes="application/json")
+    public List<Map<String, Object>> getWalkAround(@PathVariable String userId,@RequestParam("longitude") String longitude ,@RequestParam("latitude") String latitude){
+        return walkService.getWalkAround(userId, longitude, latitude);
+    }
 }

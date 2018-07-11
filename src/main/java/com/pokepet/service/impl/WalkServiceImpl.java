@@ -1,6 +1,7 @@
 package com.pokepet.service.impl;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,16 @@ import com.pokepet.service.IWalkService;
 
 @Service
 public class WalkServiceImpl implements IWalkService {
+	
+	/*
+	 * 5分钟内
+	 */
+	final static String MINUTE_AGO = "5"; 
+	
+	/*
+	 * 1000米内
+	 */
+	final static String DIS_AROUND = "1000";
 
 	@Autowired
 	UserWalkHistoryMapper userWalkHistoryMapper;
@@ -130,6 +141,12 @@ public class WalkServiceImpl implements IWalkService {
 		}
 
 		return result;
+	}
+
+	@Override
+	public List<Map<String, Object>> getWalkAround(String userId, String longitude, String latitude) {
+		
+		return userWalkHistoryMapper.getWalkAround(userId, longitude, latitude, MINUTE_AGO, DIS_AROUND);
 	}
 
 }

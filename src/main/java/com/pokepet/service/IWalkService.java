@@ -1,6 +1,7 @@
 package com.pokepet.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.alibaba.fastjson.JSONObject;
 import com.pokepet.model.UserWalkHistory;
@@ -103,6 +104,15 @@ public interface IWalkService {
 	 * @date 2018年6月19日
 	 */
 	JSONObject finishWalk(UserWalkHistory record);
+	
+	/**
+	 * 获取用户周围walk的其他用户
+	 * @param userId
+	 * @param longitude
+	 * @param latitude
+	 * @return
+	 */
+	List<Map<String, Object>> getWalkAround(String userId,String longitude ,String latitude);
 	
 
 }
