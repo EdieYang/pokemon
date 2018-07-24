@@ -59,7 +59,7 @@ public class UserController {
 			pet.put("age", CommonUtil.getAgeByBirthday(p.getBirthday()));//设置年龄
 			//步行里程
 			pet.put("walkDistance", walkService.getWalkDistanceByPetId(p.getPetId()));
-			
+			pet.put("expCanvas","");
 			//点赞数
 			pet.put("likeCount", petLikeService.getLikeCountByPetId(p.getPetId()));
 			
@@ -110,7 +110,7 @@ public class UserController {
 		
 		history.setFinishTime(new Date());
 		
-        return walkService.finishWalk(history);
+		return walkService.finishWalk(history);
     }
 	
 	/**

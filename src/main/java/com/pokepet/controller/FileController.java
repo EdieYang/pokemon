@@ -68,7 +68,7 @@ public class FileController {
 			case "mapPortrait": objName+="/pet/portrait/m_"+petId;
 				break;
 			case "album" :
-				objName+="/pet/"+petId+"/"+ UUID.randomUUID();
+				objName+="/pet/album/"+petId+"/"+ UUID.randomUUID();
 			default:break;
 		}
 

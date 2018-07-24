@@ -225,9 +225,10 @@
 	  t_p.weight,
 	  t_p.photo_path,
 	  t_p.sterilization,
-	  t_p.level, 
-	  t_p.exp, 
-	  t_p.del_flag 
+	  t_p.level,
+	  t_p.energy_coin,
+	  t_p.exp,
+	  t_p.del_flag
 	FROM
 	  pet t_p,
 	  user_pet t_u 

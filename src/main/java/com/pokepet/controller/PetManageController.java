@@ -10,6 +10,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.pokepet.dao.UserPetMapper;
 import com.pokepet.model.PetAlbum;
 import com.pokepet.model.UserPet;
+import cpm.pokepet.util.CommonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -50,8 +51,10 @@ public class PetManageController {
 	 */
 	@RequestMapping(value = "/{petId}",method = RequestMethod.GET,consumes="application/json")
     public Pet getPet(@PathVariable String petId){
-        return petManageService.getPetByPetId(petId);
-    }
+        Pet pet= petManageService.getPetByPetId(petId);
+		 pet.setAge(CommonUtil.getAgeByBirthday(pet.getBirthday()));//设置年龄
+		 return pet;
+	}
 	
 	@RequestMapping(value = "/{petId}/album",method = RequestMethod.GET,consumes="application/json")
     public List<PetAlbum> getPetAlbum(@PathVariable String petId){
@@ -131,7 +134,7 @@ public class PetManageController {
 	 * @date 2018年5月24日
 	 */
 	@PostMapping
-	@RequestMapping(value = "/",method = RequestMethod.PUT,consumes="application/json")
+	@RequestMapping(value = "",method = RequestMethod.PUT,consumes="application/json")
     public boolean uptPet(@RequestBody Pet pet){
         return petManageService.uptPet(pet);
     }

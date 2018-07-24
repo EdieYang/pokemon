@@ -1,5 +1,6 @@
 package cpm.pokepet.util;
 
+import java.text.DecimalFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -20,13 +21,14 @@ public class CommonUtil {
 	 * @return int  
 	 * @throws
 	 * @author Bean Zhou
+	 * @Modified By lily
 	 * @date 2018年5月25日
 	 */
-	public static int getAgeByBirthday(Date birthday) {
+	public static String getAgeByBirthday(Date birthday) {
 		Calendar cal = Calendar.getInstance();
 
 		if (cal.before(birthday)) {
-			return -1;
+			return "";
 		}
 		int yearNow = cal.get(Calendar.YEAR);
 		int monthNow = cal.get(Calendar.MONTH);
@@ -37,17 +39,37 @@ public class CommonUtil {
 		int monthBirth = cal.get(Calendar.MONTH);
 		int dayOfMonthBirth = cal.get(Calendar.DAY_OF_MONTH);
 
-		int age = yearNow - yearBirth;
+		//获取
+		int year = yearNow - yearBirth;
+		int month=monthNow-monthBirth;
+		int day=dayOfMonthNow-dayOfMonthBirth;
 
-		if (monthNow <= monthBirth) {
-			if (monthNow == monthBirth) {
-				if (dayOfMonthNow < dayOfMonthBirth)
-					age--;
-			} else {
-				age--;
-			}
+		if(day<0){
+			month -= 1;
+			cal.add(Calendar.MONTH, -1);//得到上一个月，用来得到上个月的天数。
+			day = day + cal.getActualMaximum(Calendar.DAY_OF_MONTH);
 		}
+		if(month<0){
+			month = (month+12)%12;
+			year--;
+		}
+		System.out.println("年龄："+year+"年"+month+"月"+day+"天");
+		double ageD=year+month/12.0+	day/30.0*0.1;
+		DecimalFormat df = new DecimalFormat("0.00");
+		String age=df.format(ageD);
+		System.out.println(age);
+
 		return age;
+	}
+
+
+
+
+
+	public static void main(String[] args) {
+		Calendar calendar=Calendar.getInstance();
+		calendar.set(2018,6,3);
+		System.out.println(getAgeByBirthday(calendar.getTime()));
 	}
 
 }
