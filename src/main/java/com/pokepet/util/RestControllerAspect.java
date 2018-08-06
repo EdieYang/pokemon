@@ -140,7 +140,7 @@ public class RestControllerAspect {
 			return jsonObject.toJSONString();
 		}
 
-		try {
+		/*try {
 			String param = JSON.toJSONString(obj);
 			jsonObject = JSONObject.parseObject(param);
 			List<String> sensitiveFieldList = this.getSensitiveFieldList();
@@ -151,7 +151,7 @@ public class RestControllerAspect {
 			}
 		} catch (ClassCastException e) {
 			return String.valueOf(obj);
-		}
+		}*/
 		return jsonObject.toJSONString();
 	}
 

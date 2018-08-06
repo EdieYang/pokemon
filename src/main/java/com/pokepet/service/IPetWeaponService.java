@@ -20,5 +20,8 @@ public interface IPetWeaponService {
 	 * @return
 	 */
 	public boolean setPetWeaponConcat(PetWeaponConcat concat);
+	
+	
+	
 
 }
