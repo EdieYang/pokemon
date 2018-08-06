@@ -69,6 +69,7 @@ public class UserController {
 			//expCanvas @杨浩杰傻逼要的
 			pet.put("expCanvas", "");
 			
+			//装备栏装备
 			pet.put("weapon", petWeaponService.getWeaponByPetId(p.getPetId()));
 			
 			arr.add(pet);

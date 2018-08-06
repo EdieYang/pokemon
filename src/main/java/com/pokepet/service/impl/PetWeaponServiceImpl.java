@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.pokepet.dao.PetWeaponConcatMapper;
+import com.pokepet.model.PetWeaponConcat;
 import com.pokepet.service.IPetWeaponService;
 
 @Service
@@ -18,6 +19,11 @@ public class PetWeaponServiceImpl implements IPetWeaponService{
 	@Override
 	public List<Map<String, Object>> getWeaponByPetId(String petId) {
 		return PetWeaponConcatMapper.getWeaponByPetId(petId);
+	}
+
+	@Override
+	public boolean setPetWeaponConcat(PetWeaponConcat concat) {
+		return PetWeaponConcatMapper.updateByPrimaryKeySelective(concat) == 1;
 	}
 
 }

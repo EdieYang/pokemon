@@ -4,12 +4,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
-import com.alibaba.fastjson.JSONObject;
-import com.pokepet.dao.UserPetMapper;
-import com.pokepet.model.PetAlbum;
-import com.pokepet.model.UserPet;
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,12 +15,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.alibaba.fastjson.JSONObject;
 import com.pokepet.annotation.ResponseResult;
 import com.pokepet.model.Pet;
+import com.pokepet.model.PetAlbum;
+import com.pokepet.model.PetWeaponConcat;
 import com.pokepet.service.IPetManageService;
+import com.pokepet.service.IPetWeaponService;
 import com.pokepet.util.CommonUtil;
-
-import javax.servlet.http.HttpServletRequest;
 
 @ResponseResult
 @RestController
@@ -36,6 +34,9 @@ public class PetManageController {
 
 //	@Autowired
 //	private UserPetMapper userPetMapper;
+	
+	@Autowired
+	IPetWeaponService petWeaponService;
 
 
 	private final static String PIC_SUFFIX=".png";
@@ -57,6 +58,11 @@ public class PetManageController {
 		 return pet;
 	}
 	
+	/**
+	 * 获取宠物相册
+	 * @param petId
+	 * @return
+	 */
 	@RequestMapping(value = "/{petId}/album",method = RequestMethod.GET,consumes="application/json")
     public List<PetAlbum> getPetAlbum(@PathVariable String petId){
         return petManageService.getPetAlbumByPetId(petId);
@@ -156,12 +162,25 @@ public class PetManageController {
         return petManageService.delPet(petId);
     }
 	
+	/**
+	 * 创建宠物
+	 * @return
+	 */
 	@RequestMapping(value = "/petId",method = RequestMethod.GET,consumes="application/json")
 	public JSONObject createPet(){
 		String areaId = "010";
 		JSONObject js = new JSONObject();
 		js.put("petId", petManageService.createPetId(areaId));
         return js;
+	}
+	
+	/**
+	 * 设置宠物装备
+	 * @param concat
+	 */
+	@RequestMapping(value = "/setPetWeapon",method = RequestMethod.POST,consumes="application/json")
+	public void setPetWeapon(@RequestBody PetWeaponConcat concat){
+		petWeaponService.setPetWeaponConcat(concat);
 	}
 
 }
