@@ -25,6 +25,7 @@ import com.pokepet.model.UserWalkHistory;
 import com.pokepet.model.UserWalkLocation;
 import com.pokepet.service.IPetLikeService;
 import com.pokepet.service.IPetManageService;
+import com.pokepet.service.IPetWeaponService;
 import com.pokepet.service.IUserService;
 import com.pokepet.service.IWalkService;
 
@@ -47,6 +48,9 @@ public class UserController {
 	@Autowired
 	IUserService userService;
 	
+	@Autowired
+	IPetWeaponService petWeaponService;
+	
 	@RequestMapping(value = "/{userId}/pets",method = RequestMethod.GET,consumes="application/json")
 	public JSONArray getPets(@PathVariable String userId){
 		//获取某用户下的宠物
@@ -65,6 +69,8 @@ public class UserController {
 			
 			//expCanvas @杨浩杰傻逼要的
 			pet.put("expCanvas", "");
+			
+			pet.put("weapon", petWeaponService.getWeaponByPetId(p.getPetId()));
 			
 			arr.add(pet);
 		}
