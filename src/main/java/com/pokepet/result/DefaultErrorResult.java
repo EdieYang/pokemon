@@ -8,8 +8,8 @@ import org.springframework.http.HttpStatus;
 import com.pokepet.enums.ExceptionEnum;
 import com.pokepet.enums.ResultCode;
 import com.pokepet.exception.BusinessException;
+import com.pokepet.util.RequestContextHolderUtil;
 
-import cpm.pokepet.util.RequestContextHolderUtil;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

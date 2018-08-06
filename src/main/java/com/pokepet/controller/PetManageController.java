@@ -10,7 +10,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.pokepet.dao.UserPetMapper;
 import com.pokepet.model.PetAlbum;
 import com.pokepet.model.UserPet;
-import cpm.pokepet.util.CommonUtil;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.pokepet.annotation.ResponseResult;
 import com.pokepet.model.Pet;
 import com.pokepet.service.IPetManageService;
+import com.pokepet.util.CommonUtil;
 
 import javax.servlet.http.HttpServletRequest;
 

@@ -1,4 +1,4 @@
-package cpm.pokepet.util;
+package com.pokepet.util;
 
 import java.text.DecimalFormat;
 import java.util.Calendar;

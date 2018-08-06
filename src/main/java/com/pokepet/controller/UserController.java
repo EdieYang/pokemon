@@ -28,8 +28,7 @@ import com.pokepet.service.IPetManageService;
 import com.pokepet.service.IPetWeaponService;
 import com.pokepet.service.IUserService;
 import com.pokepet.service.IWalkService;
-
-import cpm.pokepet.util.CommonUtil;
+import com.pokepet.util.CommonUtil;
 
 @ResponseResult
 @RestController

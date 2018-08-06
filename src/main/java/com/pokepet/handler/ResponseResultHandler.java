@@ -13,8 +13,7 @@ import com.pokepet.interceptor.ResponseResultInterceptor;
 import com.pokepet.result.DefaultErrorResult;
 import com.pokepet.result.PlatformResult;
 import com.pokepet.result.Result;
-
-import cpm.pokepet.util.RequestContextHolderUtil;
+import com.pokepet.util.RequestContextHolderUtil;
 
 /**
  * @desc 接口响应体处理器
