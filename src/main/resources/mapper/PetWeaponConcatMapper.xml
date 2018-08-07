@@ -204,4 +204,29 @@
 	  AND t_c.weapon_status = '0'
 	  AND t_c.pet_id = #{petId,jdbcType=VARCHAR}
   </select>
+  
+  <select id="getWeaponByUserId" parameterType="java.lang.String" resultType="java.util.Map">
+  	SELECT 
+	  t_c.id,
+	  t_w.weapon_id AS weaponId,
+	  t_w.weapon_name AS weaponName,
+	  t_w.weapon_img AS weaponImg,
+	  t_w.weapon_demand_level AS weaponDemandLevel,
+	  t_w.weapon_rare_degree AS weaponRareDegree,
+	  t_w.weapon_description AS weaponDescription,
+	  t_c.weapon_endurance_percent AS weaponEndurancePercent,
+	  t_c.weapon_match_percent AS weaponMatchPercent,
+	  t_c.weapon_install_state AS weaponInstallState,
+	  t_c.weapon_status AS weaponStatus,
+	  t_c.pet_id AS petId,
+	  t_c.use_id AS useId
+	FROM
+	  pet_weapon_concat t_c 
+	  LEFT JOIN pet_weapon t_w 
+	    ON t_c.weapon_id = t_w.weapon_id 
+	WHERE t_c.del_flag = '0' 
+	  AND t_w.del_flag = '0' 
+	  AND t_c.weapon_status = '0'
+	  AND t_c.user_id = #{userId,jdbcType=VARCHAR}
+  </select>
 </mapper>
