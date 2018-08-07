@@ -22,7 +22,7 @@ public class ExploreController {
 		arr.add(LocationUtils.GetRandomLocation(location, 300));
 		arr.add(LocationUtils.GetRandomLocation(location, 300));
 		arr.add(LocationUtils.GetRandomLocation(location, 300));
-        return arr;
+       return arr;
 	}
 
 }

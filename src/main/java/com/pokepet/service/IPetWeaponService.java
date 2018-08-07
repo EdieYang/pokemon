@@ -16,7 +16,7 @@ public interface IPetWeaponService {
 	
 	/**
 	 * 设置宠物装备
-	 * @param cancat
+	 * @param concat
 	 * @return
 	 */
 	public boolean setPetWeaponConcat(PetWeaponConcat concat);
