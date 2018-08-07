@@ -3,6 +3,7 @@ package com.pokepet.service;
 import java.util.List;
 import java.util.Map;
 
+import com.alibaba.fastjson.JSONObject;
 import com.pokepet.model.PetWeaponConcat;
 
 public interface IPetWeaponService {
@@ -22,6 +23,13 @@ public interface IPetWeaponService {
 	public boolean setPetWeaponConcat(PetWeaponConcat concat);
 	
 	
+	/**
+	 * 探索目标点，扣除装备耐久、活力度，生成探索奖励
+	 * @param petId
+	 * @param pointStar
+	 * @return
+	 */
+	public JSONObject expolrePoint(String petId, int pointStar);
 	
 
 }
