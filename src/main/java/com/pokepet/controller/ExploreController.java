@@ -11,29 +11,35 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.pokepet.annotation.ResponseResult;
 import com.pokepet.model.GPSLocation;
+import com.pokepet.service.IExploreService;
 import com.pokepet.service.IPetWeaponService;
-import com.pokepet.util.LocationUtils;
 
 @ResponseResult
 @RestController
 @RequestMapping("/explore")
 public class ExploreController {
-	
+
 	@Autowired
 	IPetWeaponService petWeaponService;
-	
-	
-	@RequestMapping(value = "/getExplorePoint",method = RequestMethod.POST,consumes="application/json")
-	public JSONArray getExplorePoint(@RequestBody GPSLocation location){
-		JSONArray arr = new JSONArray();
-		arr.add(LocationUtils.GetRandomLocation(location, 300));
-		arr.add(LocationUtils.GetRandomLocation(location, 300));
-		arr.add(LocationUtils.GetRandomLocation(location, 300));
-       return arr;
+
+	@Autowired
+	IExploreService exploreService;
+
+	@RequestMapping(value = "/getExplorePoint", method = RequestMethod.POST, consumes = "application/json")
+	public JSONArray getExplorePoint(@RequestBody JSONObject data) {
+		GPSLocation location = new GPSLocation();
+
+		location.setLatitude(data.getDoubleValue("latitude"));
+		location.setLongitude(data.getDoubleValue("longitude"));
+		double distance = data.getDoubleValue("distance");
+		int pointStar = data.getIntValue("pointStar");
+		int pointCount = data.getIntValue("pointCount");
+
+		return exploreService.getExplorePoint(location, distance, pointStar, pointCount);
 	}
-	
-	@RequestMapping(value = "/explorePoint",method = RequestMethod.GET)
-	public JSONObject explorePoint(@RequestParam("petId") String petId ,@RequestParam("pointStar") int pointStar){
+
+	@RequestMapping(value = "/explorePoint", method = RequestMethod.GET)
+	public JSONObject explorePoint(@RequestParam("petId") String petId, @RequestParam("pointStar") int pointStar) {
 		return petWeaponService.expolrePoint(petId, pointStar);
 	}
 
