@@ -200,4 +200,14 @@ public class UserController {
     public List<Map<String, Object>> getWalkAround(@PathVariable String userId,@RequestParam("longitude") String longitude ,@RequestParam("latitude") String latitude){
         return walkService.getWalkAround(userId, longitude, latitude);
     }
+	
+	/**
+	 * 获取用户装备
+	 * @param userId
+	 * @return
+	 */
+	@RequestMapping(value = "/{userId}/weponList",method = RequestMethod.GET,consumes="application/json")
+	public List<Map<String, Object>> getWeaponList(@PathVariable String userId){
+        return petWeaponService.getWeaponByUserId(userId);
+	}
 }

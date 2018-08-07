@@ -31,5 +31,11 @@ public interface IPetWeaponService {
 	 */
 	public JSONObject expolrePoint(String petId, int pointStar);
 	
+	/**
+	 * 根据userId获取装备信息
+	 * @param userId
+	 * @return
+	 */
+	List<Map<String, Object>> getWeaponByUserId(String userId);
 
 }

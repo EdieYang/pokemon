@@ -48,4 +48,11 @@ public interface PetWeaponConcatMapper {
 	 * @return
 	 */
 	List<Map<String, Object>> getWeaponByPetId(String petId);
+	
+	/**
+	 * 根据userId获取用户装备信息
+	 * @param userId
+	 * @return
+	 */
+	List<Map<String, Object>> getWeaponByUserId(String userId);
 }

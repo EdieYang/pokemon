@@ -25,10 +25,10 @@ public class PetWeaponServiceImpl implements IPetWeaponService {
 
 	@Autowired
 	PetWeaponMapper petWeaponMapper;
-	
+
 	@Autowired
 	PetMapper petMapper;
-	
+
 	@Autowired
 	UserMapper userMapper;
 
@@ -54,7 +54,7 @@ public class PetWeaponServiceImpl implements IPetWeaponService {
 			int chipRate = 1;
 
 			int chipCount = 0;
-			
+
 			int chipAddCount = 0;
 
 			switch (pointStar) {
@@ -85,50 +85,54 @@ public class PetWeaponServiceImpl implements IPetWeaponService {
 
 			// 装备列表
 			List<Map<String, Object>> concatList = PetWeaponConcatMapper.getWeaponByPetId(petId);
-//			List<PetWeapon> weaponList = new ArrayList<PetWeapon>();
+			// List<PetWeapon> weaponList = new ArrayList<PetWeapon>();
 			for (int i = 0; i < concatList.size(); i++) {
 				String id = (String) concatList.get(i).get("id");
 				PetWeaponConcat concat = PetWeaponConcatMapper.selectByPrimaryKey(id);
 				if (concat.getWeaponEndurancePercent() > weaponDiscountRate) {
 					concat.setWeaponEndurancePercent(concat.getWeaponEndurancePercent() - weaponDiscountRate);
 				} else {
-					//装备报废
+					// 装备报废
 					concat.setWeaponEndurancePercent(0);
-					concat.setWeaponInstallState("0");//不装备
-					concat.setPetId("");//清空petId
-					concat.setWeaponStatus("1");//装备不可用
+					concat.setWeaponInstallState("0");// 不装备
+					concat.setPetId("");// 清空petId
+					concat.setWeaponStatus("1");// 装备不可用
 				}
-				PetWeaponConcatMapper.updateByPrimaryKeySelective(concat);//扣除装备耐久、更新装备信息
+				PetWeaponConcatMapper.updateByPrimaryKeySelective(concat);// 扣除装备耐久、更新装备信息
 
 				PetWeapon weapon = petWeaponMapper.selectByPrimaryKey(concat.getWeaponId());
 
 				if (Math.random() * 100 <= weapon.getChipAddRate()) {
 					chipAddCount += weapon.getChipAddCount();
 				}
-				
+
 				chipRate = chipRate * weapon.getChipRate() / 100;
 
 			}
 
 			// 根据装备列表、探索地星级计算物品爆率
-			if(chipRate>=1){
+			if (chipRate >= 1) {
 				chipCount += 1;
 			}
-			
 
-			//扣除活力值
+			// 扣除活力值
 			Pet pet = petMapper.selectByPrimaryKey(petId);
-			pet.setEnergyCoin(pet.getEnergyCoin()-discountEnergyCoin);
+			pet.setEnergyCoin(pet.getEnergyCoin() - discountEnergyCoin);
 			petMapper.updateByPrimaryKeySelective(pet);
 			result.put("energyCoin", pet.getEnergyCoin());
 
 			// 生成奖励物品，保存入庫
-			result.put("chip", chipCount+ chipAddCount);
+			result.put("chip", chipCount + chipAddCount);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-		
+
 		return result;
+	}
+
+	@Override
+	public List<Map<String, Object>> getWeaponByUserId(String userId) {
+		return PetWeaponConcatMapper.getWeaponByUserId(userId);
 	}
 
 }
