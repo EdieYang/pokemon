@@ -1,5 +1,8 @@
 package com.pokepet.dao;
 
+import java.util.List;
+import java.util.Map;
+
 import com.pokepet.model.PetSupplyConcat;
 
 public interface PetSupplyConcatMapper {
@@ -50,4 +53,6 @@ public interface PetSupplyConcatMapper {
      * @mbggenerated Tue Aug 07 15:31:28 GMT+08:00 2018
      */
     int updateByPrimaryKey(PetSupplyConcat record);
+    
+    List<Map<String, Object>> getSupplyByUserId(String userId);
 }
