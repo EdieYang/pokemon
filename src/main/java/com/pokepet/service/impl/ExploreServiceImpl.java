@@ -71,6 +71,7 @@ public class ExploreServiceImpl implements IExploreService {
 				pointList.remove(aa);
 				point.put("location", LocationUtils.GetRandomLocation(location, distance));
 				arr.add(point);
+				pointCount--;
 			} else {
 				pointCount = 0;
 			}
@@ -176,7 +177,7 @@ public class ExploreServiceImpl implements IExploreService {
 				chipCount += 1;
 			}
 
-			//碎片入库
+			// 碎片入库
 			User user = userMapper.selectByPrimaryKey(userId);
 			user.setChipCount(user.getChipCount() + chipCount + chipAddCount);
 			userMapper.updateByPrimaryKeySelective(user);
