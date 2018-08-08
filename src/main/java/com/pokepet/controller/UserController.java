@@ -196,7 +196,7 @@ public class UserController {
 	 * @author Bean Zhou
 	 * @date 2018年6月5日
 	 */
-	@RequestMapping(value = "/{userId}/walk/around",method = RequestMethod.GET,consumes="application/json")
+	@RequestMapping(value = "/{userId}/walk/around",method = RequestMethod.GET)
     public List<Map<String, Object>> getWalkAround(@PathVariable String userId,@RequestParam("longitude") String longitude ,@RequestParam("latitude") String latitude){
         return walkService.getWalkAround(userId, longitude, latitude);
     }
@@ -206,7 +206,7 @@ public class UserController {
 	 * @param userId
 	 * @return
 	 */
-	@RequestMapping(value = "/{userId}/weponList",method = RequestMethod.GET,consumes="application/json")
+	@RequestMapping(value = "/{userId}/weponList",method = RequestMethod.GET)
 	public List<Map<String, Object>> getWeaponList(@PathVariable String userId){
         return petWeaponService.getWeaponByUserId(userId);
 	}
