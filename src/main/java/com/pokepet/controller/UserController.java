@@ -25,6 +25,7 @@ import com.pokepet.model.UserWalkHistory;
 import com.pokepet.model.UserWalkLocation;
 import com.pokepet.service.IPetLikeService;
 import com.pokepet.service.IPetManageService;
+import com.pokepet.service.IPetSupplyService;
 import com.pokepet.service.IPetWeaponService;
 import com.pokepet.service.IUserService;
 import com.pokepet.service.IWalkService;
@@ -49,6 +50,9 @@ public class UserController {
 	
 	@Autowired
 	IPetWeaponService petWeaponService;
+	
+	@Autowired
+	IPetSupplyService petSupplyService;
 	
 	@RequestMapping(value = "/{userId}/pets",method = RequestMethod.GET,consumes="application/json")
 	public JSONArray getPets(@PathVariable String userId){
@@ -209,5 +213,15 @@ public class UserController {
 	@RequestMapping(value = "/{userId}/weponList",method = RequestMethod.GET)
 	public List<Map<String, Object>> getWeaponList(@PathVariable String userId){
         return petWeaponService.getWeaponByUserId(userId);
+	}
+	
+	/**
+	 * 获取用户补给
+	 * @param userId
+	 * @return
+	 */
+	@RequestMapping(value = "/{userId}/supplyList",method = RequestMethod.GET)
+	public List<Map<String, Object>> getSupplyList(@PathVariable String userId){
+        return petSupplyService.getSupplyByUserId(userId);
 	}
 }

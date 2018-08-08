@@ -130,4 +130,26 @@
       del_flag = #{delFlag,jdbcType=VARCHAR}
     where id = #{id,jdbcType=VARCHAR}
   </update>
+  
+  <select id="getSupplyByUserId" parameterType="java.lang.String" resultType="java.util.Map">
+  	SELECT 
+	  t_c.id,
+	  t_w.supply_id AS supplyId,
+	  t_w.supply_name AS supplyName,
+	  t_w.supply_img AS supplyImg,
+	  t_w.supply_demand_level AS supplyDemandLevel,
+	  t_w.supply_rare_degree AS supplyRareDegree,
+	  t_w.supply_description AS supplyDescription,
+	  t_w.add_energy AS addEnergy,
+	  t_c.supply_status AS supplyStatus,
+	  t_c.user_id AS useId
+	FROM
+	  pet_supply_concat t_c 
+	  LEFT JOIN pet_supply t_w 
+	    ON t_c.supply_id = t_w.supply_id 
+	WHERE t_c.del_flag = '0' 
+	  AND t_w.del_flag = '0' 
+	  AND t_c.supply_status = '0'
+	  AND t_c.user_id = #{userId,jdbcType=VARCHAR}
+  </select>
 </mapper>
