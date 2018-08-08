@@ -27,6 +27,7 @@ import com.pokepet.model.PetSupply;
 import com.pokepet.model.PetSupplyConcat;
 import com.pokepet.model.PetWeapon;
 import com.pokepet.model.PetWeaponConcat;
+import com.pokepet.model.User;
 import com.pokepet.model.UserExploreHistory;
 import com.pokepet.service.IExploreService;
 import com.pokepet.util.LocationUtils;
@@ -80,7 +81,8 @@ public class ExploreServiceImpl implements IExploreService {
 
 	@Transactional
 	@Override
-	public JSONObject expolrePoint(String userId, String petId, String pointName, int pointStar, double longitude, double latitude) {
+	public JSONObject expolrePoint(String userId, String petId, String pointName, int pointStar, double longitude,
+			double latitude) {
 		JSONObject reward = new JSONObject();
 		List<PetWeapon> newWeaponList = new ArrayList<PetWeapon>();
 		List<PetSupply> newSupplyList = new ArrayList<PetSupply>();
@@ -173,6 +175,12 @@ public class ExploreServiceImpl implements IExploreService {
 			if (chipRate >= 1) {
 				chipCount += 1;
 			}
+
+			//碎片入库
+			User user = userMapper.selectByPrimaryKey(userId);
+			user.setChipCount(user.getChipCount() + chipCount + chipAddCount);
+			userMapper.updateByPrimaryKeySelective(user);
+
 			double weaponP = Math.random() * 100;
 			System.out.println("[随机幸运值]:" + weaponP + "[装备爆率:]" + weaponRate);
 			if (weaponP <= weaponRate) {
@@ -185,7 +193,7 @@ public class ExploreServiceImpl implements IExploreService {
 				newWeapon.setId(UUID.randomUUID().toString());
 				newWeapon.setWeaponId(weapon.getWeaponId());
 				newWeapon.setUserId(userId);
-				PetWeaponConcatMapper.insertSelective(newWeapon);// 入库
+				PetWeaponConcatMapper.insertSelective(newWeapon);// 装备入库
 				newWeaponList.add(weapon);
 
 			}
@@ -202,7 +210,7 @@ public class ExploreServiceImpl implements IExploreService {
 				newSupply.setId(UUID.randomUUID().toString());
 				newSupply.setSupplyId(supply.getSupplyId());
 				newSupply.setUserId(userId);
-				petSupplyConcatMapper.insertSelective(newSupply);// 入库
+				petSupplyConcatMapper.insertSelective(newSupply);// 补给入库
 				newSupplyList.add(supply);
 
 			}
@@ -217,8 +225,8 @@ public class ExploreServiceImpl implements IExploreService {
 			reward.put("chip", chipCount + chipAddCount);
 			reward.put("weapon", newWeaponList);
 			reward.put("supply", newSupplyList);
-			
-			//保存探索记录
+
+			// 保存探索记录
 			UserExploreHistory history = new UserExploreHistory();
 			history.setExploreDatetime(new Date());
 			history.setUserId(userId);

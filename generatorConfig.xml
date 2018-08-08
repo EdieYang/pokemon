@@ -16,7 +16,7 @@
 		<javaClientGenerator targetPackage="com.pokepet.dao"
 			targetProject="pokemon" type="XMLMAPPER" />
 
-		<table schema="pokemon" tableName="user_explore_history"
+		<table schema="pokemon" tableName="user"
 			enableCountByExample="false" enableUpdateByExample="false"
 			enableDeleteByExample="false" enableSelectByExample="false"
 			selectByExampleQueryId="false"></table>
