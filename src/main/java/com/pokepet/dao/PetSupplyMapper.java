@@ -41,10 +41,5 @@ public interface PetSupplyMapper {
 	 */
 	int updateByPrimaryKey(PetSupply record);
 
-	/**
-	 * 根据探索点星级获取补给列�?
-	 * @param pointStar
-	 * @return
-	 */
 	List<PetSupply> getSupplyListWithPointStar(int pointStar);
 }

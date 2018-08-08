@@ -53,15 +53,5 @@ public interface UserWalkLocationMapper {
      */
     int updateByPrimaryKey(UserWalkLocation record);
     
-    /**
-	 * 
-	 * @Description: 根据历史记录id获取轨迹坐标
-	 * @param @param historyId
-	 * @param @return   
-	 * @return List<UserWalkLocation>  
-	 * @throws
-	 * @author Bean Zhou
-	 * @date 2018年5月28日
-	 */
 	List<UserWalkLocation> getLocationListByHistoryId(String historyId);
 }

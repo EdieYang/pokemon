@@ -42,10 +42,5 @@ public interface PetWeaponMapper {
 	 */
 	int updateByPrimaryKey(PetWeapon record);
 
-	/**
-	 * 根据探索点星级获取装备列表
-	 * @param pointStar
-	 * @return
-	 */
 	List<PetWeapon> getWeaponListWithPointStar(int pointStar);
 }

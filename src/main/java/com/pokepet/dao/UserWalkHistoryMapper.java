@@ -57,42 +57,10 @@ public interface UserWalkHistoryMapper {
 
 	List<UserWalkHistory> getHistoryListByUserId(String userId);
 
-	/**
-	 * 
-	 * @Description: 获取用户累计walk距离
-	 * @param @param
-	 *            usersId
-	 * @param @return
-	 * @return int
-	 * @throws @author
-	 *             Bean Zhou
-	 * @date 2018年6月5日
-	 */
 	int getWalkDistanceByUserId(String usersId);
 
-	/**
-	 * 
-	 * @Description: 获取pet累计walk距离
-	 * @param @param
-	 *            petId
-	 * @param @return
-	 * @return int
-	 * @throws @author
-	 *             Bean Zhou
-	 * @date 2018年6月5日
-	 */
 	int getWalkDistanceByPetId(String petId);
 
-	/**
-	 * 获取用户周围walk的其他用户
-	 * 
-	 * @param userId
-	 * @param longitude
-	 * @param latitude
-	 * @param minuteAgo
-	 * @param disAround
-	 * @return
-	 */
 	List<Map<String, Object>> getWalkAround(String userId, String longitude, String latitude, String minuteAgo,
 			String disAround);
 }
