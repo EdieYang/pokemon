@@ -19,7 +19,6 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.pokepet.handler.GlobalExceptionHandler;
 
@@ -116,7 +115,12 @@ public class RestControllerAspect {
 			}
 			sb.append(paramStr).append(",");
 		}
-		return sb.deleteCharAt(sb.length() - 1).toString();
+		if (sb.length() > 0) {
+			return sb.deleteCharAt(sb.length() - 1).toString();
+		} else {
+			return sb.toString();
+		}
+
 	}
 
 	/**
@@ -140,18 +144,14 @@ public class RestControllerAspect {
 			return jsonObject.toJSONString();
 		}
 
-		/*try {
-			String param = JSON.toJSONString(obj);
-			jsonObject = JSONObject.parseObject(param);
-			List<String> sensitiveFieldList = this.getSensitiveFieldList();
-			for (String sensitiveField : sensitiveFieldList) {
-				if (jsonObject.containsKey(sensitiveField)) {
-					jsonObject.put(sensitiveField, "******");
-				}
-			}
-		} catch (ClassCastException e) {
-			return String.valueOf(obj);
-		}*/
+		/*
+		 * try { String param = JSON.toJSONString(obj); jsonObject =
+		 * JSONObject.parseObject(param); List<String> sensitiveFieldList =
+		 * this.getSensitiveFieldList(); for (String sensitiveField :
+		 * sensitiveFieldList) { if (jsonObject.containsKey(sensitiveField)) {
+		 * jsonObject.put(sensitiveField, "******"); } } } catch
+		 * (ClassCastException e) { return String.valueOf(obj); }
+		 */
 		return jsonObject.toJSONString();
 	}
 

@@ -3,6 +3,7 @@ package com.pokepet.service;
 import java.util.List;
 import java.util.Map;
 
+import com.pokepet.model.PetWeapon;
 import com.pokepet.model.PetWeaponConcat;
 
 public interface IPetWeaponService {
@@ -29,5 +30,11 @@ public interface IPetWeaponService {
 	 * @return
 	 */
 	List<Map<String, Object>> getWeaponByUserId(String userId);
+	
+	/**
+	 * 获取装备列表
+	 * @return
+	 */
+	List<PetWeapon> getWeaponList();
 
 }

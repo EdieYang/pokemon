@@ -21,6 +21,7 @@ import com.pokepet.model.Pet;
 import com.pokepet.model.PetAlbum;
 import com.pokepet.model.PetWeaponConcat;
 import com.pokepet.service.IPetManageService;
+import com.pokepet.service.IPetSupplyService;
 import com.pokepet.service.IPetWeaponService;
 import com.pokepet.util.CommonUtil;
 
@@ -37,6 +38,9 @@ public class PetManageController {
 	
 	@Autowired
 	IPetWeaponService petWeaponService;
+	
+	@Autowired
+	IPetSupplyService petSupplyService;
 
 
 	private final static String PIC_SUFFIX=".png";
@@ -181,6 +185,17 @@ public class PetManageController {
 	@RequestMapping(value = "/setPetWeapon",method = RequestMethod.POST,consumes="application/json")
 	public void setPetWeapon(@RequestBody PetWeaponConcat concat){
 		petWeaponService.setPetWeaponConcat(concat);
+	}
+	
+	/**
+	 * 使用补给
+	 * @param concat
+	 */
+	@RequestMapping(value = "/useSupply",method = RequestMethod.POST,consumes="application/json")
+	public void useSupply(@RequestBody JSONObject data){
+		String petId = data.getString("petId");
+		String id = data.getString("id");
+		petSupplyService.useSupply(petId, id);
 	}
 
 }

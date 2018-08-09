@@ -12,6 +12,7 @@ import com.pokepet.dao.PetSupplyMapper;
 import com.pokepet.dao.PetWeaponConcatMapper;
 import com.pokepet.dao.PetWeaponMapper;
 import com.pokepet.dao.UserMapper;
+import com.pokepet.model.PetWeapon;
 import com.pokepet.model.PetWeaponConcat;
 import com.pokepet.service.IPetWeaponService;
 
@@ -52,6 +53,11 @@ public class PetWeaponServiceImpl implements IPetWeaponService {
 	@Override
 	public List<Map<String, Object>> getWeaponByUserId(String userId) {
 		return PetWeaponConcatMapper.getWeaponByUserId(userId);
+	}
+
+	@Override
+	public List<PetWeapon> getWeaponList() {
+		return petWeaponMapper.getWeaponList();
 	}
 
 }
