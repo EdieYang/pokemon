@@ -30,5 +30,4 @@ public interface IPetSupplyService {
 	 * @return
 	 */
 	JSONObject useSupply(String petId, String id);
-
 }
