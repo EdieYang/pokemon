@@ -55,7 +55,7 @@ public class PetManageController {
 	 * @author Bean Zhou
 	 * @date 2018年5月24日
 	 */
-	@RequestMapping(value = "/{petId}",method = RequestMethod.GET,consumes="application/json")
+	@RequestMapping(value = "/{petId}",method = RequestMethod.GET)
     public Pet getPet(@PathVariable String petId){
         Pet pet= petManageService.getPetByPetId(petId);
 		 pet.setAge(CommonUtil.getAgeByBirthday(pet.getBirthday()));//设置年龄
