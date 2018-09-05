@@ -1,5 +1,7 @@
 package com.pokepet.dao;
 
+import java.util.List;
+
 import com.pokepet.model.UserShoppingAddress;
 
 public interface UserShoppingAddressMapper {
@@ -50,4 +52,8 @@ public interface UserShoppingAddressMapper {
      * @mbggenerated Thu May 24 14:44:58 CST 2018
      */
     int updateByPrimaryKey(UserShoppingAddress record);
+    
+    public List<UserShoppingAddress> getAddressList(String userId);
+    
+    public int resetDefultAddress(String userId);
 }
