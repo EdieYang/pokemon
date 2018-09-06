@@ -2,6 +2,7 @@ package com.pokepet.service.impl;
 
 import java.util.Calendar;
 
+import com.pokepet.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,6 +36,16 @@ public class UserServiceImpl implements IUserService {
 					+ userIdEnd.substring(userIdEnd.length() - 6, userIdEnd.length());
 		}
 
+	}
+
+	@Override
+	public int modifyUser(User user) {
+		return userMapper.updateByPrimaryKeySelective(user);
+	}
+
+	@Override
+	public User getUserInfo(String userId) {
+		return userMapper.selectByPrimaryKey(userId);
 	}
 
 }

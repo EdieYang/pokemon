@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.alibaba.fastjson.JSONObject;
+import com.pokepet.model.Pet;
 import com.pokepet.model.PetWeapon;
 import com.pokepet.model.PetWeaponConcat;
 
@@ -24,6 +25,7 @@ public interface IPetWeaponService {
 	 * @return
 	 */
 	public boolean setPetWeaponConcat(PetWeaponConcat concat);
+
 
 	/**
 	 * 根据userId获取装备信息
@@ -60,5 +62,8 @@ public interface IPetWeaponService {
 	 * @return
 	 */
 	JSONObject buySupply(String userId, String supplyId, String payWay, JSONObject payInfo);
+
+
+	PetWeapon getWeaponByWeaponId(String weaponId);
 
 }

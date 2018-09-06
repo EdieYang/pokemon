@@ -4,9 +4,13 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.pokepet.model.*;
+import com.pokepet.service.IPetLikeService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,9 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSONObject;
 import com.pokepet.annotation.ResponseResult;
-import com.pokepet.model.Pet;
-import com.pokepet.model.PetAlbum;
-import com.pokepet.model.PetWeaponConcat;
 import com.pokepet.service.IPetManageService;
 import com.pokepet.service.IPetSupplyService;
 import com.pokepet.service.IPetWeaponService;
@@ -42,6 +43,9 @@ public class PetManageController {
 	@Autowired
 	IPetSupplyService petSupplyService;
 
+	@Autowired
+	IPetLikeService petLikeService;
+
 
 	private final static String PIC_SUFFIX=".png";
 	
@@ -61,6 +65,8 @@ public class PetManageController {
 		 pet.setAge(CommonUtil.getAgeByBirthday(pet.getBirthday()));//设置年龄
 		 return pet;
 	}
+
+
 	
 	/**
 	 * 获取宠物相册
@@ -86,7 +92,7 @@ public class PetManageController {
 	@RequestMapping(value = "",method = RequestMethod.POST)
     public JSONObject addPet(HttpServletRequest request){
 		JSONObject jsonObject=new JSONObject();
-		String petId=petManageService.createPetId("010");//地区ID没传 @杨浩杰
+		String petId=petManageService.createPetId("010");//地区ID没传
 		String species=request.getParameter("species");
 		String name=request.getParameter("name");
 		String sex=request.getParameter("sex");
@@ -97,6 +103,7 @@ public class PetManageController {
 		String exp=request.getParameter("exp");
 		String delFlag=request.getParameter("delFlag");
 		String userId=request.getParameter("userId");
+		String memo=request.getParameter("memo");
 
 
 		Pet pet=new Pet();
@@ -118,6 +125,7 @@ public class PetManageController {
 		pet.setSterilization(sterilization);
 		pet.setExp(Integer.valueOf(exp));
 		pet.setLevel(Integer.valueOf(level));
+		pet.setMemo(memo);
 		pet.setDelFlag(delFlag);
 
 		boolean returnFlag=petManageService.addPet(pet);
@@ -197,5 +205,60 @@ public class PetManageController {
 		String id = data.getString("id");
 		petSupplyService.useSupply(petId, id);
 	}
+
+	@RequestMapping(value = "/setPetEnergyCoin" ,method = RequestMethod.POST,consumes="application/json")
+	public void setPetWeapon(@RequestBody JSONObject data){
+		String petId = data.getString("petId");
+		String energyCoin=data.getString("energyCoin");
+		if(!StringUtils.isEmpty(energyCoin)){
+			//获取最新活力值并进行校验
+			Pet petRecord=petManageService.getPetByPetId(petId);
+			int energyCoinInt=Integer.parseInt(energyCoin);
+			Pet pet=new Pet();
+			pet.setPetId(petId);
+			pet.setEnergyCoin(energyCoinInt);
+			if(petRecord!=null){
+				int egCoinOld=petRecord.getEnergyCoin();
+				if(egCoinOld<energyCoinInt){
+					petManageService.uptPet(pet);
+				}
+			}
+
+		}
+	}
+
+	/**
+	 * 宠物装备
+	 * @param petId
+	 * @return
+     */
+	@RequestMapping(value = "/{petId}/weaponRepo",method = RequestMethod.GET,consumes = "application/json")
+	public JSONObject getPetWeaponRepo(@PathVariable String petId){
+		JSONObject jsonObject=new JSONObject();
+		jsonObject.put("weapons",petWeaponService.getWeaponByPetId(petId));
+		return jsonObject;
+	}
+
+
+	@RequestMapping(value = "/{petId}/like",method = RequestMethod.POST,consumes = "application/json")
+	public JSONObject addPetsLike(@PathVariable String petId,@RequestBody JSONObject data){
+		JSONObject jsonObject=new JSONObject();
+		String userId=data.getString("userId");
+		int petLikeCount=petLikeService.getPetLikeCountByUserId(petId,userId);
+		if(petLikeCount==0){
+			//增加爱心
+			PetLike petLike=new PetLike();
+			petLike.setPetId(petId);
+			petLike.setUserId(userId);
+			petLike.setCreateDatetime(new Date());
+			petLikeService.addPetLike(petLike);
+			jsonObject.put("success",true);
+		}else{
+			jsonObject.put("success",false);
+		}
+		return jsonObject;
+	}
+
+
 
 }

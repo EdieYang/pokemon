@@ -1,5 +1,7 @@
 package com.pokepet.service;
 
+import com.pokepet.model.User;
+
 public interface IUserService {
 	
 	/**
@@ -8,5 +10,9 @@ public interface IUserService {
 	 * @return
 	 */
 	String createUserId(String areaId);
+
+	int modifyUser(User user);
+
+	User getUserInfo(String userId);
 
 }

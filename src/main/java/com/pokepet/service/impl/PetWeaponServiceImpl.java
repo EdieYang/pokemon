@@ -201,4 +201,9 @@ public class PetWeaponServiceImpl implements IPetWeaponService {
 		return result;
 	}
 
+	@Override
+	public PetWeapon getWeaponByWeaponId(String weaponId) {
+		return petWeaponMapper.selectByPrimaryKey(weaponId);
+	}
+
 }

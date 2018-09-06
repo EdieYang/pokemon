@@ -141,4 +141,9 @@
   <select id="getLikeCountByPetId" parameterType="java.lang.String" resultType="java.lang.Integer">
   	SELECT COUNT(DISTINCT user_id) FROM pet_like WHERE pet_id = #{petId,jdbcType=VARCHAR} AND del_flag = '0' ;
   </select>
+
+  <select id="getPetLikeCountByUserId"  parameterType="java.lang.String" resultType="java.lang.Integer">
+    SELECT COUNT(1) FROM pet_like WHERE pet_id = #{petId,jdbcType=VARCHAR} AND user_id=#{userId}
+    AND del_flag = '0' ;
+  </select>
 </mapper>

@@ -220,7 +220,7 @@ public class ExploreServiceImpl implements IExploreService {
 			Pet pet = petMapper.selectByPrimaryKey(petId);
 			pet.setEnergyCoin(pet.getEnergyCoin() - discountEnergyCoin);
 			petMapper.updateByPrimaryKeySelective(pet);
-			reward.put("energyCoin", pet.getEnergyCoin());
+			reward.put("energyCoin",discountEnergyCoin);
 
 			// 生成奖励物品，保存入庫
 			reward.put("chip", chipCount + chipAddCount);

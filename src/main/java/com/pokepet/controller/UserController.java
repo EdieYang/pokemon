@@ -1,11 +1,15 @@
 package com.pokepet.controller;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import com.pokepet.model.*;
+import com.pokepet.service.*;
+import org.apache.catalina.servlet4preview.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,15 +24,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.pokepet.annotation.ResponseResult;
 import com.pokepet.enums.PetLevelEnum;
 import com.pokepet.enums.StarSignEnum;
-import com.pokepet.model.Pet;
-import com.pokepet.model.UserWalkHistory;
-import com.pokepet.model.UserWalkLocation;
-import com.pokepet.service.IPetLikeService;
-import com.pokepet.service.IPetManageService;
-import com.pokepet.service.IPetSupplyService;
-import com.pokepet.service.IPetWeaponService;
-import com.pokepet.service.IUserService;
-import com.pokepet.service.IWalkService;
 import com.pokepet.util.CommonUtil;
 
 @ResponseResult
@@ -53,6 +48,78 @@ public class UserController {
 	
 	@Autowired
 	IPetSupplyService petSupplyService;
+
+	@Autowired
+	IUserFollowService userFollowService;
+
+
+	@RequestMapping(value = "/{userId}",method = RequestMethod.POST,consumes="application/json")
+	public void modifyUser(@PathVariable String userId,@RequestBody User user){
+		user.setUserId(userId);
+		userService.modifyUser(user);
+	}
+
+	@RequestMapping(value = "/{userId}",method = RequestMethod.GET,consumes="application/json")
+	public JSONObject getUserInfo(@PathVariable String userId){
+		User user=userService.getUserInfo(userId);
+		int followAmount=userFollowService.getUserFollowAmount(userId);
+		int followedAmount=userFollowService.getUserFollowedAmount(userId);
+
+		JSONObject  userInfo = new JSONObject();
+		userInfo.put("user",user);
+		userInfo.put("fanAmount",followedAmount);
+		userInfo.put("followAmount",followAmount);
+
+		return userInfo;
+	}
+
+
+	@RequestMapping(value = "/{userId}/follow",method = RequestMethod.GET,consumes="application/json")
+	public JSONObject getFollowUser(@PathVariable String userId, HttpServletRequest request){
+		String followUserId=request.getParameter("followUserId");
+		UserFollow userFollowParam=new UserFollow();
+		userFollowParam.setFollowUserId(followUserId);
+		userFollowParam.setUserId(userId);
+		UserFollow follow=userFollowService.selectFollowedUser(userFollowParam);
+
+		JSONObject  userInfo = new JSONObject();
+		userInfo.put("success",true);
+		userInfo.put("data",follow);
+		return userInfo;
+	}
+
+
+
+	@RequestMapping(value = "/{userId}/follow",method = RequestMethod.POST,consumes="application/json")
+	public JSONObject followUser(@PathVariable String userId, HttpServletRequest request){
+		String followUserId=request.getParameter("followUserId");
+		Map<String,String> map=new HashMap<>();
+		map.put("userId",userId);
+		map.put("followUserId",followUserId);
+		boolean result=userFollowService.addFollowRelation(map);
+
+		JSONObject  userInfo = new JSONObject();
+		userInfo.put("success",result);
+		return userInfo;
+	}
+
+
+	@RequestMapping(value = "/{userId}/cancelFollow",method = RequestMethod.POST,consumes="application/json")
+	public JSONObject cancelFollowUser(@PathVariable String userId, HttpServletRequest request){
+		String followUserId=request.getParameter("followUserId");
+		Map<String,String> map=new HashMap<>();
+		map.put("userId",userId);
+		map.put("followUserId",followUserId);
+		boolean result=userFollowService.deleteUserFollow(map);
+
+		JSONObject  userInfo = new JSONObject();
+		userInfo.put("success",result);
+		return userInfo;
+	}
+
+
+
+
 	
 	@RequestMapping(value = "/{userId}/pets",method = RequestMethod.GET,consumes="application/json")
 	public JSONArray getPets(@PathVariable String userId){
@@ -69,18 +136,19 @@ public class UserController {
 			pet.put("expCanvas","");
 			//点赞数
 			pet.put("likeCount", petLikeService.getLikeCountByPetId(p.getPetId()));
-			
-			//expCanvas @杨浩杰傻逼要的
-			pet.put("expCanvas", "");
-			
+
 			//装备栏装备
 			pet.put("weapon", petWeaponService.getWeaponByPetId(p.getPetId()));
+
+			SimpleDateFormat format=new SimpleDateFormat("yyyy年MM月dd日");
+			pet.put("birthdayFormat",format.format(p.getBirthday()));
+			pet.put("petAlbum",petManageService.getPetAlbumByPetId(p.getPetId()));
 			
 			arr.add(pet);
 		}
         return arr;
 	}
-	
+
 	/**
 	 * 
 	 * @Description: 用户walk开始，创建记录
@@ -184,8 +252,9 @@ public class UserController {
 		String areaId = "010";
 		JSONObject js = new JSONObject();
 		js.put("userId", userService.createUserId(areaId));
-        return js;
+		return js;
 	}
+
 	
 	
 	/**

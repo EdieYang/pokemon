@@ -51,8 +51,16 @@ public class PetSupplyServiceImpl implements IPetSupplyService{
 					pet.setEnergyCoin(pet.getEnergyCoin() + supply.getAddEnergy());
 				}
 				petMapper.updateByPrimaryKeySelective(pet);
+
+				//将补给置位已使用
+				PetSupplyConcat petSupplyConcat=new PetSupplyConcat();
+				petSupplyConcat.setSupplyStatus("1");
+				petSupplyConcat.setId(id);
+				petSupplyConcatMapper.updateByPrimaryKeySelective(petSupplyConcat);
 				result.put("energyCoin", pet.getEnergyCoin());
 			}
+
+
 			
 		}
 		

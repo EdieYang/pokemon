@@ -67,6 +67,16 @@ public class Pet {
 	 */
 	private String delFlag;
 
+	private String memo;
+
+	public String getMemo() {
+		return memo;
+	}
+
+	public void setMemo(String memo) {
+		this.memo = memo;
+	}
+
 	public String getAge() {
 		return age;
 	}

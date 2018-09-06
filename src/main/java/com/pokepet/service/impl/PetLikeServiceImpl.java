@@ -7,6 +7,8 @@ import com.pokepet.dao.PetLikeMapper;
 import com.pokepet.model.PetLike;
 import com.pokepet.service.IPetLikeService;
 
+import java.util.List;
+
 @Service
 public class PetLikeServiceImpl implements IPetLikeService{
 
@@ -27,5 +29,12 @@ public class PetLikeServiceImpl implements IPetLikeService{
 	public int getLikeCountByPetId(String petId) {
 		return petLikeMapper.getLikeCountByPetId(petId);
 	}
+
+	@Override
+	public int getPetLikeCountByUserId(String petId, String userId) {
+		return petLikeMapper.getPetLikeCountByUserId(petId,userId);
+
+	}
+
 
 }

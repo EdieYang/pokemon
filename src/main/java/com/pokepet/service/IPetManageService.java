@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.pokepet.model.Pet;
 import com.pokepet.model.PetAlbum;
+import com.pokepet.model.PetLike;
 
 public interface IPetManageService {
 	
@@ -27,5 +28,6 @@ public interface IPetManageService {
 	String createPetId(String areaId);
 	
 	boolean bindlingPetToUser(String petId,String userId);
+
 
 }

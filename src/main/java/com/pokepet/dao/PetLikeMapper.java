@@ -56,4 +56,6 @@ public interface PetLikeMapper {
     int delPetLike(@Param("petId") String petId,@Param("userId") String userId);
 	
 	int getLikeCountByPetId(String petId);
+
+    int getPetLikeCountByUserId(@Param("petId") String petId,@Param("userId") String userId);
 }
