@@ -12,8 +12,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSONObject;
 import com.pokepet.annotation.ResponseResult;
+import com.pokepet.model.Commodity;
 import com.pokepet.model.PetSupply;
 import com.pokepet.model.PetWeapon;
+import com.pokepet.service.ICommodityService;
 import com.pokepet.service.IPetSupplyService;
 import com.pokepet.service.IPetWeaponService;
 
@@ -27,6 +29,9 @@ public class MallController {
 
 	@Autowired
 	IPetSupplyService petSupplyService;
+	
+	@Autowired
+	ICommodityService commodityService;
 
 	@RequestMapping(value = "/weaponList", method = RequestMethod.GET)
 	public List<PetWeapon> getWeaponList() {
@@ -55,14 +60,13 @@ public class MallController {
 	}
 
 	@RequestMapping(value = "/commodityList", method = RequestMethod.GET)
-	public List<Object> geCommodityList(@RequestParam("search") String search,
+	public List<Commodity> geCommodityList(@RequestParam("search") String search,
 			@RequestParam("typeList") String typeList, @RequestParam("brandList") String brandList,
-			@RequestParam("pageNo") int pageNo, @RequestParam("pageSize") int pageSize) {
+			@RequestParam("pageNum") int pageNum, @RequestParam("pageSize") int pageSize) {
 		String[] typeArr = typeList.split("");
 
 		List<String> list = Arrays.asList(typeArr);
-
-		return null;
+		return commodityService.getCommodityList(search, null, null, pageNum, pageSize);
 	}
 
 }

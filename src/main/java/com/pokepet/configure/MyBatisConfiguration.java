@@ -1,7 +1,7 @@
 package com.pokepet.configure;
 
-import com.github.pagehelper.PageInterceptor;
-import org.apache.ibatis.plugin.Interceptor;
+import javax.sql.DataSource;
+
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.SqlSessionTemplate;
@@ -15,9 +15,6 @@ import org.springframework.core.annotation.Order;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
-
-import javax.sql.DataSource;
-import java.util.Properties;
 
 /**
  * Created by Fade on 2016/12/22.
@@ -47,7 +44,7 @@ public class MyBatisConfiguration{
 
 
         log.info("initialize SqlSessionFactoryBean  ..............");
-        Properties properties=new Properties();
+       /*Properties properties=new Properties();
 //        properties.setProperty("reasonable", "true");
         properties.setProperty("supportMethodsArguments", "false");
         properties.setProperty("returnPageInfo", "check");
@@ -55,7 +52,8 @@ public class MyBatisConfiguration{
         pageInterceptor.setProperties(properties);
 
         //add pageHelpPlugin
-        sqlSessionFactoryBean.setPlugins(new Interceptor[]{pageInterceptor});
+        sqlSessionFactoryBean.setPlugins(new Interceptor[]{pageInterceptor});*/
+        
 
         //PathResource
         ResourcePatternResolver resourceResolver=new PathMatchingResourcePatternResolver();
@@ -76,7 +74,6 @@ public class MyBatisConfiguration{
         dataSourceTransactionManager.setDataSource(datasource);
         return dataSourceTransactionManager;
     }
-
 
 
 
