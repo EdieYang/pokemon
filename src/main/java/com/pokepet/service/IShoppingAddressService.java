@@ -19,5 +19,12 @@ public interface IShoppingAddressService {
 	 * @return
 	 */
 	public boolean saveAddress(UserShoppingAddress address);
+
+	/**
+	 * 获取用户收货地址详情
+	 * @param id
+	 * @return
+     */
+	UserShoppingAddress getAddressDetail(int id);
 	
 }

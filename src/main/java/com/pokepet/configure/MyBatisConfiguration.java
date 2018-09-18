@@ -1,5 +1,7 @@
 package com.pokepet.configure;
 
+import com.github.pagehelper.PageInterceptor;
+import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.SqlSessionTemplate;
@@ -46,14 +48,14 @@ public class MyBatisConfiguration{
 
         log.info("initialize SqlSessionFactoryBean  ..............");
         Properties properties=new Properties();
-       // properties.setProperty("reasonable", "true");
+//        properties.setProperty("reasonable", "true");
         properties.setProperty("supportMethodsArguments", "false");
         properties.setProperty("returnPageInfo", "check");
-//        PageInterceptor pageInterceptor=new PageInterceptor();
-//        pageInterceptor.setProperties(properties);
+        PageInterceptor pageInterceptor=new PageInterceptor();
+        pageInterceptor.setProperties(properties);
 
         //add pageHelpPlugin
-//        sqlSessionFactoryBean.setPlugins(new Interceptor[]{pageInterceptor});
+        sqlSessionFactoryBean.setPlugins(new Interceptor[]{pageInterceptor});
 
         //PathResource
         ResourcePatternResolver resourceResolver=new PathMatchingResourcePatternResolver();

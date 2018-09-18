@@ -16,7 +16,7 @@
 		<javaClientGenerator targetPackage="com.pokepet.dao"
 			targetProject="src/main/java" type="XMLMAPPER" />
 
-		<table schema="pokemon" tableName="order_pay"
+		<table schema="pokemon" tableName="pet_record"
 			enableCountByExample="false" enableUpdateByExample="false"
 			enableDeleteByExample="false" enableSelectByExample="false"
 			selectByExampleQueryId="false"></table>

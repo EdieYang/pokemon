@@ -162,8 +162,19 @@
     where open_id = #{openId}
   </select>
 
-	<select id="getMaxUserNo" parameterType="java.lang.String" resultType="java.lang.String">
-		SELECT MAX(SUBSTR(user_id,11,6)) FROM user WHERE user_id LIKE "${userIdStart}%" AND SUBSTR(user_id,9,2) = #{year,jdbcType=VARCHAR};
-	</select>
+  <select id="getMaxUserNo" parameterType="java.lang.String" resultType="java.lang.String">
+      SELECT MAX(SUBSTR(user_id,11,6)) FROM user WHERE user_id LIKE "${userIdStart}%" AND SUBSTR(user_id,9,2) = #{year,jdbcType=VARCHAR};
+  </select>
+
+  <select id="selectAllUsers" resultMap="BaseResultMap">
+      SELECT
+      <include refid="Base_Column_List" />
+      from user
+  </select>
+
+  <select id="selectAllUsersCount" parameterType="java.util.Map" resultType="java.lang.Integer">
+    SELECT COUNT(1)
+    from user
+  </select>
 
 </mapper>

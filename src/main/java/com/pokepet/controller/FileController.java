@@ -55,8 +55,6 @@ public class FileController {
 	@RequestMapping(value = "/pet/portrait/upload",method = RequestMethod.POST)
 	public JSONObject uploadPetPortrait(@RequestParam("file") MultipartFile file, HttpServletRequest request) throws IOException {
 		JSONObject resJson=new JSONObject();
-
-
 		String 	userId=request.getParameter("userId");
 		String petId= request.getParameter("petId");
 		String type=request.getParameter("type");
@@ -69,6 +67,11 @@ public class FileController {
 				break;
 			case "album" :
 				objName+="/pet/album/"+petId+"/"+ UUID.randomUUID();
+			case "record" :
+				objName+="/pet/record/"+petId+"/"+UUID.randomUUID();
+				break;
+			case "explore" :
+				objName+="/explore/"+UUID.randomUUID();
 			default:break;
 		}
 
@@ -128,6 +131,18 @@ public class FileController {
 				petAlbum.setPhotoPath(fileObjName);
 				petAlbum.setDelFlag("0");
 				petAlbumMapper.insertSelective(petAlbum);
+			}
+
+			if(type.equals("record")){
+				//返回图片链接
+				resJson.put("returnPicUrl",fileObjName);
+				return resJson;
+			}
+
+			if(type.equals("explore")){
+				//返回图片链接
+				resJson.put("returnPicUrl",fileObjName);
+				return resJson;
 			}
 
 

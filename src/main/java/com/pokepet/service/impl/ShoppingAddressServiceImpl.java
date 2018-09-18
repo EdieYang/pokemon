@@ -26,9 +26,10 @@ public class ShoppingAddressServiceImpl implements IShoppingAddressService {
 	public boolean saveAddress(UserShoppingAddress address) {
 		boolean FLAG = false;
 		try {
-			if (null != address.getDelFlag() && "1".equals(address.getDelFlag())) {// 若此地址为默认地址，则将其他地址的默认地址属性重置为0
+			if("1".equals(address.getDefaultFlag())){ //如果此地址是默认地址,先将其他地址的默认地址属性重置为0
 				userShoppingAddressMapper.resetDefultAddress(address.getUserId());
 			}
+
 			if (null == address.getId()) {
 				// 新增
 				userShoppingAddressMapper.insertSelective(address);
@@ -41,6 +42,11 @@ public class ShoppingAddressServiceImpl implements IShoppingAddressService {
 			throw new RuntimeException(e);
 		}
 		return FLAG;
+	}
+
+	@Override
+	public UserShoppingAddress getAddressDetail(int id) {
+		return userShoppingAddressMapper.selectByPrimaryKey(id);
 	}
 
 }

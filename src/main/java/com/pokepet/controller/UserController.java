@@ -52,6 +52,21 @@ public class UserController {
 	@Autowired
 	IUserFollowService userFollowService;
 
+	@RequestMapping(value = "",method = RequestMethod.GET)
+	public JSONObject getUsers(HttpServletRequest request){
+		String pageSize=request.getParameter("pageSize");
+		String pageNumber=request.getParameter("pageNumber");
+		Map<String,Object> map=new HashMap<>();
+		map.put("pageNumber",pageNumber);
+		map.put("pageSize",pageSize);
+		List<User> users=userService.getUsers(map);
+		int userCount=userService.getUsersCount(map);
+		JSONObject resultJson=new JSONObject();
+		resultJson.put("userList",users);
+		resultJson.put("count",userCount);
+		return resultJson;
+	}
+
 
 	@RequestMapping(value = "/{userId}",method = RequestMethod.POST,consumes="application/json")
 	public void modifyUser(@PathVariable String userId,@RequestBody User user){

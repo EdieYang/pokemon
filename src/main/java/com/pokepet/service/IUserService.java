@@ -2,6 +2,9 @@ package com.pokepet.service;
 
 import com.pokepet.model.User;
 
+import java.util.List;
+import java.util.Map;
+
 public interface IUserService {
 	
 	/**
@@ -14,5 +17,9 @@ public interface IUserService {
 	int modifyUser(User user);
 
 	User getUserInfo(String userId);
+
+	List<User> getUsers(Map<String,Object> map);
+
+	int getUsersCount(Map<String,Object> map);
 
 }

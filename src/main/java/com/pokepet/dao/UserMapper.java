@@ -4,6 +4,9 @@ import org.apache.ibatis.annotations.Param;
 
 import com.pokepet.model.User;
 
+import java.util.List;
+import java.util.Map;
+
 public interface UserMapper {
 
 	/**
@@ -47,4 +50,8 @@ public interface UserMapper {
 	User getUserByOpenId(String openId);
 	
 	String getMaxUserNo(@Param("userIdStart") String userIdStart,@Param("year") String year);
+
+	List<User> selectAllUsers(Map<String,Object> map);
+
+	int selectAllUsersCount(Map<String,Object> map);
 }

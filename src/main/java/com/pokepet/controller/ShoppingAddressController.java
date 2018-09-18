@@ -13,7 +13,7 @@ import com.pokepet.model.UserShoppingAddress;
 import com.pokepet.service.IShoppingAddressService;
 
 @RestController
-@RequestMapping("/shoppingAddresss")
+@RequestMapping("/shoppingAddress")
 public class ShoppingAddressController {
 	
 	@Autowired
@@ -25,17 +25,30 @@ public class ShoppingAddressController {
 	 * @param userId
 	 * @return
 	 */
-	@RequestMapping(value = "/{userId}",method = RequestMethod.GET,consumes="application/json")
+	@RequestMapping(value = "/user/{userId}",method = RequestMethod.GET,consumes="application/json")
     public List<UserShoppingAddress> getAddressList(@PathVariable String userId){
         return shoppingAddressService.getAddressList(userId);
     }
+
+
+    /**
+     * 获取用户收货地址
+     * @param id
+     * @return
+     */
+    @RequestMapping(value = "/{id}",method = RequestMethod.GET,consumes="application/json")
+    public UserShoppingAddress getAddress(@PathVariable String id){
+        int addressId=Integer.parseInt(id);
+        return shoppingAddressService.getAddressDetail(addressId);
+    }
+
 	
 	/**
 	 * 保存收货地址
-	 * @param userId
+	 * @param address
 	 * @return
 	 */
-	@RequestMapping(value = "/",method = RequestMethod.POST,consumes="application/json")
+	@RequestMapping(value = "",method = RequestMethod.POST,consumes="application/json")
     public boolean addAddress(@RequestBody UserShoppingAddress address){
         return shoppingAddressService.saveAddress(address);
     }

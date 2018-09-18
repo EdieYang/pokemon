@@ -1,7 +1,10 @@
 package com.pokepet.service.impl;
 
 import java.util.Calendar;
+import java.util.List;
+import java.util.Map;
 
+import com.github.pagehelper.PageHelper;
 import com.pokepet.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -46,6 +49,20 @@ public class UserServiceImpl implements IUserService {
 	@Override
 	public User getUserInfo(String userId) {
 		return userMapper.selectByPrimaryKey(userId);
+	}
+
+	@Override
+	public List<User> getUsers(Map<String,Object> map) {
+		int pageNum=Integer.parseInt(String.valueOf(map.get("pageNumber")));
+		int pageSize=Integer.parseInt(String.valueOf(map.get("pageSize")));
+		PageHelper.startPage(pageNum,pageSize);
+		List<User> users= userMapper.selectAllUsers(map);
+		return users;
+	}
+
+	@Override
+	public int getUsersCount(Map<String, Object> map) {
+		return userMapper.selectAllUsersCount(map);
 	}
 
 }
