@@ -1,14 +1,15 @@
 package com.pokepet.service;
 
-import com.pokepet.model.User;
-
-import java.util.List;
 import java.util.Map;
 
+import com.alibaba.fastjson.JSONObject;
+import com.pokepet.model.User;
+
 public interface IUserService {
-	
+
 	/**
 	 * 生成用户ID，格式为"hu-03+区号+年份（后两位）+00001"
+	 * 
 	 * @param areaId
 	 * @return
 	 */
@@ -18,8 +19,6 @@ public interface IUserService {
 
 	User getUserInfo(String userId);
 
-	List<User> getUsers(Map<String,Object> map);
-
-	int getUsersCount(Map<String,Object> map);
+	JSONObject getUserList(Map<String, Object> param, int pageNum, int pageSize);
 
 }

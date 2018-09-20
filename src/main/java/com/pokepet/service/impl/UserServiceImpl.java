@@ -4,12 +4,14 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
-import com.github.pagehelper.PageHelper;
-import com.pokepet.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSONObject;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.pokepet.dao.UserMapper;
+import com.pokepet.model.User;
 import com.pokepet.service.IUserService;
 
 @Service
@@ -30,8 +32,8 @@ public class UserServiceImpl implements IUserService {
 
 		if (cal.get(Calendar.YEAR) != year) {
 			year = cal.get(Calendar.YEAR);
-			String maxId = userMapper.getMaxUserNo(USER_ID_TEMP.substring(0, 3), (year+"").substring(2));
-			userIdGrenc = null == maxId ? 1 : Integer.parseInt(maxId)+1;
+			String maxId = userMapper.getMaxUserNo(USER_ID_TEMP.substring(0, 3), (year + "").substring(2));
+			userIdGrenc = null == maxId ? 1 : Integer.parseInt(maxId) + 1;
 			return createUserId(areaId);
 		} else {
 			String userIdEnd = "000000" + userIdGrenc++;
@@ -52,17 +54,15 @@ public class UserServiceImpl implements IUserService {
 	}
 
 	@Override
-	public List<User> getUsers(Map<String,Object> map) {
-		int pageNum=Integer.parseInt(String.valueOf(map.get("pageNumber")));
-		int pageSize=Integer.parseInt(String.valueOf(map.get("pageSize")));
-		PageHelper.startPage(pageNum,pageSize);
-		List<User> users= userMapper.selectAllUsers(map);
-		return users;
-	}
-
-	@Override
-	public int getUsersCount(Map<String, Object> map) {
-		return userMapper.selectAllUsersCount(map);
+	public JSONObject getUserList(Map<String, Object> param, int pageNum, int pageSize) {
+		JSONObject result = new JSONObject();
+		PageHelper.startPage(pageNum, pageSize);
+		List<Map<String, Object>> list = userMapper.selectUserList(param);
+		PageInfo<Map<String, Object>> page = new PageInfo<Map<String, Object>>(list);
+		result.put("page", page.getPageNum());
+		result.put("records", page.getTotal());
+		result.put("rows", list);
+		return result;
 	}
 
 }

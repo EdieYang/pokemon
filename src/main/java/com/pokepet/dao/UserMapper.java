@@ -51,7 +51,6 @@ public interface UserMapper {
 	
 	String getMaxUserNo(@Param("userIdStart") String userIdStart,@Param("year") String year);
 
-	List<User> selectAllUsers(Map<String,Object> map);
+	List<Map<String, Object>> selectUserList(Map<String,Object> map);
 
-	int selectAllUsersCount(Map<String,Object> map);
 }

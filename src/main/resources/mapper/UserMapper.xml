@@ -166,15 +166,27 @@
       SELECT MAX(SUBSTR(user_id,11,6)) FROM user WHERE user_id LIKE "${userIdStart}%" AND SUBSTR(user_id,9,2) = #{year,jdbcType=VARCHAR};
   </select>
 
-  <select id="selectAllUsers" resultMap="BaseResultMap">
-      SELECT
-      <include refid="Base_Column_List" />
-      from user
-  </select>
-
-  <select id="selectAllUsersCount" parameterType="java.util.Map" resultType="java.lang.Integer">
-    SELECT COUNT(1)
-    from user
+  <select id="selectUserList" resultType="java.util.Map">
+      SELECT 
+		  t_u.user_id AS userId,
+		  IFNULL(t_u.nick_name,'') AS nickName,
+		  IFNULL(t_u.mobile_phone,'') AS mobilePhone,
+		  IFNULL(t_u.photo_path,'') AS photoPath,
+		  t_u.chip_count AS chipCount,
+		  DATE_FORMAT(t_u.create_datetime,'%Y-%m-%d') AS createDate,
+		  t_u.open_id AS openId,
+		  SUM(1) AS petCount
+		FROM
+		  user t_u 
+		  LEFT JOIN user_pet t_p 
+		    ON t_p.user_id = t_u.user_id 
+		    AND t_p.del_flag = '0' 
+		 WHERE 1 = 1
+		 <if test="search != null and search != ''">
+		 	AND (t_u.nick_name like concat('%',#{search,jdbcType=VARCHAR},'%') OR t_u.mobile_phone like concat('%',#{search,jdbcType=VARCHAR},'%'))
+		 </if>
+		 GROUP BY t_u.user_id
+		 ORDER BY t_u.create_datetime DESC
   </select>
 
 </mapper>
