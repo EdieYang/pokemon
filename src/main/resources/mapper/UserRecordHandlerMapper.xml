@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.pokepet.dao.UserRecordHandlerMapper" >
+
+
+  <select id="selectUserRecordList" resultType="java.util.Map">
+
+      SELECT recordId,title,content,abbreImg,images,recommend,
+            userId,petId,createtime,checkState,delState,
+            type,memo,location,detailLocation,lat,lng
+      FROM
+        (
+      (SELECT record_id as recordId, title, content,abbre_img as abbreImg ,
+          null as images, null as recommend,user_id as userId, pet_id as petId,
+          create_time as createtime, check_state as checkState, del_state as delState,
+          type,null as memo,null as location,null as detailLocation,null as lat,null as lng
+          FROM user_long_record
+          WHERE user_id=#{userId})
+
+      UNION all
+
+      (SELECT record_id as recordId,title, content,null as abbreImg, images, recommend,
+          user_id as userId, null as petId,create_time as createtime, check_state as checkState,
+           del_state as delState, type,memo, location, detail_location as detailLocation, lat, lng
+          FROM user_record
+          WHERE user_id=#{userId})
+      )AS allunion
+      ORDER BY createtime DESC
+
+  </select>
+
+
+    <select id="selectRecommendList"  resultType="java.util.Map">
+
+        SELECT recordId,title,content,abbreImg,images,recommend,
+        userId,nickName,photoPath,petId,petName,petPhotoPath,createtime,checkState,delState,
+        type,memo,location,detailLocation,lat,lng
+        FROM
+        (
+            (SELECT
+                 ulr.record_id   AS recordId,
+                 ulr.title,
+                 ulr.content,
+                 ulr.abbre_img   AS abbreImg,
+                 NULL        AS images,
+                 NULL        AS recommend,
+                 ulr.user_id     AS userId,
+                 u.photo_path as photoPath,
+                 u.nick_name as nickName,
+                 ulr.pet_id      AS petId,
+                 p.name as petName,
+                 p.photo_path as petPhotoPath,
+                 create_time AS createtime,
+                 check_state AS checkState,
+                 del_state   AS delState,
+                 type,
+                 NULL        AS memo,
+                 NULL        AS location,
+                 NULL        AS detailLocation,
+                 NULL        AS lat,
+                 NULL        AS lng
+             FROM user_long_record ulr
+             LEFT JOIN user u
+             ON ulr.user_id=u.user_id
+             LEFT JOIN  pet p
+             ON ulr.pet_id=p.pet_id
+             WHERE   check_state='1' and del_state='0' and (type = '0' OR type = '1'))
+
+             UNION ALL
+
+             (SELECT
+                  record_id       AS recordId,
+                  title,
+                  content,
+                  NULL            AS abbreImg,
+                  images,
+                  recommend,
+                  ur.user_id         AS userId,
+                  u.photo_path    As photoPath,
+                  u.nick_name     As nickName,
+                  NULL            AS petId,
+                  NULL            As petName,
+                  NULL            As petPhotoPath,
+                  create_time     AS createtime,
+                  check_state     AS checkState,
+                  del_state       AS delState,
+                  type,
+                  memo,
+                  location,
+                  detail_location AS detailLocation,
+                  lat,
+                  lng
+              FROM user_record ur
+              LEFT JOIN user u
+              ON ur.user_id=u.user_id
+              WHERE type = '2' and check_state='1' and del_state='0'
+             )
+            )AS allunion
+            ORDER BY createtime DESC
+    </select>
+
+
+    <select id="selectCharityList"  resultType="java.util.Map">
+
+        SELECT recordId,title,content,abbreImg,images,recommend,
+        userId,nickName,photoPath,petId,petName,createtime,checkState,delState,
+        type,memo,location,detailLocation,lat,lng
+        FROM
+        (SELECT
+        record_id       AS recordId,
+        title,
+        content,
+        NULL            AS abbreImg,
+        images,
+        recommend,
+        ur.user_id         AS userId,
+        u.photo_path    As photoPath,
+        u.nick_name     As nickName,
+        NULL            AS petId,
+        NULL            As petName,
+        create_time     AS createtime,
+        check_state     AS checkState,
+        del_state       AS delState,
+        type,
+        memo,
+        location,
+        detail_location AS detailLocation,
+        lat,
+        lng
+        FROM user_record ur
+        LEFT JOIN user u
+        ON ur.user_id=u.user_id
+        WHERE type = '3' and check_state='1' and del_state='0'
+        )AS allunion
+        ORDER BY createtime DESC
+    </select>
+
+
+
+
+
+
+</mapper>
