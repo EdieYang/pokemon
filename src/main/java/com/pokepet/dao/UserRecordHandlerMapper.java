@@ -5,6 +5,8 @@ package com.pokepet.dao;
  */
 
 
+import org.apache.ibatis.annotations.Param;
+
 import java.util.List;
 import java.util.Map;
 
@@ -15,8 +17,13 @@ public interface UserRecordHandlerMapper {
 
     List<Map<String,Object>> selectUserRecordList(String userId);
 
-    List<Map<String,Object>> selectRecommendList();
+    List<Map<String,Object>> selectRecommendList(String userId);
 
-    List<Map<String,Object>> selectCharityList();
+    List<Map<String,Object>> selectCharityList(String userId);
+
+    Map<String,Object> selectLongRecordByRecordId(@Param("recordId") String recordId, @Param("userId") String userId);
+
+    Map<String,Object> selectRecordByRecordId(String recordId);
+
 
 }

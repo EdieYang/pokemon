@@ -1,19 +1,19 @@
 package com.pokepet.service.impl;
 
-import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
-import com.pokepet.dao.UserLongRecordMapper;
-import com.pokepet.dao.UserRecordHandlerMapper;
-import com.pokepet.dao.UserRecordMapper;
+import com.pokepet.dao.*;
+import com.pokepet.model.RecordCollect;
+import com.pokepet.model.RecordLike;
 import com.pokepet.model.UserLongRecord;
 import com.pokepet.model.UserRecord;
 import com.pokepet.service.IRecordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * Created by Fade on 2018/9/19.
@@ -30,6 +30,13 @@ public class RecordServiceImpl implements IRecordService {
 
     @Autowired
     private UserRecordHandlerMapper userRecordHandlerMapper;
+
+    @Autowired
+    private RecordLikeMapper recordLikeMapper;
+
+
+    @Autowired
+    private RecordCollectMapper recordCollectMapper;
 
 
     @Override
@@ -61,38 +68,70 @@ public class RecordServiceImpl implements IRecordService {
     }
 
     @Override
-    public List<Map<String, Object>> selectRecommendList(int pageNum, int pageSize) {
+    public List<Map<String, Object>> selectRecommendList(int pageNum, int pageSize,String userId) {
         PageHelper.startPage(pageNum,pageSize);
-        return userRecordHandlerMapper.selectRecommendList();
+        return userRecordHandlerMapper.selectRecommendList(userId);
     }
 
     @Override
-    public List<Map<String, Object>> selectCharityList(int pageNum, int pageSize) {
+    public List<Map<String, Object>> selectCharityList(int pageNum, int pageSize,String userId) {
         PageHelper.startPage(pageNum,pageSize);
-        return userRecordHandlerMapper.selectCharityList();
+        return userRecordHandlerMapper.selectCharityList(userId);
     }
 
-	@Override
-	public JSONObject getRecordList(Map<String, Object> param, int pageNum, int pageSize) {
-		JSONObject result = new JSONObject();
-		PageHelper.startPage(pageNum, pageSize);
-		List<Map<String, Object>> list = userRecordMapper.selectRecordList(param);
-		PageInfo<Map<String, Object>> page = new PageInfo<Map<String, Object>>(list);
-		result.put("page", page.getPageNum());
-		result.put("records", page.getTotal());
-		result.put("rows", list);
-		return result;
-	}
+    @Override
+    public Map<String, Object> selectLongRecordByRecordId(String recordId,String userId) {
+        return userRecordHandlerMapper.selectLongRecordByRecordId(recordId,userId);
+    }
 
-	@Override
-	public JSONObject getLongRecordList(Map<String, Object> param, int pageNum, int pageSize) {
-		JSONObject result = new JSONObject();
-		PageHelper.startPage(pageNum, pageSize);
-		List<Map<String, Object>> list = userLongRecordMapper.selectLongRecordList(param);
-		PageInfo<Map<String, Object>> page = new PageInfo<Map<String, Object>>(list);
-		result.put("page", page.getPageNum());
-		result.put("records", page.getTotal());
-		result.put("rows", list);
-		return result;
-	}
+    @Override
+    public Map<String, Object> selectRecordByRecordId(String recordId) {
+        return userRecordHandlerMapper.selectRecordByRecordId(recordId);
+    }
+
+    @Override
+    public boolean updateRecordLike(String userId, String recordId) {
+        RecordLike recordLike=recordLikeMapper.selectByUserIdAndRecordId(userId,recordId);
+        if(recordLike!=null){
+            String delFlag=recordLike.getDelFlag();
+            if(delFlag.equals("1")){
+                recordLike.setDelFlag("0");
+            }else{
+                recordLike.setDelFlag("1");
+
+            }
+        }else{
+            recordLike=new RecordLike();
+            recordLike.setUserId(userId);
+            recordLike.setRecordId(recordId);
+            recordLike.setDelFlag("0");
+            recordLike.setId(UUID.randomUUID().toString().replace("-",""));
+            recordLike.setCreateTime(new Date());
+            return recordLikeMapper.insertSelective(recordLike)>0;
+        }
+        return recordLikeMapper.updateByPrimaryKey(recordLike)>0;
+    }
+
+    @Override
+    public boolean updateRecordCollect(String userId, String recordId) {
+        RecordCollect recordCollect=recordCollectMapper.selectByUserIdAndRecordId(userId,recordId);
+        if(recordCollect!=null){
+            String delFlag=recordCollect.getDelFlag();
+            if(delFlag.equals("1")){
+                recordCollect.setDelFlag("0");
+            }else{
+                recordCollect.setDelFlag("1");
+
+            }
+        }else{
+            recordCollect=new RecordCollect();
+            recordCollect.setUserId(userId);
+            recordCollect.setRecordId(recordId);
+            recordCollect.setDelFlag("0");
+            recordCollect.setId(UUID.randomUUID().toString().replace("-",""));
+            recordCollect.setCreateTime(new Date());
+            return recordCollectMapper.insertSelective(recordCollect)>0;
+        }
+        return recordCollectMapper.updateByPrimaryKey(recordCollect)>0;
+    }
 }

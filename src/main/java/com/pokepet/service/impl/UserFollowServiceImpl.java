@@ -1,6 +1,8 @@
 package com.pokepet.service.impl;
 
+import com.pokepet.dao.PetFollowMapper;
 import com.pokepet.dao.UserFollowMapper;
+import com.pokepet.model.PetFollow;
 import com.pokepet.model.UserFollow;
 import com.pokepet.service.IUserFollowService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +21,9 @@ public class UserFollowServiceImpl implements IUserFollowService {
 
     @Autowired
     UserFollowMapper userFollowMapper;
+
+    @Autowired
+    PetFollowMapper petFollowMapper;
 
 
     @Override
@@ -85,6 +90,57 @@ public class UserFollowServiceImpl implements IUserFollowService {
     @Override
     public UserFollow selectFollowedUser(UserFollow userFollow) {
         return userFollowMapper.selectFollowedUser(userFollow);
+    }
+
+    @Override
+    public boolean crdFollowRelationWithPet(Map<String, String> map) {
+        String userId= map.get("userId");
+        String petId=map.get("petId");
+
+        PetFollow petFollow=petFollowMapper.selectByUserIdAndPetId(map);
+        if(petFollow==null){
+            petFollow=new PetFollow();
+            petFollow.setFollowId(UUID.randomUUID().toString().replace("-",""));
+            petFollow.setUserId(userId);
+            petFollow.setPetId(petId);
+            petFollow.setCreateTime(new Date());
+            petFollow.setDelFlag("0");
+            return petFollowMapper.insertSelective(petFollow)>0;
+        }else{
+            String flag=petFollow.getDelFlag();
+            if(flag.equals("0")){
+                petFollow.setDelFlag("1");
+            }else{
+                petFollow.setDelFlag("0");
+            }
+            return petFollowMapper.updateByPrimaryKey(petFollow)>0;
+
+        }
+
+    }
+
+    @Override
+    public boolean crdFollowRelationWithUser(Map<String, String> map) {
+        String userId=map.get("userId");
+        String followUserId=map.get("followUserId");
+        UserFollow userFollow=new UserFollow();
+        userFollow.setUserId(userId);
+        userFollow.setFollowUserId(followUserId);
+        UserFollow existUserFollow=userFollowMapper.selectFollowedUser(userFollow);
+        if(existUserFollow==null){
+            userFollow.setId(UUID.randomUUID().toString().replace("-",""));
+            userFollow.setDelFlag("0");
+            userFollow.setCreateTime(new Date());
+            return userFollowMapper.insertSelective(userFollow)>0;
+        }else{
+            String delFlag=existUserFollow.getDelFlag();
+            if(delFlag.equals("0")){
+                existUserFollow.setDelFlag("1");
+            }else{
+                existUserFollow.setDelFlag("0");
+            }
+            return userFollowMapper.updateByPrimaryKeySelective(existUserFollow)>0;
+        }
     }
 
 

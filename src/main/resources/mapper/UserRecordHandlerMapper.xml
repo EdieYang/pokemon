@@ -30,73 +30,118 @@
   </select>
 
 
-    <select id="selectRecommendList"  resultType="java.util.Map">
+    <select id="selectRecommendList"  parameterType="java.lang.String" resultType="java.util.Map">
 
-        SELECT recordId,title,content,abbreImg,images,recommend,
-        userId,nickName,photoPath,petId,petName,petPhotoPath,createtime,checkState,delFlag,
-        type,memo,location,detailLocation,lat,lng
+        SELECT
+          recordId,
+          title,
+          content,
+          abbreImg,
+          images,
+          recommend,
+          userId,
+          nickName,
+          photoPath,
+          petId,
+          petName,
+          petPhotoPath,
+          createtime,
+          checkState,
+          delFlag,
+          type,
+          memo,
+          location,
+          detailLocation,
+          lat,
+          lng,
+          likeNumber,
+          likeOrNot,
+          collectNumber,
+          collectOrNot,
+          shareNumber,
+          shareOrNot,
+          followPetOrNot,
+          followUserOrNot
         FROM
-        (
+          (
             (SELECT
-                 ulr.record_id   AS recordId,
-                 ulr.title,
-                 ulr.content,
-                 ulr.abbre_img   AS abbreImg,
-                 NULL        AS images,
-                 NULL        AS recommend,
-                 ulr.user_id     AS userId,
-                 u.photo_path as photoPath,
-                 u.nick_name as nickName,
-                 ulr.pet_id      AS petId,
-                 p.name as petName,
-                 p.photo_path as petPhotoPath,
-                 create_time AS createtime,
-                 check_state AS checkState,
-                 del_flag   AS delFlag,
-                 type,
-                 NULL        AS memo,
-                 NULL        AS location,
-                 NULL        AS detailLocation,
-                 NULL        AS lat,
-                 NULL        AS lng
-             FROM user_long_record ulr
-             LEFT JOIN user u
-             ON ulr.user_id=u.user_id
-             LEFT JOIN  pet p
-             ON ulr.pet_id=p.pet_id
-             WHERE   check_state='1' and del_flag='0' and (type = '0' OR type = '1'))
+               ulr.record_id   AS recordId,
+               ulr.title,
+               ulr.content,
+               ulr.abbre_img   AS abbreImg,
+               NULL            AS images,
+               NULL            AS recommend,
+               ulr.user_id     AS userId,
+               u.photo_path    AS photoPath,
+               u.nick_name     AS nickName,
+               ulr.pet_id      AS petId,
+               p.name          AS petName,
+               p.photo_path    AS petPhotoPath,
+               ulr.create_time AS createtime,
+               check_state     AS checkState,
+               ulr.del_flag    AS delFlag,
+               type,
+               NULL            AS memo,
+               NULL            AS location,
+               NULL            AS detailLocation,
+               NULL            AS lat,
+               NULL            AS lng,
+              (select count(1) FROM record_like rl WHERE rl.record_id=ulr.record_id and rl.del_flag='0') as likeNumber,
+              (SELECT count(1) FROM record_like rl2 WHERE rl2.record_id=ulr.record_id and rl2.user_id=#{userId} and rl2.del_flag='0') as likeOrNot,
+              (select count(1) FROM record_collect rc where rc.record_id=ulr.record_id and rc.del_flag='0') as collectNumber,
+              (select count(1) FROM record_collect rc2 where rc2.record_id=ulr.record_id and rc2.user_id=#{userId} and rc2.del_flag='0') as collectOrNot,
+              (SELECT count(1) from record_share rs where rs.record_id=ulr.record_id  and rs.del_flag='0') as shareNumber,
+              (SELECT count(1) from record_share rs2 where rs2.record_id=ulr.record_id and rs2.user_id=#{userId} and rs2.del_flag='0') as shareOrNot,
+              (SELECT count(1) from pet_follow pf where pf.pet_id=ulr.pet_id and pf.user_id=#{userId} and pf.del_flag='0' and ulr.type='0') as followPetOrNot,
+              (SELECT count(1) from user_follow uf where uf.user_id=ulr.user_id and uf.follow_user_id=#{userId} and uf.del_flag='0' and ulr.type='1') as followUserOrNot
 
-             UNION ALL
+            FROM user_long_record ulr
+            LEFT JOIN user u
+            ON ulr.user_id = u.user_id
+            LEFT JOIN pet p
+            ON ulr.pet_id = p.pet_id
+            WHERE check_state = '1' AND ulr.del_flag = '0' AND (ulr.type = '0' OR ulr.type = '1')
+          )
 
-             (SELECT
-                  record_id       AS recordId,
-                  title,
-                  content,
-                  NULL            AS abbreImg,
-                  images,
-                  recommend,
-                  ur.user_id         AS userId,
-                  u.photo_path    As photoPath,
-                  u.nick_name     As nickName,
-                  NULL            AS petId,
-                  NULL            As petName,
-                  NULL            As petPhotoPath,
-                  create_time     AS createtime,
-                  check_state     AS checkState,
-                  del_flag       AS delFlag,
-                  type,
-                  memo,
-                  location,
-                  detail_location AS detailLocation,
-                  lat,
-                  lng
-              FROM user_record ur
-              LEFT JOIN user u
-              ON ur.user_id=u.user_id
-              WHERE type = '2' and check_state='1' and del_flag='0'
-             )
-            )AS allunion
-            ORDER BY createtime DESC
+        UNION ALL
+        
+          (SELECT
+            record_id AS recordId,
+            title,
+            content,
+            NULL AS abbreImg,
+            images,
+            recommend,
+            ur.user_id AS userId,
+            u.photo_path AS photoPath,
+            u.nick_name AS nickName,
+            NULL AS petId,
+            NULL AS petName,
+            NULL AS petPhotoPath,
+            create_time AS createtime,
+            check_state AS checkState,
+            ur.del_flag AS delFlag,
+            type,
+            memo,
+            location,
+            detail_location AS detailLocation,
+            lat,
+            lng,
+            (select count(1) FROM record_like rl WHERE rl.record_id=ur.record_id and rl.del_flag='0') as likeNumber,
+            (SELECT count(1) FROM record_like rl2 WHERE rl2.record_id=ur.record_id and rl2.user_id=#{userId} and rl2.del_flag='0') as likeOrNot,
+            (select count(1) FROM record_collect rc where rc.record_id=ur.record_id and rc.del_flag='0') as collectNumber,
+            (select count(1) FROM record_collect rc2 where rc2.record_id=ur.record_id and rc2.user_id=#{userId} and rc2.del_flag='0') as collectOrNot,
+            (SELECT count(1) from record_share rs where rs.record_id=ur.record_id and rs.del_flag='0') as shareNumber,
+            (SELECT count(1) from record_share rs2 where rs2.record_id=ur.record_id and rs2.user_id=#{userId} and rs2.del_flag='0') as shareOrNot,
+            0 as followPetOrNot,
+            (SELECT count(1) from user_follow uf where uf.user_id=ur.user_id and uf.follow_user_id=#{userId} and uf.del_flag='0') as followUserOrNot
+            FROM user_record ur
+            LEFT JOIN user u
+            ON ur.user_id=u.user_id
+            WHERE type = '2' AND check_state='1' AND ur.del_flag='0'
+          )
+        ) AS allunion
+        ORDER BY createtime DESC
     </select>
 
 
@@ -104,7 +149,8 @@
 
         SELECT recordId,title,content,abbreImg,images,recommend,
         userId,nickName,photoPath,petId,petName,createtime,checkState,delFlag,
-        type,memo,location,detailLocation,lat,lng
+        type,memo,location,detailLocation,lat,lng,likeNumber,likeOrNot,
+        collectNumber,collectOrNot,shareNumber,shareOrNot
         FROM
         (SELECT
         record_id       AS recordId,
@@ -120,23 +166,99 @@
         NULL            As petName,
         create_time     AS createtime,
         check_state     AS checkState,
-        del_flag       AS delFlag,
+        ur.del_flag       AS delFlag,
         type,
         memo,
         location,
         detail_location AS detailLocation,
         lat,
-        lng
+        lng,
+        (select count(1) FROM record_like rl WHERE rl.record_id=ur.record_id and rl.del_flag='0') as likeNumber,
+        (SELECT count(1) FROM record_like rl2 WHERE rl2.record_id=ur.record_id and rl2.user_id=#{userId} and rl2.del_flag='0') as likeOrNot,
+        (select count(1) FROM record_collect rc where rc.record_id=ur.record_id and rc.del_flag='0') as collectNumber,
+        (select count(1) FROM record_collect rc2 where rc2.record_id=ur.record_id and rc2.user_id=#{userId} and rc2.del_flag='0') as collectOrNot,
+        (SELECT count(1) from record_share rs where rs.record_id=ur.record_id and rs.del_flag='0') as shareNumber,
+        (SELECT count(1) from record_share rs2 where rs2.record_id=ur.record_id and rs2.user_id=#{userId} and rs2.del_flag='0') as shareOrNot,
+        (SELECT count(1) from user_follow uf where uf.user_id=ur.user_id and uf.follow_user_id=#{userId} and uf.del_flag='0') as followUserOrNot
+
         FROM user_record ur
         LEFT JOIN user u
         ON ur.user_id=u.user_id
-        WHERE type = '3' and check_state='1' and del_flag='0'
+        WHERE type = '3' and check_state='1' and ur.del_flag='0'
         )AS allunion
         ORDER BY createtime DESC
     </select>
 
 
 
+    <select id="selectLongRecordByRecordId" resultType="java.util.Map" parameterType="java.lang.String">
+
+        SELECT
+             ulr.record_id   AS recordId,
+             ulr.title,
+             ulr.content,
+             ulr.abbre_img   AS abbreImg,
+             ulr.user_id     AS userId,
+             u.photo_path as photoPath,
+             u.nick_name as nickName,
+             ulr.pet_id      AS petId,
+             p.name as petName,
+             p.photo_path as petPhotoPath,
+             create_time AS createtime,
+             check_state AS checkState,
+             ulr.del_flag   AS delFlag,
+             type,
+             (SELECT count(1) from record_like rl where rl.record_id=#{recordId} and rl.del_flag='0') as likeNumber,
+             (SELECT count(1) from record_like rl2 where rl2.record_id=#{recordId} and rl2.user_id=#{userId} and rl2.del_flag='0') as likeOrNot,
+             (SELECT count(1) from record_collect rc where rc.record_id=#{recordId} and rc.del_flag='0') as collectNumber,
+             (SELECT count(1) from record_collect rc2 where rc2.record_id=#{recordId} and rc2.user_id=#{userId} and rc2.del_flag='0') as collectOrNot,
+             (SELECT count(1) from record_share rs where rs.record_id=#{recordId} and rs.del_flag='0') as shareNumber,
+             (SELECT count(1) from record_share rs2 where rs2.record_id=#{recordId} and rs2.user_id=#{userId} and rs2.del_flag='0') as shareOrNot,
+             (SELECT count(1) from pet_follow pf where pf.user_id=#{userId} and pf.del_flag='0') as petFollowOrNot,
+             (SELECT count(1) from user_follow uf where uf.follow_user_id=#{userId} and uf.del_flag='0') as userFollowOrNot
+         FROM user_long_record ulr
+         LEFT JOIN user u
+         ON ulr.user_id=u.user_id
+         LEFT JOIN  pet p
+         ON ulr.pet_id=p.pet_id
+         WHERE   check_state='1'
+         AND ulr.del_flag='0'
+         AND ulr.record_id=#{recordId}
+
+
+
+    </select>
+
+
+    <select id="selectRecordByRecordId" resultType="java.util.Map" parameterType="java.lang.String">
+
+        SELECT
+              record_id       AS recordId,
+              title,
+              content,
+              images,
+              recommend,
+              ur.user_id      AS userId,
+              u.photo_path    As photoPath,
+              u.nick_name     As nickName,
+              create_time     AS createtime,
+              check_state     AS checkState,
+              ur.del_flag     AS delFlag,
+              type,
+              memo,
+              location,
+              detail_location AS detailLocation,
+              lat,
+              lng
+          FROM user_record ur
+          LEFT JOIN user u
+          ON ur.user_id=u.user_id
+          WHERE  check_state='1'
+          and ur.del_flag='0'
+          and ur.record_id=#{recordId}
+
+
+    </select>
 
 
 

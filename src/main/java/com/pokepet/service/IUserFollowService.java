@@ -41,4 +41,14 @@ public interface IUserFollowService {
 
 
     UserFollow selectFollowedUser(UserFollow userFollow);
+
+
+    /**
+     * 宠物关注 (增删)
+     * @param map
+     * @return
+     */
+    boolean crdFollowRelationWithPet(Map<String,String> map);
+
+    boolean crdFollowRelationWithUser(Map<String,String> map);
 }
