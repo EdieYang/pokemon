@@ -1,14 +1,18 @@
 package com.pokepet.service.impl;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.pokepet.dao.CommodityMapper;
 import com.pokepet.model.Commodity;
+import com.pokepet.model.UserShoppingAddress;
 import com.pokepet.service.ICommodityService;
 
 @Service
@@ -18,14 +22,39 @@ public class CommodityServiceImpl implements ICommodityService{
 	CommodityMapper commodityMapper;
 
 	@Override
-	public List<Commodity> getCommodityList(String search, List<String> typeList, List<String> brandList, int pageNum,
-			int pageSize) {
+	public JSONObject getCommodityList(Map<String, Object> param, int pageNum, int pageSize) {
+		JSONObject result = new JSONObject();
 		PageHelper.startPage(pageNum, pageSize);
-		List<Commodity> list = commodityMapper.getCommodityList(search, typeList, brandList);
-		PageInfo<Commodity> page = new PageInfo<Commodity>(list);
-		System.out.println(page.getTotal());
-		System.out.println(page.getPageNum());
-		return list;
+		List<Map<String, Object>> list = commodityMapper.selectCommodityList(param);
+		PageInfo<Map<String, Object>> page = new PageInfo<Map<String, Object>>(list);
+		result.put("page", page.getPageNum());
+		result.put("records", page.getTotal());
+		result.put("rows", list);
+		return result;
+	}
+
+	@Override
+	public Commodity getCommodity(String commodityId) {
+		return commodityMapper.selectByPrimaryKey(commodityId);
+	}
+	
+	@Transactional
+	@Override
+	public boolean saveCommodity(Commodity commodity) {
+		boolean FLAG = false;
+		try {
+			if (null == commodity.getCommodityId()) {
+				// 新增
+				commodityMapper.insertSelective(commodity);
+			} else {
+				// 修改
+				commodityMapper.updateByPrimaryKeySelective(commodity);
+			}
+			FLAG = true;
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		return FLAG;
 	}
 
 }

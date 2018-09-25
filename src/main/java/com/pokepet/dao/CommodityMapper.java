@@ -1,6 +1,7 @@
 package com.pokepet.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Param;
 
@@ -50,5 +51,5 @@ public interface CommodityMapper {
 	 */
 	int updateByPrimaryKey(Commodity record);
 
-	public List<Commodity> getCommodityList(@Param("search") String search, @Param("typeList") List<String> typeList, @Param("brandList") List<String> brandList);
+	public List<Map<String, Object>> selectCommodityList(Map<String, Object> param);
 }

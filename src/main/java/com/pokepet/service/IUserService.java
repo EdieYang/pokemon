@@ -19,6 +19,13 @@ public interface IUserService {
 
 	User getUserInfo(String userId);
 
+	/**
+	 * 根据查询条件获取用户列表（分页）
+	 * @param param
+	 * @param pageNum
+	 * @param pageSize
+	 * @return
+	 */
 	JSONObject getUserList(Map<String, Object> param, int pageNum, int pageSize);
 
 }

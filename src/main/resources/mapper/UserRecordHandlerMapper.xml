@@ -6,13 +6,13 @@
   <select id="selectUserRecordList" resultType="java.util.Map">
 
       SELECT recordId,title,content,abbreImg,images,recommend,
-            userId,petId,createtime,checkState,delState,
+            userId,petId,createtime,checkState,delFlag,
             type,memo,location,detailLocation,lat,lng
       FROM
         (
       (SELECT record_id as recordId, title, content,abbre_img as abbreImg ,
           null as images, null as recommend,user_id as userId, pet_id as petId,
-          create_time as createtime, check_state as checkState, del_state as delState,
+          create_time as createtime, check_state as checkState, del_flag as delFlag,
           type,null as memo,null as location,null as detailLocation,null as lat,null as lng
           FROM user_long_record
           WHERE user_id=#{userId})
@@ -21,7 +21,7 @@
 
       (SELECT record_id as recordId,title, content,null as abbreImg, images, recommend,
           user_id as userId, null as petId,create_time as createtime, check_state as checkState,
-           del_state as delState, type,memo, location, detail_location as detailLocation, lat, lng
+           del_flag as delFlag, type,memo, location, detail_location as detailLocation, lat, lng
           FROM user_record
           WHERE user_id=#{userId})
       )AS allunion
@@ -33,7 +33,7 @@
     <select id="selectRecommendList"  resultType="java.util.Map">
 
         SELECT recordId,title,content,abbreImg,images,recommend,
-        userId,nickName,photoPath,petId,petName,petPhotoPath,createtime,checkState,delState,
+        userId,nickName,photoPath,petId,petName,petPhotoPath,createtime,checkState,delFlag,
         type,memo,location,detailLocation,lat,lng
         FROM
         (
@@ -52,7 +52,7 @@
                  p.photo_path as petPhotoPath,
                  create_time AS createtime,
                  check_state AS checkState,
-                 del_state   AS delState,
+                 del_flag   AS delFlag,
                  type,
                  NULL        AS memo,
                  NULL        AS location,
@@ -64,7 +64,7 @@
              ON ulr.user_id=u.user_id
              LEFT JOIN  pet p
              ON ulr.pet_id=p.pet_id
-             WHERE   check_state='1' and del_state='0' and (type = '0' OR type = '1'))
+             WHERE   check_state='1' and del_flag='0' and (type = '0' OR type = '1'))
 
              UNION ALL
 
@@ -83,7 +83,7 @@
                   NULL            As petPhotoPath,
                   create_time     AS createtime,
                   check_state     AS checkState,
-                  del_state       AS delState,
+                  del_flag       AS delFlag,
                   type,
                   memo,
                   location,
@@ -93,7 +93,7 @@
               FROM user_record ur
               LEFT JOIN user u
               ON ur.user_id=u.user_id
-              WHERE type = '2' and check_state='1' and del_state='0'
+              WHERE type = '2' and check_state='1' and del_flag='0'
              )
             )AS allunion
             ORDER BY createtime DESC
@@ -103,7 +103,7 @@
     <select id="selectCharityList"  resultType="java.util.Map">
 
         SELECT recordId,title,content,abbreImg,images,recommend,
-        userId,nickName,photoPath,petId,petName,createtime,checkState,delState,
+        userId,nickName,photoPath,petId,petName,createtime,checkState,delFlag,
         type,memo,location,detailLocation,lat,lng
         FROM
         (SELECT
@@ -120,7 +120,7 @@
         NULL            As petName,
         create_time     AS createtime,
         check_state     AS checkState,
-        del_state       AS delState,
+        del_flag       AS delFlag,
         type,
         memo,
         location,
@@ -130,7 +130,7 @@
         FROM user_record ur
         LEFT JOIN user u
         ON ur.user_id=u.user_id
-        WHERE type = '3' and check_state='1' and del_state='0'
+        WHERE type = '3' and check_state='1' and del_flag='0'
         )AS allunion
         ORDER BY createtime DESC
     </select>

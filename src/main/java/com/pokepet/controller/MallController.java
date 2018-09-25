@@ -1,9 +1,12 @@
 package com.pokepet.controller;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -92,24 +95,38 @@ public class MallController {
 	 * @return
 	 */
 	@RequestMapping(value = "/commodityList", method = RequestMethod.GET)
-	public List<Commodity> geCommodityList(@RequestParam("search") String search,
+	public JSONObject geCommodityList(@RequestParam("search") String search,
 			@RequestParam("typeList") String typeList, @RequestParam("brandList") String brandList,
 			@RequestParam("pageNum") int pageNum, @RequestParam("pageSize") int pageSize) {
-		String[] typeArr = typeList.split("");
 
-		List<String> list = Arrays.asList(typeArr);
-		return commodityService.getCommodityList(search, null, null, pageNum, pageSize);
+		List<String> types = Arrays.asList(typeList.split(","));
+		List<String> brands = Arrays.asList(brandList.split(","));
+		Map<String, Object> param = new HashMap<String, Object>();
+		param.put("search", search);
+		param.put("typeList", types.size() >0 && !"".equals(typeList) ? types : null);
+		param.put("brandList", types.size() >0 && !"".equals(brandList) ? brands : null);
+		return commodityService.getCommodityList(param, pageNum, pageSize);
 	}
 
 	/**
 	 * 获取商品
-	 * 
 	 * @param commodityId
 	 * @return
 	 */
-	@RequestMapping(value = "/commodity", method = RequestMethod.GET)
-	public Commodity geCommodity(@RequestParam("commodityId") String commodityId) {
-		return null;
+	@RequestMapping(value = "/commodity/{commodityId}", method = RequestMethod.GET)
+	public Commodity geCommodity(@PathVariable String commodityId) {
+		return commodityService.getCommodity(commodityId);
 	}
+	
+	
+	/**
+	 * 保存/更新商品信息
+	 * @param address
+	 * @return
+	 */
+	@RequestMapping(value = "/commodity", method = RequestMethod.POST, consumes = "application/json")
+    public boolean saveCommodity(@RequestBody Commodity commodity){
+        return commodityService.saveCommodity(commodity);
+    }
 
 }

@@ -391,28 +391,53 @@
     where commodity_id = #{commodityId,jdbcType=VARCHAR}
   </update>
   
-  <select id="getCommodityList" parameterType="java.lang.String" resultMap="BaseResultMap">
+  <select id="selectCommodityList" parameterType="java.lang.String" resultType="java.util.Map">
     SELECT 
-    <include refid="Base_Column_List" />
-    FROM commodity
-    WHERE del_flag = '0'
+		t_c.commodity_id AS commodityId,
+		t_c.commodity_name AS commodityName,
+		t_c.commodity_type AS commodityType,
+		t_t.type_name AS commodityTypeValue,
+		t_c.commodity_brand AS commodityBrand,
+		t_b.brand_name_chi AS brandNameChi,
+		t_b.brand_name_eng AS brandNameEng,
+		t_c.price,
+		t_c.inventory,
+		t_c.on_sale AS onSale,
+		CASE t_c.on_sale
+		WHEN '0' THEN '在售'
+		WHEN '1' THEN '停售'
+		ELSE '' END AS onSaleValue,
+		t_c.on_conversion AS onConversion,
+		CASE t_c.on_conversion
+		WHEN '0' THEN '不可兑换'
+		WHEN '1' THEN '可兑换'
+		ELSE '' END AS onConversionValue,
+		IFNULL(DATE_FORMAT(t_c.sale_start_datetime,'%Y-%m-%d %H:%i:%s'),'不限') AS saleStart,
+		IFNULL(DATE_FORMAT(t_c.sale_end_datetime,'%Y-%m-%d %H:%i:%s'),'不限') AS saleEnd
+	FROM
+	  commodity t_c 
+	  LEFT JOIN commodity_brand t_b 
+	    ON t_c.commodity_brand = t_b.brand_id 
+	  LEFT JOIN commodity_type t_t 
+	    ON t_c.commodity_type = t_t.type_id 
+	WHERE t_c.del_flag = '0' 
     <if test="search != null and search != ''">
-    	AND (commodity_name LIKE BINARY CONCAT('%',#{search},'%')
-			OR commodity_type IN (SELECT type_id FROM commodity_type WHERE del_flag = '0' AND type_name LIKE BINARY CONCAT('%',#{search},'%')) 
-			OR commodity_brand IN (SELECT brand_id FROM commodity_brand WHERE del_flag = '0' 
-				AND (brand_name_chi LIKE BINARY CONCAT('%',#{search},'%') 
-					OR brand_name_eng LIKE BINARY CONCAT('%',#{search},'%') 
-					OR brand_name_tag LIKE BINARY CONCAT('%',#{search},'%'))))
+    	AND (t_c.commodity_name LIKE BINARY CONCAT('%',#{search},'%')
+			OR t_b.brand_name_chi LIKE BINARY CONCAT('%',#{search},'%')
+			OR t_b.brand_name_eng LIKE BINARY CONCAT('%',#{search},'%')
+			OR t_t.type_name LIKE BINARY CONCAT('%',#{search},'%')
+				)
     </if>
     <if test="typeList != null">
-    	<foreach close=")" collection="typeList" item="type" open=" AND commodity_type in(" separator=",">
+    	<foreach close=")" collection="typeList" item="type" open=" AND t_c.commodity_type in(" separator=",">
 	            #{type}
 	    </foreach>
     </if>
     <if test="brandList != null">
-    	<foreach close=")" collection="brandList" item="brand" open=" AND commodity_brand in(" separator=",">
+    	<foreach close=")" collection="brandList" item="brand" open=" AND t_c.commodity_brand in(" separator=",">
 	            #{brand}
 	    </foreach>
     </if>
+    ORDER BY CONVERT(t_c.commodity_name USING gbk) ASC
   </select>
 </mapper>

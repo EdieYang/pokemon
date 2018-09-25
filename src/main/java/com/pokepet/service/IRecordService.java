@@ -1,5 +1,6 @@
 package com.pokepet.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.pokepet.model.UserLongRecord;
 import com.pokepet.model.UserRecord;
 
@@ -27,4 +28,23 @@ public interface IRecordService {
     List<Map<String,Object>> selectRecommendList(int pageNum,int pageSize);
 
     List<Map<String,Object>> selectCharityList(int pageNum,int pageSize);
+    
+    /**
+     * 根据查询条件获取短文列表（分页）
+     * @param param
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
+    JSONObject getRecordList(Map<String, Object> param, int pageNum, int pageSize);
+    
+    
+    /**
+     * 根据查询条件获取长文列表（分页）
+     * @param param
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
+    JSONObject getLongRecordList(Map<String, Object> param, int pageNum, int pageSize);
 }
