@@ -52,5 +52,7 @@ public interface RecordCollectMapper {
      */
     int updateByPrimaryKey(RecordCollect record);
 
+    int getUserCollectRecordAmount(String userId);
+
     RecordCollect selectByUserIdAndRecordId(@Param("userId")String userId,@Param("recordId")String recordId);
 }

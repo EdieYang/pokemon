@@ -52,6 +52,9 @@ public class UserController {
 	@Autowired
 	IUserFollowService userFollowService;
 
+	@Autowired
+	IRecordService recordService;
+
 	@RequestMapping(value = "/userList", method = RequestMethod.GET)
 	public JSONObject getUserList(@RequestParam("search") String search, @RequestParam("pageNum") int pageNum, @RequestParam("pageSize") int pageSize) {
 		Map<String, Object> param = new HashMap<String, Object>();
@@ -70,11 +73,12 @@ public class UserController {
 		User user = userService.getUserInfo(userId);
 		int followAmount = userFollowService.getUserFollowAmount(userId);
 		int followedAmount = userFollowService.getUserFollowedAmount(userId);
-
+		int collectAmount= recordService.getUserCollectRecordAmount(userId);
 		JSONObject userInfo = new JSONObject();
 		userInfo.put("user", user);
 		userInfo.put("fanAmount", followedAmount);
 		userInfo.put("followAmount", followAmount);
+		userInfo.put("collectAmount",collectAmount);
 
 		return userInfo;
 	}

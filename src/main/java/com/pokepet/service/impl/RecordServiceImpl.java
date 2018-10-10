@@ -1,9 +1,14 @@
 package com.pokepet.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
 import com.pokepet.dao.*;
 import com.pokepet.model.RecordCollect;
 import com.pokepet.model.RecordLike;
+import com.github.pagehelper.PageInfo;
+import com.pokepet.dao.UserLongRecordMapper;
+import com.pokepet.dao.UserRecordHandlerMapper;
+import com.pokepet.dao.UserRecordMapper;
 import com.pokepet.model.UserLongRecord;
 import com.pokepet.model.UserRecord;
 import com.pokepet.service.IRecordService;
@@ -60,6 +65,11 @@ public class RecordServiceImpl implements IRecordService {
         return userRecordMapper.insertSelective(userRecord);
     }
 
+    @Override
+    public int getUserCollectRecordAmount(String userId) {
+        return recordCollectMapper.getUserCollectRecordAmount(userId);
+    }
+
 
     @Override
     public List<Map<String, Object>> selectUserRecordList(String userId,int pageNum,int pageSize) {
@@ -68,16 +78,24 @@ public class RecordServiceImpl implements IRecordService {
     }
 
     @Override
+    public List<Map<String, Object>> selectUserCheckedRecordList(String userId, int pageNum, int pageSize) {
+        PageHelper.startPage(pageNum,pageSize);
+        return userRecordHandlerMapper.selectUserCheckedRecordList(userId);
+    }
+
+    @Override
+    public List<Map<String, Object>> getCollectRecordList( int pageNum, int pageSize,String userId) {
+        PageHelper.startPage(pageNum,pageSize);
+        return userRecordHandlerMapper.selectUserCollectRecordList(userId);
+    }
+
+    @Override
     public List<Map<String, Object>> selectRecommendList(int pageNum, int pageSize,String userId) {
         PageHelper.startPage(pageNum,pageSize);
         return userRecordHandlerMapper.selectRecommendList(userId);
     }
 
-    @Override
-    public List<Map<String, Object>> selectCharityList(int pageNum, int pageSize,String userId) {
-        PageHelper.startPage(pageNum,pageSize);
-        return userRecordHandlerMapper.selectCharityList(userId);
-    }
+
 
     @Override
     public Map<String, Object> selectLongRecordByRecordId(String recordId,String userId) {
@@ -134,4 +152,43 @@ public class RecordServiceImpl implements IRecordService {
         }
         return recordCollectMapper.updateByPrimaryKey(recordCollect)>0;
     }
+
+
+
+    @Override
+    public List<Map<String, Object>> selectCharityList(int pageNum, int pageSize,String userId) {
+        PageHelper.startPage(pageNum,pageSize);
+        return userRecordHandlerMapper.selectCharityList(userId);
+    }
+
+    @Override
+    public List<Map<String, Object>> getPetRecordList(int pageNum, int pageSize, String petId) {
+        PageHelper.startPage(pageNum,pageSize);
+        return userRecordHandlerMapper.getPetRecordList(petId);
+    }
+
+
+    @Override
+	public JSONObject getRecordList(Map<String, Object> param, int pageNum, int pageSize) {
+		JSONObject result = new JSONObject();
+		PageHelper.startPage(pageNum, pageSize);
+		List<Map<String, Object>> list = userRecordMapper.selectRecordList(param);
+		PageInfo<Map<String, Object>> page = new PageInfo<Map<String, Object>>(list);
+		result.put("page", page.getPageNum());
+		result.put("records", page.getTotal());
+		result.put("rows", list);
+		return result;
+	}
+
+	@Override
+	public JSONObject getLongRecordList(Map<String, Object> param, int pageNum, int pageSize) {
+		JSONObject result = new JSONObject();
+		PageHelper.startPage(pageNum, pageSize);
+		List<Map<String, Object>> list = userLongRecordMapper.selectLongRecordList(param);
+		PageInfo<Map<String, Object>> page = new PageInfo<Map<String, Object>>(list);
+		result.put("page", page.getPageNum());
+		result.put("records", page.getTotal());
+		result.put("rows", list);
+		return result;
+	}
 }

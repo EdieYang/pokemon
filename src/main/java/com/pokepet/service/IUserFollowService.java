@@ -2,6 +2,7 @@ package com.pokepet.service;
 
 import com.pokepet.model.UserFollow;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -22,6 +23,11 @@ public interface IUserFollowService {
      * @return
      */
     int getUserFollowedAmount(String userId);
+
+
+    List<Map<String,String>> getUserFollowList(String userId ,int pageNumber,int pageSize);
+
+    List<Map<String,String>> getUserFollowedList(String userId ,int pageNumber,int pageSize);
 
 
     /**

@@ -151,4 +151,11 @@
     where user_id=#{userId}
     and record_id=#{recordId}
   </select>
+
+  <select id="getUserCollectRecordAmount" parameterType="java.lang.String" resultType="java.lang.Integer">
+    SELECT count(1)
+    FROM record_collect
+    where user_id=#{userId}
+    and del_flag='0'
+  </select>
 </mapper>

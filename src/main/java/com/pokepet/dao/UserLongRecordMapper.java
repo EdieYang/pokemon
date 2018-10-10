@@ -3,6 +3,7 @@ package com.pokepet.dao;
 import com.pokepet.model.UserLongRecord;
 
 import java.util.List;
+import java.util.Map;
 
 public interface UserLongRecordMapper {
     /**

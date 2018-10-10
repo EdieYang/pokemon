@@ -1,5 +1,6 @@
 package com.pokepet.service.impl;
 
+import com.github.pagehelper.PageHelper;
 import com.pokepet.dao.PetFollowMapper;
 import com.pokepet.dao.UserFollowMapper;
 import com.pokepet.model.PetFollow;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -26,15 +28,30 @@ public class UserFollowServiceImpl implements IUserFollowService {
     PetFollowMapper petFollowMapper;
 
 
+
+
     @Override
     public int getUserFollowAmount(String userId) {
-
-        return 0;
+        return userFollowMapper.selectFollowAmount(userId);
     }
 
     @Override
     public int getUserFollowedAmount(String userId) {
-        return 0;
+        return userFollowMapper.selectFollowedAmount(userId);
+    }
+
+    @Override
+    public List<Map<String, String>> getUserFollowList(String userId,int pageNumber,int pageSize) {
+        PageHelper.startPage(pageNumber,pageSize);
+        List<Map<String,String>> list=userFollowMapper.selectFollowers(userId);
+        return list;
+    }
+
+    @Override
+    public List<Map<String, String>> getUserFollowedList(String userId, int pageNumber, int pageSize) {
+        PageHelper.startPage(pageNumber,pageSize);
+        List<Map<String,String>> list=userFollowMapper.selectFans(userId);
+        return list;
     }
 
     @Override
@@ -126,7 +143,7 @@ public class UserFollowServiceImpl implements IUserFollowService {
         UserFollow userFollow=new UserFollow();
         userFollow.setUserId(userId);
         userFollow.setFollowUserId(followUserId);
-        UserFollow existUserFollow=userFollowMapper.selectFollowedUser(userFollow);
+        UserFollow existUserFollow=userFollowMapper.selectExistFollowedUser(userFollow);
         if(existUserFollow==null){
             userFollow.setId(UUID.randomUUID().toString().replace("-",""));
             userFollow.setDelFlag("0");
