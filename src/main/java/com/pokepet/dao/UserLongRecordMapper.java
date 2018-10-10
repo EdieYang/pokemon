@@ -63,4 +63,8 @@ public interface UserLongRecordMapper {
     int updateByPrimaryKey(UserLongRecord record);
 
     List<Map<String, Object>> selectLongRecordList(Map<String, Object> param);
+
+
+//    List<UserLongRecord> getUserRecordsByUserId(String userId);
+
 }
