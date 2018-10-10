@@ -16,7 +16,7 @@
 		<javaClientGenerator targetPackage="com.pokepet.dao"
 			targetProject="pokemon" type="XMLMAPPER" />
 
-		<table schema="pokemon" tableName="user_long_record"
+		<table schema="pokemon" tableName="commodity"
 			enableCountByExample="false" enableUpdateByExample="false"
 			enableDeleteByExample="false" enableSelectByExample="false"
 			selectByExampleQueryId="false"></table>

@@ -16,6 +16,7 @@ import com.pokepet.model.GPSLocation;
 import com.pokepet.model.UserExploreHistory;
 import com.pokepet.service.IExploreService;
 import com.pokepet.service.IPetWeaponService;
+import com.pokepet.util.LocationUtils;
 
 @ResponseResult
 @RestController
@@ -61,6 +62,13 @@ public class ExploreController {
 	@RequestMapping(value = "/{userId}/exploreCountToday", method = RequestMethod.GET)
 	public int getExploreCountToday(@PathVariable String userId) {
 		return exploreService.getExploreCountForUserToday(userId);
+	}
+	
+	@RequestMapping(value = "/getDistance", method = RequestMethod.POST, consumes = "application/json")
+	public double getDistance(@RequestBody JSONObject data) {
+		GPSLocation start = JSONObject.toJavaObject(data.getJSONObject("start"), GPSLocation.class);
+		GPSLocation end = JSONObject.toJavaObject(data.getJSONObject("end"), GPSLocation.class);
+		return LocationUtils.GetDistance(start, end);
 	}
 
 }

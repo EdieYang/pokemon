@@ -85,7 +85,7 @@ public class MallController {
 	}
 
 	/**
-	 * 商品列表（分页）
+	 * 商品列表（分页）--后台
 	 * 
 	 * @param search
 	 * @param typeList
@@ -95,7 +95,7 @@ public class MallController {
 	 * @return
 	 */
 	@RequestMapping(value = "/commodityList", method = RequestMethod.GET)
-	public JSONObject geCommodityList(@RequestParam("search") String search,
+	public JSONObject getCommodityList(@RequestParam("search") String search,
 			@RequestParam("typeList") String typeList, @RequestParam("brandList") String brandList,
 			@RequestParam("pageNum") int pageNum, @RequestParam("pageSize") int pageSize) {
 
@@ -109,7 +109,7 @@ public class MallController {
 	}
 
 	/**
-	 * 获取商品
+	 * 获取商品--后台
 	 * @param commodityId
 	 * @return
 	 */
@@ -120,7 +120,7 @@ public class MallController {
 	
 	
 	/**
-	 * 保存/更新商品信息
+	 * 保存/更新商品信息--后台
 	 * @param address
 	 * @return
 	 */
@@ -128,5 +128,36 @@ public class MallController {
     public boolean saveCommodity(@RequestBody Commodity commodity){
         return commodityService.saveCommodity(commodity);
     }
+	
+	/**
+	 * 商品列表（分页）--商城
+	 * @param search
+	 * @param pageNum
+	 * @param pageSize
+	 * @return
+	 */
+	@RequestMapping(value = "/commodityListForMall", method = RequestMethod.GET)
+	public JSONObject getCommodityListForMall(@RequestParam("search") String search,
+//			@RequestParam("typeList") String typeList, @RequestParam("brandList") String brandList,
+			@RequestParam("pageNum") int pageNum, @RequestParam("pageSize") int pageSize) {
+
+//		List<String> types = Arrays.asList(typeList.split(","));
+//		List<String> brands = Arrays.asList(brandList.split(","));
+		Map<String, Object> param = new HashMap<String, Object>();
+		param.put("search", search);
+//		param.put("typeList", types.size() >0 && !"".equals(typeList) ? types : null);
+//		param.put("brandList", types.size() >0 && !"".equals(brandList) ? brands : null);
+		return commodityService.getCommodityListForMall(param, pageNum, pageSize);
+	}
+	
+	/**
+	 * 获取商品信息--商城
+	 * @param commodityId
+	 * @return
+	 */
+	@RequestMapping(value = "/commodityInfo/{commodityId}", method = RequestMethod.GET)
+	public Map<String, Object> geCommodityInfoForMall(@PathVariable String commodityId) {
+		return commodityService.getCommodityInfo(commodityId);
+	}
 
 }

@@ -60,4 +60,27 @@ public class OrderServiceImpl implements IOrderService {
 	public OrderPay getOrder(String orderId) {
 		return orderPayMapper.selectByPrimaryKey(orderId);
 	}
+
+	@Override
+	public JSONObject checkBuyStatusByUserId(String userId, String commodityId, int dayRange) {
+		JSONObject result = new JSONObject();
+		//获取最近一条有效的未完成订单
+		OrderPay unfilledOrder = orderPayMapper.selectLastUnfilledOrderByUserId(userId);
+		if(null != unfilledOrder){
+			result.put("FLAG", false);
+			result.put("msg", "您有未完成订单，请完成后继续兑换。");
+			return result;
+		}
+		
+		//获取一周内该用户对该商品的有效订单
+		OrderPay commodityOrder = orderPayMapper.selectLastCommodityOrderByUserId(userId, commodityId, dayRange);
+		if(null != commodityOrder){
+			result.put("FLAG", false);
+			result.put("msg", "该物品"+dayRange+"天只能兑换一次哦，请过段时间后继续兑换。");
+			return result;
+		}
+		
+		result.put("FLAG", true);
+		return result;
+	}
 }

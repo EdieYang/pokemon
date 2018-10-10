@@ -56,4 +56,21 @@ public class CommodityServiceImpl implements ICommodityService{
 		return FLAG;
 	}
 
+	@Override
+	public JSONObject getCommodityListForMall(Map<String, Object> param, int pageNum, int pageSize) {
+		JSONObject result = new JSONObject();
+		PageHelper.startPage(pageNum, pageSize);
+		List<Map<String, Object>> list = commodityMapper.selectCommodityListForMall(param);
+		PageInfo<Map<String, Object>> page = new PageInfo<Map<String, Object>>(list);
+		result.put("page", page.getPageNum());
+		result.put("records", page.getTotal());
+		result.put("rows", list);
+		return result;
+	}
+
+	@Override
+	public Map<String, Object> getCommodityInfo(String commodityId) {
+		return commodityMapper.selectCommodityInfoForMall(commodityId);
+	}
+
 }
