@@ -1,5 +1,21 @@
 package com.pokepet.controller;
 
+import java.io.UnsupportedEncodingException;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
+import org.apache.catalina.servlet4preview.http.HttpServletRequest;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.alibaba.fastjson.JSONObject;
 import com.pokepet.annotation.ResponseResult;
 import com.pokepet.model.OrderPay;
@@ -10,24 +26,7 @@ import com.pokepet.service.IPetWeaponService;
 import com.pokepet.service.IUserService;
 import com.pokepet.util.CommonUtil;
 import com.pokepet.util.HttpUtil;
-import com.pokepet.util.wxpay.WXPay;
 import com.pokepet.util.wxpay.WXPayUtil;
-import com.pokepet.utils.HttpClientUtils;
-import com.pokepet.utils.HttpPostUtils;
-import org.apache.catalina.servlet4preview.http.HttpServletRequest;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.tomcat.util.security.MD5Encoder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.ClassUtils;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.io.UnsupportedEncodingException;
-import java.security.NoSuchAlgorithmException;
-import java.util.*;
 
 /**
  * Created by Fade on 2018/8/20.
@@ -223,5 +222,38 @@ public class PayOrderController {
         return "执行回调函数";
     }
 
+    
+    /**
+	 * 订单列表（分页）
+	 * 
+	 * @param search
+	 * @param typeList
+	 * @param brandList
+	 * @param pageNum
+	 * @param pageSize
+	 * @return
+	 */
+	@RequestMapping(value = "/orderList", method = RequestMethod.GET)
+	public JSONObject geOrderList(@RequestParam("search") String search,
+			@RequestParam("pageNum") int pageNum, @RequestParam("pageSize") int pageSize) {
+
+		Map<String, Object> param = new HashMap<String, Object>();
+		param.put("search", search);
+		return orderService.getOrderList(param, pageNum, pageSize);
+	}
+	
+	
+	/**
+	 * 根据orderId获取订单详情
+	 * @param orderId
+	 * @return
+	 */
+	@RequestMapping(value = "/order", method = RequestMethod.GET)
+	public JSONObject geOrderInfo(@RequestParam("orderId") String orderId) {
+		JSONObject result = new JSONObject();
+		result.put("orderInfo", orderService.getOrder(orderId));
+		return result;
+	}
+	
 
 }

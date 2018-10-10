@@ -12,7 +12,6 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.pokepet.dao.CommodityMapper;
 import com.pokepet.model.Commodity;
-import com.pokepet.model.UserShoppingAddress;
 import com.pokepet.service.ICommodityService;
 
 @Service

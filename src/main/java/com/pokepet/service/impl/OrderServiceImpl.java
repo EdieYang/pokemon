@@ -1,5 +1,8 @@
 package com.pokepet.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.pokepet.dao.OrderPayMapper;
 import com.pokepet.model.OrderPay;
 import com.pokepet.service.IOrderService;
@@ -40,4 +43,21 @@ public class OrderServiceImpl implements IOrderService {
     public void updateOrderPay(OrderPay orderPay) {
 
     }
+
+	@Override
+	public JSONObject getOrderList(Map<String, Object> param, int pageNum, int pageSize) {
+		JSONObject result = new JSONObject();
+		PageHelper.startPage(pageNum, pageSize);
+		List<Map<String, Object>> list = orderPayMapper.selectCommodityList(param);
+		PageInfo<Map<String, Object>> page = new PageInfo<Map<String, Object>>(list);
+		result.put("page", page.getPageNum());
+		result.put("records", page.getTotal());
+		result.put("rows", list);
+		return result;
+	}
+
+	@Override
+	public OrderPay getOrder(String orderId) {
+		return orderPayMapper.selectByPrimaryKey(orderId);
+	}
 }

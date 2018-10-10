@@ -1,5 +1,8 @@
 package com.pokepet.dao;
 
+import java.util.List;
+import java.util.Map;
+
 import com.pokepet.model.OrderPay;
 
 public interface OrderPayMapper {
@@ -50,4 +53,6 @@ public interface OrderPayMapper {
      * @mbggenerated Wed Aug 22 10:06:12 CST 2018
      */
     int updateByPrimaryKey(OrderPay record);
+
+	List<Map<String, Object>> selectCommodityList(Map<String, Object> param);
 }

@@ -201,4 +201,22 @@
       commodity_type = #{commodityType,jdbcType=VARCHAR}
     where order_id = #{orderId,jdbcType=VARCHAR}
   </update>
+  <select id="selectCommodityList" parameterType="java.lang.String" resultType="java.util.Map">
+  	SELECT 
+	  t_o.order_id AS orderId,
+	  t_u.nick_name AS nickName,
+	  DATE_FORMAT(t_o.create_time,'%Y-%m-%d %H:%i:%s') AS orderTime,
+	  t_o.price/100 AS price,
+	  CASE t_o.order_status
+	  WHEN '0' THEN '未支付'
+	  WHEN '1' THEN '已支付'
+	  ELSE '' END AS orderStatus,
+	  IFNULL(DATE_FORMAT(t_o.pay_time,'%Y-%m-%d %H:%i:%s') ,'') AS payTime
+	FROM
+	  order_pay t_o 
+	  LEFT JOIN user t_u
+	  ON t_o.user_id = t_u.user_id
+	WHERE t_o.del_flag = '0' 
+	ORDER BY t_o.create_time DESC
+  </select>
 </mapper>
