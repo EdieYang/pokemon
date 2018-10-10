@@ -152,7 +152,7 @@ public class UserController {
 	}
 
 	/**
-	 * 
+	 *
 	 * @Description: 用户walk开始，创建记录
 	 * @param @param
 	 *            history
@@ -176,7 +176,7 @@ public class UserController {
 	}
 
 	/**
-	 * 
+	 *
 	 * @Description: 用户walk结束，返回经验值、活力值
 	 * @param @param
 	 *            history
@@ -196,7 +196,7 @@ public class UserController {
 	}
 
 	/**
-	 * 
+	 *
 	 * @Description: 保存用户walk坐标
 	 * @param @param
 	 *            location
@@ -213,7 +213,7 @@ public class UserController {
 	}
 
 	/**
-	 * 
+	 *
 	 * @Description: 获取用户walk历史记录
 	 * @param @param
 	 *            userId
@@ -235,7 +235,7 @@ public class UserController {
 
 	/**
 	 * 获取用户某一次walk记录及轨迹
-	 * 
+	 *
 	 * @Description: TODO
 	 * @param @param
 	 *            historyId
@@ -263,7 +263,7 @@ public class UserController {
 
 	/**
 	 * 获取用户周围walk的其他用户位置
-	 * 
+	 *
 	 * @Description: TODO
 	 * @param @param
 	 *            userId * @param @param longitude * @param @param latitude
@@ -275,13 +275,13 @@ public class UserController {
 	 */
 	@RequestMapping(value = "/{userId}/walk/around", method = RequestMethod.GET)
 	public List<Map<String, Object>> getWalkAround(@PathVariable String userId,
-			@RequestParam("longitude") String longitude, @RequestParam("latitude") String latitude) {
+												   @RequestParam("longitude") String longitude, @RequestParam("latitude") String latitude) {
 		return walkService.getWalkAround(userId, longitude, latitude);
 	}
 
 	/**
 	 * 获取用户装备
-	 * 
+	 *
 	 * @param userId
 	 * @return
 	 */
@@ -292,7 +292,7 @@ public class UserController {
 
 	/**
 	 * 获取用户补给
-	 * 
+	 *
 	 * @param userId
 	 * @return
 	 */
