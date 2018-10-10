@@ -65,7 +65,6 @@ public interface UserLongRecordMapper {
     List<Map<String, Object>> selectLongRecordList(Map<String, Object> param);
 
 
-    List<UserLongRecord> getUserRecordsByUserId(String userId);
+//    List<UserLongRecord> getUserRecordsByUserId(String userId);
 
-    List<Map<String, Object>> selectLongRecordList(Map<String, Object> param);
 }
