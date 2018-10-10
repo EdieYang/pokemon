@@ -53,6 +53,7 @@ public interface UserRecordMapper {
      * @mbggenerated Thu Sep 20 14:08:43 GMT+08:00 2018
      */
     int updateByPrimaryKey(UserRecord record);
-    
+
+
     List<Map<String, Object>> selectRecordList(Map<String,Object> map);
 }

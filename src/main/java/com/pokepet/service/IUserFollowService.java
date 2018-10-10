@@ -2,6 +2,7 @@ package com.pokepet.service;
 
 import com.pokepet.model.UserFollow;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -24,6 +25,11 @@ public interface IUserFollowService {
     int getUserFollowedAmount(String userId);
 
 
+    List<Map<String,String>> getUserFollowList(String userId ,int pageNumber,int pageSize);
+
+    List<Map<String,String>> getUserFollowedList(String userId ,int pageNumber,int pageSize);
+
+
     /**
      * 增加用户粉丝
      * @param map
@@ -41,4 +47,14 @@ public interface IUserFollowService {
 
 
     UserFollow selectFollowedUser(UserFollow userFollow);
+
+
+    /**
+     * 宠物关注 (增删)
+     * @param map
+     * @return
+     */
+    boolean crdFollowRelationWithPet(Map<String,String> map);
+
+    boolean crdFollowRelationWithUser(Map<String,String> map);
 }

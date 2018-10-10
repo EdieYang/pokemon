@@ -70,6 +70,9 @@ public class FileController {
 			case "record" :
 				objName+="/pet/record/"+petId+"/"+UUID.randomUUID();
 				break;
+			case "recordK":
+				objName+="/explore/recordK/"+UUID.randomUUID();
+				break;
 			case "explore" :
 				objName+="/explore/"+UUID.randomUUID();
 			default:break;
@@ -133,7 +136,7 @@ public class FileController {
 				petAlbumMapper.insertSelective(petAlbum);
 			}
 
-			if(type.equals("record")){
+			if(type.equals("record") || type.equals("recordK")){
 				//返回图片链接
 				resJson.put("returnPicUrl",fileObjName);
 				return resJson;

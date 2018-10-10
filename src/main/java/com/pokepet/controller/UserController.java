@@ -52,6 +52,9 @@ public class UserController {
 	@Autowired
 	IUserFollowService userFollowService;
 
+	@Autowired
+	IRecordService recordService;
+
 	@RequestMapping(value = "/userList", method = RequestMethod.GET)
 	public JSONObject getUserList(@RequestParam("search") String search, @RequestParam("pageNum") int pageNum, @RequestParam("pageSize") int pageSize) {
 		Map<String, Object> param = new HashMap<String, Object>();
@@ -70,11 +73,12 @@ public class UserController {
 		User user = userService.getUserInfo(userId);
 		int followAmount = userFollowService.getUserFollowAmount(userId);
 		int followedAmount = userFollowService.getUserFollowedAmount(userId);
-
+		int collectAmount= recordService.getUserCollectRecordAmount(userId);
 		JSONObject userInfo = new JSONObject();
 		userInfo.put("user", user);
 		userInfo.put("fanAmount", followedAmount);
 		userInfo.put("followAmount", followAmount);
+		userInfo.put("collectAmount",collectAmount);
 
 		return userInfo;
 	}
@@ -148,7 +152,7 @@ public class UserController {
 	}
 
 	/**
-	 * 
+	 *
 	 * @Description: 用户walk开始，创建记录
 	 * @param @param
 	 *            history
@@ -172,7 +176,7 @@ public class UserController {
 	}
 
 	/**
-	 * 
+	 *
 	 * @Description: 用户walk结束，返回经验值、活力值
 	 * @param @param
 	 *            history
@@ -192,7 +196,7 @@ public class UserController {
 	}
 
 	/**
-	 * 
+	 *
 	 * @Description: 保存用户walk坐标
 	 * @param @param
 	 *            location
@@ -209,7 +213,7 @@ public class UserController {
 	}
 
 	/**
-	 * 
+	 *
 	 * @Description: 获取用户walk历史记录
 	 * @param @param
 	 *            userId
@@ -231,7 +235,7 @@ public class UserController {
 
 	/**
 	 * 获取用户某一次walk记录及轨迹
-	 * 
+	 *
 	 * @Description: TODO
 	 * @param @param
 	 *            historyId
@@ -259,7 +263,7 @@ public class UserController {
 
 	/**
 	 * 获取用户周围walk的其他用户位置
-	 * 
+	 *
 	 * @Description: TODO
 	 * @param @param
 	 *            userId * @param @param longitude * @param @param latitude
@@ -271,13 +275,13 @@ public class UserController {
 	 */
 	@RequestMapping(value = "/{userId}/walk/around", method = RequestMethod.GET)
 	public List<Map<String, Object>> getWalkAround(@PathVariable String userId,
-			@RequestParam("longitude") String longitude, @RequestParam("latitude") String latitude) {
+												   @RequestParam("longitude") String longitude, @RequestParam("latitude") String latitude) {
 		return walkService.getWalkAround(userId, longitude, latitude);
 	}
 
 	/**
 	 * 获取用户装备
-	 * 
+	 *
 	 * @param userId
 	 * @return
 	 */
@@ -288,7 +292,7 @@ public class UserController {
 
 	/**
 	 * 获取用户补给
-	 * 
+	 *
 	 * @param userId
 	 * @return
 	 */

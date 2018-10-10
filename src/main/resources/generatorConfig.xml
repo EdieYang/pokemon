@@ -16,7 +16,7 @@
 		<javaClientGenerator targetPackage="com.pokepet.dao"
 			targetProject="src/main/java" type="XMLMAPPER" />
 
-		<table schema="pokemon" tableName="user_long_record"
+		<table schema="pokemon" tableName="message_queue"
 			enableCountByExample="false" enableUpdateByExample="false"
 			enableDeleteByExample="false" enableSelectByExample="false"
 			selectByExampleQueryId="false"></table>
