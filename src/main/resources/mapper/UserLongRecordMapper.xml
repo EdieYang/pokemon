@@ -293,45 +293,4 @@
 	ORDER BY t_r.create_time DESC
   </select>
 
-  <select id="selectLongRecordList" resultType="java.util.Map">
-  	SELECT
-	  t_r.record_id AS recordId,
-	  t_u.user_id AS userId,
-	  t_u.nick_name AS nickName,
-	  t_r.pet_id AS petId,
-	  t_p.name AS petName,
-	  DATE_FORMAT(t_r.create_time,'%Y-%m-%d %H:%i:%s') AS createTime,
-	  t_r.type,
-	  CASE t_r.type
-	  WHEN '0' THEN '事故'
-	  WHEN '1' THEN '科普'
-	  WHEN '2' THEN '日记'
-	  WHEN '3' THEN '紧急事件'
-	  ELSE '' END AS typeValue,
-	  IFNULL(t_r.title,'') AS title,
-	  t_r.check_state AS checkState,
-	  CASE t_r.check_state
-	  WHEN '0' THEN '未审核'
-	  WHEN '1' THEN '审核通过'
-	  WHEN '2' THEN '审核失败'
-	  ELSE '' END AS checkStateValue,
-	  IFNULL(DATE_FORMAT(t_r.check_datetime,'%Y-%m-%d %H:%i:%s'),'') AS checkDatetime
-	FROM
-	  user_long_record t_r
-	  LEFT JOIN user t_u
-	    ON t_r.user_id = t_u.user_id
-	  LEFT JOIN pet t_p
-	  ON t_r.pet_id = t_p.pet_id
-	WHERE t_r.del_flag = '0'
-	<if test="search != null and search != ''">
-		AND (t_u.nick_name like concat('%',#{search,jdbcType=VARCHAR},'%') OR t_p.name like concat('%',#{search,jdbcType=VARCHAR},'%') OR t_r.title like concat('%',#{search,jdbcType=VARCHAR},'%'))
-	</if>
-	<if test="checkStatus != null and checkStatus != ''">
-		AND t_r.check_state = #{checkStatus,jdbcType=VARCHAR}
-	</if>
-	<if test="recordType != null and recordType != ''">
-		AND t_r.type = #{recordType,jdbcType=VARCHAR}
-	</if>
-	ORDER BY t_r.create_time DESC
-  </select>
 </mapper>
