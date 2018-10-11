@@ -185,6 +185,15 @@
 			<version>1.2.3</version>
 		</dependency>
 		<!-- add by Bean at 2018-9-18 for pagehelper -->
+		
+		<!-- add by Bean at 2018-10-11 for WXPay -->
+		<!-- https://mvnrepository.com/artifact/com.thoughtworks.xstream/xstream -->
+		<dependency>
+		    <groupId>com.thoughtworks.xstream</groupId>
+		    <artifactId>xstream</artifactId>
+		    <version>1.4.10</version>
+		</dependency>
+		<!-- add by Bean at 2018-10-11 for WXPay -->
 
 
 	</dependencies>
