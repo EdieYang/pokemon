@@ -106,6 +106,7 @@ public class LoginController {
             map.put("userId","");
         }
 
+        map.put("openId",openId);
         return map;
 
     }
