@@ -508,7 +508,7 @@
 		  commodity_id,
 		  COUNT(1) AS saleCount 
 		FROM
-		  order_pay 
+		  order_mall 
 		WHERE order_status = '2' 
 		  AND commodity_type = '0' 
 		  AND del_flag = '0' 
@@ -580,7 +580,7 @@
 		  commodity_id,
 		  COUNT(1) AS saleCount 
 		FROM
-		  order_pay 
+		  order_mall 
 		WHERE order_status = '2' 
 		  AND commodity_type = '0' 
 		  AND del_flag = '0' 

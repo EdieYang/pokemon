@@ -1,4 +1,4 @@
-package com.pokepet.controller;
+/*package com.pokepet.controller;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
@@ -28,9 +28,9 @@ import com.pokepet.util.CommonUtil;
 import com.pokepet.util.HttpUtil;
 import com.pokepet.util.wxpay.WXPayUtil;
 
-/**
+*//**
  * Created by Fade on 2018/8/20.
- */
+ *//*
 @ResponseResult
 @RestController
 @RequestMapping("/wxPay")
@@ -223,7 +223,7 @@ public class PayOrderController {
     }
 
     
-    /**
+    *//**
 	 * 订单列表（分页）
 	 * 
 	 * @param search
@@ -232,7 +232,7 @@ public class PayOrderController {
 	 * @param pageNum
 	 * @param pageSize
 	 * @return
-	 */
+	 *//*
 	@RequestMapping(value = "/orderList", method = RequestMethod.GET)
 	public JSONObject geOrderList(@RequestParam("search") String search,
 			@RequestParam("pageNum") int pageNum, @RequestParam("pageSize") int pageSize) {
@@ -243,11 +243,11 @@ public class PayOrderController {
 	}
 	
 	
-	/**
+	*//**
 	 * 根据orderId获取订单详情
 	 * @param orderId
 	 * @return
-	 */
+	 *//*
 	@RequestMapping(value = "/order", method = RequestMethod.GET)
 	public JSONObject geOrderInfo(@RequestParam("orderId") String orderId) {
 		JSONObject result = new JSONObject();
@@ -257,3 +257,4 @@ public class PayOrderController {
 	
 
 }
+*/
