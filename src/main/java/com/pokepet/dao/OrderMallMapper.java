@@ -73,4 +73,10 @@ public interface OrderMallMapper {
 	 * @return
 	 */
 	OrderMall selectLastCommodityOrderByUserId(@Param("userId") String userId,@Param("commodityId") String commodityId,@Param("dayRange") int dayRange);
+
+	List<OrderMall> selectOrderListByUserId(@Param("userId") String userId);
+
+	List<Map<String,Object>> selectOrderList(@Param("userId") String userId);
+
+	Map<String,Object> getOrderDetail(String orderId);
 }

@@ -29,7 +29,19 @@ public class OrderServiceImpl implements IOrderService {
         return null;
     }
 
-    @Override
+	@Override
+	public JSONObject selectOrderListByUserId(String userId, int pageNum, int pageSize) {
+		JSONObject result = new JSONObject();
+		PageHelper.startPage(pageNum, pageSize);
+		List<Map<String, Object>> list = orderMallMapper.selectOrderList(userId);
+		PageInfo<Map<String, Object>> page = new PageInfo<Map<String, Object>>(list);
+		result.put("page", page.getPageNum());
+		result.put("records", page.getTotal());
+		result.put("rows", list);
+		return result;
+	}
+
+	@Override
     public List<OrderMall> getOrderListByParameter(Map<String, Object> param) {
         return null;
     }
@@ -40,8 +52,8 @@ public class OrderServiceImpl implements IOrderService {
     }
 
     @Override
-    public void updateOrder(OrderMall orderPay) {
-
+    public boolean updateOrder(OrderMall orderPay) {
+		return orderMallMapper.updateByPrimaryKeySelective(orderPay)>0;
     }
 
 	@Override
@@ -59,6 +71,11 @@ public class OrderServiceImpl implements IOrderService {
 	@Override
 	public OrderMall getOrder(String orderId) {
 		return orderMallMapper.selectByPrimaryKey(orderId);
+	}
+
+	@Override
+	public Map<String, Object> getOrderDetail(String orderId) {
+		return orderMallMapper.getOrderDetail(orderId);
 	}
 
 	@Override

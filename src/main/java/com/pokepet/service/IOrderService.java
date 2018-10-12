@@ -13,11 +13,13 @@ public interface IOrderService {
 
 	List<OrderMall> getOrderListByUserId(String userId);
 
+	JSONObject selectOrderListByUserId(String userId,int pageNum, int pageSize);
+
 	List<OrderMall> getOrderListByParameter(Map<String, Object> param);
 
 	void createOrder(OrderMall OrderMall);
 
-	void updateOrder(OrderMall OrderMall);
+	boolean updateOrder(OrderMall OrderMall);
 
 	/**
 	 * 获取订单列表（分页）
@@ -30,6 +32,8 @@ public interface IOrderService {
 	JSONObject getOrderList(Map<String, Object> param, int pageNum, int pageSize);
 
 	OrderMall getOrder(String orderId);
+
+	Map<String,Object> getOrderDetail(String orderId);
 
 	/**
 	 * 校验用户是否满足购买条件(无待支付订单；每个物品每周每人只能兑换一次）
