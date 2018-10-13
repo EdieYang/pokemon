@@ -323,8 +323,15 @@ public class OrderController {
 				resultJson.put("msg","支付完成30分钟后无法取消订单,若要取消,请联系客服");
 				resultJson.put("data",null);
 			}else{
+				//已支付取消订单,返回用户金币数
 				orderMall.setOrderStatus(ORDER_CANCEL_STATUS);
 				boolean uptReturn=orderService.updateOrder(orderMall);
+				if(uptReturn){
+					int coin=orderMall.getCoin();
+					User user=userService.getUserInfo(orderMall.getUserId());
+					user.setChipCount(user.getChipCount()+coin);
+					uptReturn=userService.modifyUser(user)>0;
+				}
 				if(uptReturn){
 					resultJson.put("status",200);
 					resultJson.put("msg","取消订单成功");
