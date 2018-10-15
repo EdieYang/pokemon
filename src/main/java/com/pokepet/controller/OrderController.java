@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.util.*;
 
 import com.pokepet.model.User;
+import com.pokepet.service.IPetWeaponService;
 import com.pokepet.service.IUserService;
 import com.pokepet.util.wxpay.*;
 import org.apache.commons.lang.StringUtils;
@@ -54,13 +55,40 @@ public class OrderController {
 	 */
 	private static final int EFFECTIVE_MINUTE_FOR_ORDER_TO_PAY = 30;
 
-	private static final String ORDER_CANCEL_STATUS="4";
-
+	/**
+	 * 取消订单时效(秒)
+	 */
 	private static final int ORDER_CANCEL_DURATION=30*60;
 
+	/**
+	 * 订单未支付状态
+	 */
+	private static final String ORDER_UNPAYED_STATUS="0";
+
+	/**
+	 * 订单已支付状态
+	 */
+	private static final String ORDER_PAYED_STATUS="1";
+
+	/**
+	 * 订单确认状态
+	 */
 	private static final String ORDER_CONFIRM_STATUS="3";
 
-	private static final String ORDER_PAYED_STATUS="1";
+	/**
+	 * 订单取消状态
+	 */
+	private static final String ORDER_CANCEL_STATUS="4";
+
+	/**
+	 * 购买方式:现金
+	 */
+	private static final String BUY_TYPE_CASH="0";
+
+	/**
+	 * 购买方式:虚拟币
+	 */
+	private static final String BUY_TYPE_COIN="1";
 
 
 	@Autowired
@@ -68,6 +96,10 @@ public class OrderController {
 
 	@Autowired
 	IUserService userService;
+
+	@Autowired
+	IPetWeaponService petWeaponService;
+
 
 	@RequestMapping(value = "/checkConversion", method = RequestMethod.POST, consumes = "application/json")
 	public JSONObject checkConversion(@RequestBody JSONObject data) {
@@ -82,82 +114,122 @@ public class OrderController {
 	public JSONObject crtOrder(@RequestBody JSONObject data) {
 		JSONObject result = new JSONObject();
 
-		// Map<String, Object> map = new HashMap<String, Object>();
-		double money = data.getDoubleValue("money");
-		data.put("money",(int) (money * 100)); //将金额转为分
-		String title = data.getString("commodityName");
-		String openId = data.getString("openId");
+		//判断订单类型
+		String orderType=data.getString("orderType");
+		if(orderType.equals("1")){ //虚拟订单,用于购买虚拟商品
+			String userId=data.getString("userId");
+			String weaponId=data.getString("commodityId");
+			//调用购买接口
+			JSONObject returnResult=petWeaponService.buyWeapon(userId,weaponId,"chip",null);
 
-		try {
-			String orderId=RandomStringGenerator.getRandomStringByLength(32);
-			OrderInfo wxPayOrder = new OrderInfo();
-			wxPayOrder.setAppid(appId);
-			wxPayOrder.setMch_id(mchId);
-			wxPayOrder.setNonce_str(RandomStringGenerator.getRandomStringByLength(32));
-			wxPayOrder.setBody(title);
-			wxPayOrder.setOut_trade_no(orderId);
-			wxPayOrder.setTotal_fee((int) (money * 100)); // 该金钱其实10 是 0.1元
-			wxPayOrder.setSpbill_create_ip("127.0.0.1");
-			wxPayOrder.setNotify_url(notifyUrl);
-			wxPayOrder.setTrade_type(tradeType);
-			wxPayOrder.setOpenid(openId);
-			wxPayOrder.setSign_type("MD5");
-			// 生成签名
-			String sign = Signature.getSign(wxPayOrder, key);
-			wxPayOrder.setSign(sign);
+			if(returnResult.getBooleanValue("flag")){
 
-			System.out.println(JSONObject.toJSONString(wxPayOrder));
-			String wxPayResult = HttpRequest.sendPost(url, wxPayOrder);
-			System.out.println(wxPayResult);
-			XStream xStream = new XStream();
-			xStream.alias("xml", OrderReturnInfo.class);
-
-			OrderReturnInfo returnInfo = (OrderReturnInfo) xStream.fromXML(wxPayResult);
-			// 二次签名
-			if ("SUCCESS".equals(returnInfo.getReturn_code())
-					&& returnInfo.getReturn_code().equals(returnInfo.getResult_code())) {
-				SignInfo signInfo = new SignInfo();
-				signInfo.setAppId(appId);
-				long time = System.currentTimeMillis() / 1000;
-				signInfo.setTimeStamp(String.valueOf(time));
-				signInfo.setNonceStr(RandomStringGenerator.getRandomStringByLength(32));
-				signInfo.setRepay_id("prepay_id=" + returnInfo.getPrepay_id());
-				signInfo.setSignType("MD5");
-				// 生成签名
-				String sign1 = Signature.getSign(signInfo, key);
-				Map<String, Object> payInfo = new HashMap<String, Object>();
-				payInfo.put("timeStamp", signInfo.getTimeStamp());
-				payInfo.put("nonceStr", signInfo.getNonceStr());
-				payInfo.put("package", signInfo.getRepay_id());
-				payInfo.put("signType", signInfo.getSignType());
-				payInfo.put("paySign", sign1);
-
-				// 此处可以写唤起支付前的业务逻辑
+				//创建订单
 				OrderMall order = JSONObject.toJavaObject(data, OrderMall.class);
-				order.setOrderId(orderId);
-				Calendar cal = Calendar.getInstance();
-				order.setCreateTime(cal.getTime());// 订单创建时间
-				cal.add(Calendar.MINUTE, EFFECTIVE_MINUTE_FOR_ORDER_TO_PAY);
-				order.setEffectiveTime(cal.getTime());// 订单有效期
+				order.setOrderId(RandomStringGenerator.getRandomStringByLength(32));
+				order.setOrderStatus(ORDER_CONFIRM_STATUS);
+				order.setBuyType(BUY_TYPE_COIN);
+				order.setMoney(0);
+				order.setOrderType("1");//虚拟订单
+				order.setPayType("0");//线上付款
+				order.setCreateTime(new Date());
+				order.setPayTime(new Date());
 				orderService.createOrder(order);
-				payInfo.put("orderId", orderId);
-
-				// 业务逻辑结束
 				result.put("status", 200);
-				result.put("msg", "统一下单成功!");
-				result.put("data", payInfo);
-
+				result.put("msg", "兑换成功!");
+				result.put("data", "");
+				return result;
+			}else{
+				result.put("status", 500);
+				result.put("msg", returnResult.getString("msg"));
+				result.put("data", "");
 				return result;
 			}
-			result.put("status", 500);
-			result.put("msg", "统一下单失败!");
-			result.put("data", null);
-			return result;
-		} catch (Exception e) {
-			e.printStackTrace();
+
+		}
+
+
+
+		if(orderType.equals("0")) { //虚拟订单,用于换购真实商品
+			double money = data.getDoubleValue("money");
+			data.put("money", (int) (money * 100)); //将金额转为分
+			String title = data.getString("commodityName");
+			String openId = data.getString("openId");
+
+			try {
+				String orderId = RandomStringGenerator.getRandomStringByLength(32);
+				OrderInfo wxPayOrder = new OrderInfo();
+				wxPayOrder.setAppid(appId);
+				wxPayOrder.setMch_id(mchId);
+				wxPayOrder.setNonce_str(RandomStringGenerator.getRandomStringByLength(32));
+				wxPayOrder.setBody(title);
+				wxPayOrder.setOut_trade_no(orderId);
+				wxPayOrder.setTotal_fee((int) (money * 100)); // 该金钱其实10 是 0.1元
+				wxPayOrder.setSpbill_create_ip("127.0.0.1");
+				wxPayOrder.setNotify_url(notifyUrl);
+				wxPayOrder.setTrade_type(tradeType);
+				wxPayOrder.setOpenid(openId);
+				wxPayOrder.setSign_type("MD5");
+				// 生成签名
+				String sign = Signature.getSign(wxPayOrder, key);
+				wxPayOrder.setSign(sign);
+
+				System.out.println(JSONObject.toJSONString(wxPayOrder));
+				String wxPayResult = HttpRequest.sendPost(url, wxPayOrder);
+				System.out.println(wxPayResult);
+				XStream xStream = new XStream();
+				xStream.alias("xml", OrderReturnInfo.class);
+
+				OrderReturnInfo returnInfo = (OrderReturnInfo) xStream.fromXML(wxPayResult);
+				// 二次签名
+				if ("SUCCESS".equals(returnInfo.getReturn_code())
+						&& returnInfo.getReturn_code().equals(returnInfo.getResult_code())) {
+					SignInfo signInfo = new SignInfo();
+					signInfo.setAppId(appId);
+					long time = System.currentTimeMillis() / 1000;
+					signInfo.setTimeStamp(String.valueOf(time));
+					signInfo.setNonceStr(RandomStringGenerator.getRandomStringByLength(32));
+					signInfo.setRepay_id("prepay_id=" + returnInfo.getPrepay_id());
+					signInfo.setSignType("MD5");
+					// 生成签名
+					String sign1 = Signature.getSign(signInfo, key);
+					Map<String, Object> payInfo = new HashMap<String, Object>();
+					payInfo.put("timeStamp", signInfo.getTimeStamp());
+					payInfo.put("nonceStr", signInfo.getNonceStr());
+					payInfo.put("package", signInfo.getRepay_id());
+					payInfo.put("signType", signInfo.getSignType());
+					payInfo.put("paySign", sign1);
+
+					// 此处可以写唤起支付前的业务逻辑
+					OrderMall order = JSONObject.toJavaObject(data, OrderMall.class);
+					order.setOrderId(orderId);
+					Calendar cal = Calendar.getInstance();
+					order.setCreateTime(cal.getTime());// 订单创建时间
+					cal.add(Calendar.MINUTE, EFFECTIVE_MINUTE_FOR_ORDER_TO_PAY);
+					order.setEffectiveTime(cal.getTime());// 订单有效期
+					order.setBuyType("3");//购买方式为换购(现金+金币)
+					orderService.createOrder(order);
+					payInfo.put("orderId", orderId);
+
+					// 业务逻辑结束
+					result.put("status", 200);
+					result.put("msg", "统一下单成功!");
+					result.put("data", payInfo);
+
+					return result;
+				}
+				result.put("status", 500);
+				result.put("msg", "统一下单失败!");
+				result.put("data", null);
+				return result;
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
 		}
 
 		return result;
+
 	}
 
 	/**
@@ -327,8 +399,8 @@ public class OrderController {
 				orderMall.setOrderStatus(ORDER_CANCEL_STATUS);
 				boolean uptReturn=orderService.updateOrder(orderMall);
 				if(uptReturn){
-					int coin=orderMall.getCoin();
-					User user=userService.getUserInfo(orderMall.getUserId());
+					int coin=order.getCoin();
+					User user=userService.getUserInfo(order.getUserId());
 					user.setChipCount(user.getChipCount()+coin);
 					uptReturn=userService.modifyUser(user)>0;
 				}
@@ -421,9 +493,9 @@ public class OrderController {
 	 * @return
 	 */
 	@RequestMapping(value = "/{orderId}", method = RequestMethod.GET, consumes = "application/json")
-	public Map<String,Object> getOrderDetail(@PathVariable("orderId")String orderId) {
+	public Map<String,String> getOrderDetail(@PathVariable("orderId")String orderId) {
 		//获取订单详情
-		Map<String,Object> orderDetail=orderService.getOrderDetail(orderId);
+		Map<String,String> orderDetail=orderService.getOrderDetail(orderId);
 		return orderDetail;
 	}
 
@@ -467,20 +539,10 @@ public class OrderController {
 				orderMall.setOrderId(outTradeNo);
 				orderMall.setPayTime(new Date());
 				orderMall.setOrderStatus(ORDER_PAYED_STATUS);
-				boolean uptResult=orderService.updateOrder(orderMall);
-				if(uptResult){
-					OrderMall orderOrigin=orderService.getOrder(outTradeNo);
 
-					//扣除金币(未判断金币数量是否足够扣除,前端已做过校验)
-					if(orderOrigin.getBuyType().equals("1")){
-						String userId=orderOrigin.getUserId();
-						User user=userService.getUserInfo(userId);
-						int leftCoin=user.getChipCount()-orderOrigin.getCoin();
-						user.setUserId(userId);
-						user.setChipCount(leftCoin);
-						userService.modifyUser(user);
-					}
-				}
+				//清算订单
+				orderService.settleAccounts(orderMall,outTradeNo);
+
 				/**此处添加自己的业务逻辑代码end**/
 
 				//通知微信服务器已经支付成功

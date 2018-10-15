@@ -21,6 +21,14 @@ public interface IOrderService {
 
 	boolean updateOrder(OrderMall OrderMall);
 
+
+	/**
+	 * 用于微信支付回调结算订单
+	 * @param orderMall
+	 * @return
+     */
+	boolean settleAccounts(OrderMall orderMall,String outTradeNo);
+
 	/**
 	 * 获取订单列表（分页）
 	 * 
@@ -33,7 +41,7 @@ public interface IOrderService {
 
 	OrderMall getOrder(String orderId);
 
-	Map<String,Object> getOrderDetail(String orderId);
+	Map<String,String> getOrderDetail(String orderId);
 
 	/**
 	 * 校验用户是否满足购买条件(无待支付订单；每个物品每周每人只能兑换一次）

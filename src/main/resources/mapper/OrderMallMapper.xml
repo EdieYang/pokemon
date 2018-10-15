@@ -301,7 +301,7 @@
     o.order_id as orderId, o.commodity_id as commodityId, o.commodity_type as commodityType,
     o.user_id as userId, o.address_id as addressId, o.buy_type as buyType, money, coin,
     o.pay_type as payType, pay_time as payTime, o.create_time as createTime,DATE_FORMAT(o.create_time,'%Y-%m-%d %H:%i:%s') as creatTimeFormat, effective_time as effectiveTime,
-    order_status as orderStatus, order_type as orderType, o.del_flag as delFlag,
+    DATE_FORMAT(o.effective_time,'%Y-%m-%d %H:%i:%s')  as effectiveTimeFormat,order_status as orderStatus, order_type as orderType, o.del_flag as delFlag,
     t_c.commodity_name as commodityName,t_c.specification as specification,t_c.carousel_pic1 as carouselPic1,
     t_b.brand_name_chi as brandNameChi,t_b.logo_url as logoUrl
     from order_mall o
@@ -311,6 +311,7 @@
     ON t_c.commodity_brand = t_b.brand_id
     where user_id = #{userId,jdbcType=VARCHAR}
     and o.del_flag = '0'
+    and o.order_type='0'
     order by create_time desc
   </select>
 
@@ -321,12 +322,15 @@
     o.pay_type as payType, pay_time as payTime, o.create_time as createTime,DATE_FORMAT(o.create_time,'%Y-%m-%d %H:%i:%s') as creatTimeFormat, effective_time as effectiveTime,
     DATE_FORMAT(o.effective_time,'%Y-%m-%d %H:%i:%s') as effectiveTimeFormat,order_status as orderStatus, order_type as orderType, o.del_flag as delFlag,
     t_c.commodity_name as commodityName,t_c.specification as specification,t_c.carousel_pic1 as carouselPic1,
-    t_b.brand_name_chi as brandNameChi,t_b.logo_url as logoUrl
+    t_b.brand_name_chi as brandNameChi,t_b.logo_url as logoUrl,usa.receiver_name as receiverName,usa.receiver_phone as receiverPhone,
+    usa.receiver_address as receiverAddress,usa.province as province,usa.city as city,usa.county as county
     from order_mall o
     left join commodity t_c
     on o.commodity_id=t_c.commodity_id
     LEFT JOIN commodity_brand t_b
     ON t_c.commodity_brand = t_b.brand_id
+    left join user_shopping_address usa
+    on o.address_id=usa.id
     where o.order_id = #{orderId,jdbcType=VARCHAR}
     and o.del_flag = '0'
     order by create_time desc

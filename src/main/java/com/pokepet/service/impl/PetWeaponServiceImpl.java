@@ -75,49 +75,33 @@ public class PetWeaponServiceImpl implements IPetWeaponService {
 		JSONObject result = new JSONObject();
 		try {
 			UserPaymentLog log = new UserPaymentLog();
-			switch (payWay) {
-			case "money":// 现金购买
-				// 记录购买信息
+
+			User user = userMapper.selectByPrimaryKey(userId);
+			PetWeapon weapon = petWeaponMapper.selectByPrimaryKey(weaponId);
+			if (weapon.getBuyChip() < 0) {
+				// 装备无法兑换
+				result.put("flag", false);
+				result.put("msg", "装备无法兑换");
+				return result;
+			} else if (user.getChipCount() < weapon.getBuyChip()) {
+				// 碎片不足
+				result.put("flag", false);
+				result.put("msg", "碎片不足");
+				return result;
+
+			} else {
+				user.setChipCount(user.getChipCount() - weapon.getBuyChip());
+				userMapper.updateByPrimaryKeySelective(user);
+
 				log.setUserId(userId);
 				log.setPayWay(payWay);
 				log.setPayDatetime(new Date());
-				log.setAmount(payInfo.getInteger("amount"));
-				log.setPayInfo(payInfo.toJSONString());
+				log.setAmount(weapon.getBuyChip());
 				//记录支付/兑换流水
 				serPaymentLogMapper.insertSelective(log);
-
-				break;
-			case "chip":// 碎片兑换
-				User user = userMapper.selectByPrimaryKey(userId);
-				PetWeapon weapon = petWeaponMapper.selectByPrimaryKey(weaponId);
-				if (weapon.getBuyChip() < 0) {
-					// 装备无法兑换
-					result.put("flag", false);
-					result.put("msg", "装备无法兑换");
-					return result;
-				} else if (user.getChipCount() < weapon.getBuyChip()) {
-					// 碎片不足
-					result.put("flag", false);
-					result.put("msg", "碎片不足");
-					return result;
-
-				} else {
-					user.setChipCount(user.getChipCount() - weapon.getBuyChip());
-					userMapper.updateByPrimaryKeySelective(user);
-					
-					log.setUserId(userId);
-					log.setPayWay(payWay);
-					log.setPayDatetime(new Date());
-					log.setAmount(weapon.getBuyChip());
-					//记录支付/兑换流水
-					serPaymentLogMapper.insertSelective(log);
-				}
-
-				break;
-
-			default:
-				break;
 			}
+
+
 			
 
 			// 绑定装备
