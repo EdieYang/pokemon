@@ -45,7 +45,7 @@ public class PetWeaponServiceImpl implements IPetWeaponService {
 
 	@Autowired
 	PetSupplyConcatMapper petSupplyConcatMapper;
-	
+
 	@Autowired
 	UserPaymentLogMapper serPaymentLogMapper;
 
@@ -102,7 +102,7 @@ public class PetWeaponServiceImpl implements IPetWeaponService {
 			}
 
 
-			
+
 
 			// 绑定装备
 			PetWeaponConcat concat = new PetWeaponConcat();
@@ -126,49 +126,49 @@ public class PetWeaponServiceImpl implements IPetWeaponService {
 		try {
 			UserPaymentLog log = new UserPaymentLog();
 			switch (payWay) {
-			case "money":// 现金购买
-				// 记录购买信息
-				log.setUserId(userId);
-				log.setPayWay(payWay);
-				log.setPayDatetime(new Date());
-				log.setAmount(payInfo.getInteger("amount"));
-				log.setPayInfo(payInfo.toJSONString());
-				//记录支付/兑换流水
-				serPaymentLogMapper.insertSelective(log);
-
-				break;
-			case "chip":// 碎片兑换
-				User user = userMapper.selectByPrimaryKey(userId);
-				PetSupply supply = petSupplyMapper.selectByPrimaryKey(supplyId);
-				if (supply.getBuyChip() < 0) {
-					// 补给无法兑换
-					result.put("flag", false);
-					result.put("msg", "补给无法兑换");
-					return result;
-				} else if (user.getChipCount() < supply.getBuyChip()) {
-					// 碎片不足
-					result.put("flag", false);
-					result.put("msg", "碎片不足");
-					return result;
-
-				} else {
-					user.setChipCount(user.getChipCount() - supply.getBuyChip());
-					userMapper.updateByPrimaryKeySelective(user);
-					
+				case "money":// 现金购买
+					// 记录购买信息
 					log.setUserId(userId);
 					log.setPayWay(payWay);
 					log.setPayDatetime(new Date());
-					log.setAmount(supply.getBuyChip());
+					log.setAmount(payInfo.getInteger("amount"));
+					log.setPayInfo(payInfo.toJSONString());
 					//记录支付/兑换流水
 					serPaymentLogMapper.insertSelective(log);
-				}
 
-				break;
+					break;
+				case "chip":// 碎片兑换
+					User user = userMapper.selectByPrimaryKey(userId);
+					PetSupply supply = petSupplyMapper.selectByPrimaryKey(supplyId);
+					if (supply.getBuyChip() < 0) {
+						// 补给无法兑换
+						result.put("flag", false);
+						result.put("msg", "补给无法兑换");
+						return result;
+					} else if (user.getChipCount() < supply.getBuyChip()) {
+						// 碎片不足
+						result.put("flag", false);
+						result.put("msg", "碎片不足");
+						return result;
 
-			default:
-				break;
+					} else {
+						user.setChipCount(user.getChipCount() - supply.getBuyChip());
+						userMapper.updateByPrimaryKeySelective(user);
+
+						log.setUserId(userId);
+						log.setPayWay(payWay);
+						log.setPayDatetime(new Date());
+						log.setAmount(supply.getBuyChip());
+						//记录支付/兑换流水
+						serPaymentLogMapper.insertSelective(log);
+					}
+
+					break;
+
+				default:
+					break;
 			}
-			
+
 
 			// 绑定补给
 			PetSupplyConcat concat = new PetSupplyConcat();
