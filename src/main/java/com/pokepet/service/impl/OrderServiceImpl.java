@@ -3,6 +3,8 @@ package com.pokepet.service.impl;
 import java.util.List;
 import java.util.Map;
 
+import com.pokepet.model.User;
+import com.pokepet.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +14,7 @@ import com.github.pagehelper.PageInfo;
 import com.pokepet.dao.OrderMallMapper;
 import com.pokepet.model.OrderMall;
 import com.pokepet.service.IOrderService;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Created by Fade on 2018/8/22.
@@ -24,12 +27,27 @@ public class OrderServiceImpl implements IOrderService {
     @Autowired
     private OrderMallMapper orderMallMapper;
 
+	@Autowired
+	private IUserService userService;
+
     @Override
     public List<OrderMall> getOrderListByUserId(String userId) {
         return null;
     }
 
-    @Override
+	@Override
+	public JSONObject selectOrderListByUserId(String userId, int pageNum, int pageSize) {
+		JSONObject result = new JSONObject();
+		PageHelper.startPage(pageNum, pageSize);
+		List<Map<String, String>> list = orderMallMapper.selectOrderList(userId);
+		PageInfo<Map<String, String>> page = new PageInfo<>(list);
+		result.put("page", page.getPageNum());
+		result.put("records", page.getTotal());
+		result.put("rows", list);
+		return result;
+	}
+
+	@Override
     public List<OrderMall> getOrderListByParameter(Map<String, Object> param) {
         return null;
     }
@@ -40,9 +58,29 @@ public class OrderServiceImpl implements IOrderService {
     }
 
     @Override
-    public void updateOrder(OrderMall orderPay) {
-
+    public boolean updateOrder(OrderMall orderPay) {
+		return orderMallMapper.updateByPrimaryKeySelective(orderPay)>0;
     }
+
+	@Transactional
+	@Override
+	public boolean settleAccounts(OrderMall orderMall,String outTradeNo) {
+		boolean uptResult=updateOrder(orderMall);
+		if(uptResult){
+			OrderMall orderOrigin=getOrder(outTradeNo);
+
+			//扣除金币(未判断金币数量是否足够扣除,前端已做过校验)
+			if(orderOrigin.getBuyType().equals("1")){
+				String userId=orderOrigin.getUserId();
+				User user=userService.getUserInfo(userId);
+				int leftCoin=user.getChipCount()-orderOrigin.getCoin();
+				user.setUserId(userId);
+				user.setChipCount(leftCoin);
+				return userService.modifyUser(user)>0;
+			}
+		}
+		return false;
+	}
 
 	@Override
 	public JSONObject getOrderList(Map<String, Object> param, int pageNum, int pageSize) {
@@ -59,6 +97,11 @@ public class OrderServiceImpl implements IOrderService {
 	@Override
 	public OrderMall getOrder(String orderId) {
 		return orderMallMapper.selectByPrimaryKey(orderId);
+	}
+
+	@Override
+	public Map<String, String> getOrderDetail(String orderId) {
+		return orderMallMapper.getOrderDetail(orderId);
 	}
 
 	@Override
