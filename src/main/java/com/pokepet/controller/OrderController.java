@@ -237,7 +237,7 @@ public class OrderController {
 	 * 说明:获取支付接口所需参数
 	 * @param data
 	 * @return
-     */
+	 */
 	@RequestMapping(value = "/payOrder", method = RequestMethod.POST, consumes = "application/json")
 	public JSONObject payOrder(@RequestBody JSONObject data) {
 		JSONObject result = new JSONObject();
@@ -346,8 +346,8 @@ public class OrderController {
 	 * @param search
 	 * @param pageNum
 	 * @param pageSize
-     * @return
-     */
+	 * @return
+	 */
 	@RequestMapping(value = "/orderlist/{userId}", method = RequestMethod.GET, consumes = "application/json")
 	public JSONObject getOrderList(@PathVariable("userId")String userId,@RequestParam("search") String search,
 								   @RequestParam("pageNum") int pageNum, @RequestParam("pageSize") int pageSize) {
@@ -361,8 +361,8 @@ public class OrderController {
 	 * 说明:1.订单未支付情况下可直接取消订单
 	 * 		2.订单已支付,在支付完成30分钟内可以取消订单,超出时间不可进行取消订单操作
 	 * @param orderId
-     * @return
-     */
+	 * @return
+	 */
 	@RequestMapping(value = "/cancel/{orderId}", method = RequestMethod.POST, consumes = "application/json")
 	public JSONObject cancelOrder(@PathVariable("orderId")String orderId,@RequestBody JSONObject data) {
 		JSONObject resultJson=new JSONObject();
@@ -505,7 +505,7 @@ public class OrderController {
 	 * @param request
 	 * @param response
 	 * @throws Exception
-     */
+	 */
 	@RequestMapping(value = "/weixin/callback")
 	public void wxNotify(HttpServletRequest request, HttpServletResponse response) throws Exception{
 		BufferedReader br = new BufferedReader(new InputStreamReader((ServletInputStream)request.getInputStream()));
