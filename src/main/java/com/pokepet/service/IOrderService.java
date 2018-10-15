@@ -15,6 +15,8 @@ public interface IOrderService {
 
 	JSONObject selectOrderListByUserId(String userId,int pageNum, int pageSize);
 
+	JSONObject selectVirtualOrderListByUserId(String userId,int pageNum, int pageSize);
+
 	List<OrderMall> getOrderListByParameter(Map<String, Object> param);
 
 	void createOrder(OrderMall OrderMall);

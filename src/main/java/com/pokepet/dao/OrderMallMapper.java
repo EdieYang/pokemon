@@ -78,5 +78,7 @@ public interface OrderMallMapper {
 
 	List<Map<String,String>> selectOrderList(@Param("userId") String userId);
 
+	List<Map<String,String>> selectVirtualOrderList(@Param("userId") String userId);
+
 	Map<String,String> getOrderDetail(String orderId);
 }
