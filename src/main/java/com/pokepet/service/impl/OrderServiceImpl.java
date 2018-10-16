@@ -48,6 +48,18 @@ public class OrderServiceImpl implements IOrderService {
 	}
 
 	@Override
+	public JSONObject selectVirtualOrderListByUserId(String userId, int pageNum, int pageSize) {
+		JSONObject result = new JSONObject();
+		PageHelper.startPage(pageNum, pageSize);
+		List<Map<String, String>> list = orderMallMapper.selectVirtualOrderList(userId);
+		PageInfo<Map<String, String>> page = new PageInfo<>(list);
+		result.put("page", page.getPageNum());
+		result.put("records", page.getTotal());
+		result.put("rows", list);
+		return result;
+	}
+
+	@Override
     public List<OrderMall> getOrderListByParameter(Map<String, Object> param) {
         return null;
     }

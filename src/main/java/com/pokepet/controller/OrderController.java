@@ -150,7 +150,7 @@ public class OrderController {
 
 
 
-		if(orderType.equals("0")) { //虚拟订单,用于换购真实商品
+		if(orderType.equals("0")) { //用于换购真实商品
 			double money = data.getDoubleValue("money");
 			data.put("money", (int) (money * 100)); //将金额转为分
 			String title = data.getString("commodityName");
@@ -348,13 +348,32 @@ public class OrderController {
 	 * @param pageSize
 	 * @return
 	 */
-	@RequestMapping(value = "/orderlist/{userId}", method = RequestMethod.GET, consumes = "application/json")
+	@RequestMapping(value = "/orderList/{userId}", method = RequestMethod.GET, consumes = "application/json")
 	public JSONObject getOrderList(@PathVariable("userId")String userId,@RequestParam("search") String search,
 								   @RequestParam("pageNum") int pageNum, @RequestParam("pageSize") int pageSize) {
 
 		return orderService.selectOrderListByUserId(userId, pageNum, pageSize);
 
 	}
+
+
+
+	/**
+	 * 获取用户虚拟订单列表数据
+	 * @param userId
+	 * @param search
+	 * @param pageNum
+	 * @param pageSize
+	 * @return
+	 */
+	@RequestMapping(value = "/virtualOrderList/{userId}", method = RequestMethod.GET, consumes = "application/json")
+	public JSONObject getVirtualOrderList(@PathVariable("userId")String userId,@RequestParam("search") String search,
+								   @RequestParam("pageNum") int pageNum, @RequestParam("pageSize") int pageSize) {
+
+		return orderService.selectVirtualOrderListByUserId(userId, pageNum, pageSize);
+
+	}
+
 
 	/**
 	 * 取消订单操作
