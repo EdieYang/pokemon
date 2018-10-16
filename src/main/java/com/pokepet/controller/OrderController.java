@@ -207,7 +207,7 @@ public class OrderController {
 					order.setCreateTime(cal.getTime());// 订单创建时间
 					cal.add(Calendar.MINUTE, EFFECTIVE_MINUTE_FOR_ORDER_TO_PAY);
 					order.setEffectiveTime(cal.getTime());// 订单有效期
-					order.setBuyType("3");//购买方式为换购(现金+金币)
+					order.setBuyType("2");//购买方式为换购(现金+金币)
 					orderService.createOrder(order);
 					payInfo.put("orderId", orderId);
 

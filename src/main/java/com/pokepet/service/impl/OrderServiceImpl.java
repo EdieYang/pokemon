@@ -5,6 +5,8 @@ import java.util.Map;
 
 import com.pokepet.model.User;
 import com.pokepet.service.IUserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +24,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class OrderServiceImpl implements IOrderService {
+
+
+	private static final Logger log= LoggerFactory.getLogger(OrderServiceImpl.class);
 
 
     @Autowired
@@ -78,11 +83,11 @@ public class OrderServiceImpl implements IOrderService {
 	@Override
 	public boolean settleAccounts(OrderMall orderMall,String outTradeNo) {
 		boolean uptResult=updateOrder(orderMall);
+		log.info("订单清算返回更新结果=====>"+uptResult);
 		if(uptResult){
 			OrderMall orderOrigin=getOrder(outTradeNo);
-
 			//扣除金币(未判断金币数量是否足够扣除,前端已做过校验)
-			if(orderOrigin.getBuyType().equals("1")){
+			if(orderOrigin.getBuyType().equals("2")){
 				String userId=orderOrigin.getUserId();
 				User user=userService.getUserInfo(userId);
 				int leftCoin=user.getChipCount()-orderOrigin.getCoin();
