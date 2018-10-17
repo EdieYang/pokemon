@@ -171,24 +171,55 @@ public class RecordServiceImpl implements IRecordService {
     @Override
 	public JSONObject getRecordList(Map<String, Object> param, int pageNum, int pageSize) {
 		JSONObject result = new JSONObject();
-		PageHelper.startPage(pageNum, pageSize);
-		List<Map<String, Object>> list = userRecordMapper.selectRecordList(param);
-		PageInfo<Map<String, Object>> page = new PageInfo<Map<String, Object>>(list);
-		result.put("page", page.getPageNum());
-		result.put("records", page.getTotal());
-		result.put("rows", list);
+		if(-1 != pageSize){
+			//分页
+			PageHelper.startPage(pageNum, pageSize);
+			List<Map<String, Object>> list = userRecordMapper.selectRecordList(param);
+			PageInfo<Map<String, Object>> page = new PageInfo<Map<String, Object>>(list);
+			result.put("page", page.getPageNum());
+			result.put("records", page.getTotal());
+			result.put("rows", list);
+		}else{
+			List<Map<String, Object>> list = userRecordMapper.selectRecordList(param);
+			result.put("rows", list);
+		}
 		return result;
 	}
 
 	@Override
 	public JSONObject getLongRecordList(Map<String, Object> param, int pageNum, int pageSize) {
 		JSONObject result = new JSONObject();
-		PageHelper.startPage(pageNum, pageSize);
-		List<Map<String, Object>> list = userLongRecordMapper.selectLongRecordList(param);
-		PageInfo<Map<String, Object>> page = new PageInfo<Map<String, Object>>(list);
-		result.put("page", page.getPageNum());
-		result.put("records", page.getTotal());
-		result.put("rows", list);
+		if(-1 != pageSize){
+			PageHelper.startPage(pageNum, pageSize);
+			List<Map<String, Object>> list = userLongRecordMapper.selectLongRecordList(param);
+			PageInfo<Map<String, Object>> page = new PageInfo<Map<String, Object>>(list);
+			result.put("page", page.getPageNum());
+			result.put("records", page.getTotal());
+			result.put("rows", list);
+		}else{
+			List<Map<String, Object>> list = userLongRecordMapper.selectLongRecordList(param);
+			result.put("rows", list);
+		}
 		return result;
+	}
+
+	@Override
+	public UserLongRecord getLongRecord(String recordId) {
+		return userLongRecordMapper.selectByPrimaryKey(recordId);
+	}
+
+	@Override
+	public boolean uptLongRecord(UserLongRecord record) {
+		return userLongRecordMapper.updateByPrimaryKeySelective(record) > 0;
+	}
+
+	@Override
+	public UserRecord getShortRecord(String recordId) {
+		return userRecordMapper.selectByPrimaryKey(recordId);
+	}
+
+	@Override
+	public boolean uptShortRecord(UserRecord record) {
+		return userRecordMapper.updateByPrimaryKeySelective(record) > 0;
 	}
 }

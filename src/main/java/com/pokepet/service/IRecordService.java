@@ -65,4 +65,32 @@ public interface IRecordService {
      * @return
      */
     JSONObject getLongRecordList(Map<String, Object> param, int pageNum, int pageSize);
+    
+    /**
+     * 获取长文
+     * @param recordId
+     * @return
+     */
+    UserLongRecord getLongRecord(String recordId);
+    
+    /**
+     * 更新长文
+     * @param record
+     * @return
+     */
+    boolean uptLongRecord(UserLongRecord record);
+    
+    /**
+     * 获取短文
+     * @param recordId
+     * @return
+     */
+    UserRecord getShortRecord(String recordId);
+    
+    /**
+     * 更新短文
+     * @param record
+     * @return
+     */
+    boolean uptShortRecord(UserRecord record);
 }

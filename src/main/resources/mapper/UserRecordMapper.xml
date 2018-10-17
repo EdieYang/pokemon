@@ -326,6 +326,13 @@
 	<if test="recordType != null and recordType != ''">
 		AND t_r.type = #{recordType,jdbcType=VARCHAR}
 	</if>
+	<if test="city != null and city != ''">
+		AND t_r.city = #{city,jdbcType=VARCHAR}
+	</if>
+	<if test="dayLimit != -1">
+		AND DATEDIFF(CURDATE(),t_r.create_time) &lt;= ${dayLimit,jdbcType=INTEGER}
+	</if>
+	
 	ORDER BY t_r.create_time DESC
   </select>
 
