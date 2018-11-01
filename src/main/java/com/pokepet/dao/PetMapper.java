@@ -47,5 +47,9 @@ public interface PetMapper {
 	List<Pet> getPetListByUserId(String userId);
 
 	String getMaxPetNo(@Param("petIdStart") String petIdStart,@Param("year") String year);
-	
+
+	int updatePetsEnergyToOneHundredPercent();
+
+	int countAllPets();
+
 }

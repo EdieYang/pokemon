@@ -103,12 +103,12 @@ public class RecordServiceImpl implements IRecordService {
     }
 
     @Override
-    public Map<String, Object> selectRecordByRecordId(String recordId) {
-        return userRecordHandlerMapper.selectRecordByRecordId(recordId);
+    public Map<String, Object> selectRecordByRecordId(String recordId,String userId) {
+        return userRecordHandlerMapper.selectRecordByRecordId(recordId,userId);
     }
 
     @Override
-    public boolean updateRecordLike(String userId, String recordId) {
+    public boolean updateRecordLike(String userId, String recordId,String recordType) {
         RecordLike recordLike=recordLikeMapper.selectByUserIdAndRecordId(userId,recordId);
         if(recordLike!=null){
             String delFlag=recordLike.getDelFlag();
@@ -123,11 +123,12 @@ public class RecordServiceImpl implements IRecordService {
             recordLike.setUserId(userId);
             recordLike.setRecordId(recordId);
             recordLike.setDelFlag("0");
+            recordLike.setRecordType(recordType);
             recordLike.setId(UUID.randomUUID().toString().replace("-",""));
             recordLike.setCreateTime(new Date());
             return recordLikeMapper.insertSelective(recordLike)>0;
         }
-        return recordLikeMapper.updateByPrimaryKey(recordLike)>0;
+        return recordLikeMapper.updateByPrimaryKeySelective(recordLike)>0;
     }
 
     @Override
@@ -156,9 +157,9 @@ public class RecordServiceImpl implements IRecordService {
 
 
     @Override
-    public List<Map<String, Object>> selectCharityList(int pageNum, int pageSize,String userId) {
+    public List<Map<String, Object>> selectCharityList(int pageNum, int pageSize,String userId,String city,int dayLimit) {
         PageHelper.startPage(pageNum,pageSize);
-        return userRecordHandlerMapper.selectCharityList(userId);
+        return userRecordHandlerMapper.selectCharityList(userId,city,dayLimit);
     }
 
     @Override

@@ -153,9 +153,10 @@ public class PetManageController {
 	 * @date 2018年5月24日
 	 */
 	@PostMapping
-	@RequestMapping(value = "",method = RequestMethod.PUT,consumes="application/json")
-    public boolean uptPet(@RequestBody Pet pet){
-        return petManageService.uptPet(pet);
+	@RequestMapping(value = "/modify",method = RequestMethod.POST,consumes="application/json")
+    public boolean uptPet(@RequestBody JSONObject data){
+		Pet pet=JSONObject.toJavaObject(data, Pet.class);
+		return petManageService.uptPet(pet);
     }
 	
 	/**

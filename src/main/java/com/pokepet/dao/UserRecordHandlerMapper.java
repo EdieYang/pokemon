@@ -23,13 +23,13 @@ public interface UserRecordHandlerMapper {
 
     List<Map<String,Object>> selectRecommendList(String userId);
 
-    List<Map<String,Object>> selectCharityList(String userId);
+    List<Map<String,Object>> selectCharityList(@Param("userId") String userId, @Param("city") String city,@Param("dayLimit") int dayLimit);
 
     List<Map<String,Object>> getPetRecordList(String petId);
 
     Map<String,Object> selectLongRecordByRecordId(@Param("recordId") String recordId, @Param("userId") String userId);
 
-    Map<String,Object> selectRecordByRecordId(String recordId);
+    Map<String,Object> selectRecordByRecordId(@Param("recordId") String recordId,@Param("userId") String userId);
 
 
 }

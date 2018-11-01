@@ -67,6 +67,7 @@ public class FileController {
 				break;
 			case "album" :
 				objName+="/pet/album/"+petId+"/"+ UUID.randomUUID();
+				break;
 			case "record" :
 				objName+="/pet/record/"+petId+"/"+UUID.randomUUID();
 				break;

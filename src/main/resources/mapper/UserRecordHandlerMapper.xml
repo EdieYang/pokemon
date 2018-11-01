@@ -406,6 +406,12 @@
         LEFT JOIN user u
         ON ur.user_id=u.user_id
         WHERE type = '3' and check_state='1' and ur.del_flag='0'
+        <if test="city != null and city != ''">
+            AND city = #{city,jdbcType=VARCHAR}
+        </if>
+        <if test="dayLimit != -1">
+            AND DATEDIFF(CURDATE(),ur.create_time) &lt;= #{dayLimit,jdbcType=INTEGER}
+        </if>
         )AS allunion
         ORDER BY createtime DESC
     </select>
@@ -469,7 +475,15 @@
               location,
               detail_location AS detailLocation,
               lat,
-              lng
+              lng,
+              (SELECT count(1) from record_like rl where rl.record_id=#{recordId} and rl.del_flag='0') as likeNumber,
+              (SELECT count(1) from record_like rl2 where rl2.record_id=#{recordId} and rl2.user_id=#{userId} and rl2.del_flag='0') as likeOrNot,
+              (SELECT count(1) from record_collect rc where rc.record_id=#{recordId} and rc.del_flag='0') as collectNumber,
+              (SELECT count(1) from record_collect rc2 where rc2.record_id=#{recordId} and rc2.user_id=#{userId} and rc2.del_flag='0') as collectOrNot,
+              (SELECT count(1) from record_share rs where rs.record_id=#{recordId} and rs.del_flag='0') as shareNumber,
+              (SELECT count(1) from record_share rs2 where rs2.record_id=#{recordId} and rs2.user_id=#{userId} and rs2.del_flag='0') as shareOrNot,
+              (SELECT count(1) from user_follow uf where uf.follow_user_id=#{userId} and uf.del_flag='0') as userFollowOrNot
+
           FROM user_record ur
           LEFT JOIN user u
           ON ur.user_id=u.user_id

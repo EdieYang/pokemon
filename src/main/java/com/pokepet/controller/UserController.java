@@ -98,8 +98,8 @@ public class UserController {
 	}
 
 	@RequestMapping(value = "/{userId}/follow", method = RequestMethod.POST, consumes = "application/json")
-	public JSONObject followUser(@PathVariable String userId, HttpServletRequest request) {
-		String followUserId = request.getParameter("followUserId");
+	public JSONObject followUser(@PathVariable String userId,@RequestBody JSONObject data) {
+		String followUserId = data.getString("followUserId");
 		Map<String, String> map = new HashMap<>();
 		map.put("userId", userId);
 		map.put("followUserId", followUserId);
@@ -111,8 +111,8 @@ public class UserController {
 	}
 
 	@RequestMapping(value = "/{userId}/cancelFollow", method = RequestMethod.POST, consumes = "application/json")
-	public JSONObject cancelFollowUser(@PathVariable String userId, HttpServletRequest request) {
-		String followUserId = request.getParameter("followUserId");
+	public JSONObject cancelFollowUser(@PathVariable String userId,@RequestBody JSONObject data) {
+		String followUserId = data.getString("followUserId");
 		Map<String, String> map = new HashMap<>();
 		map.put("userId", userId);
 		map.put("followUserId", followUserId);

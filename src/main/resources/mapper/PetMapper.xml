@@ -253,7 +253,24 @@
       AND t_u.user_id = #{userId,jdbcType=VARCHAR}
   </select>
   
-  	<select id="getMaxPetNo" parameterType="java.lang.String" resultType="java.lang.String">
-		SELECT MAX(SUBSTR(pet_id,11,6)) FROM pet WHERE pet_id LIKE "${petIdStart}%" AND SUBSTR(pet_id,7,2) = #{year,jdbcType=VARCHAR};
-	</select>
+  <select id="getMaxPetNo" parameterType="java.lang.String" resultType="java.lang.String">
+    SELECT MAX(SUBSTR(pet_id,11,6)) FROM pet WHERE pet_id LIKE "${petIdStart}%" AND SUBSTR(pet_id,7,2) = #{year,jdbcType=VARCHAR};
+  </select>
+
+  <update id="updatePetsEnergyToOneHundredPercent">
+
+    UPDATE pet
+    set energy_coin =100
+    WHERE del_flag='0'
+
+  </update>
+
+  <select id="countAllPets">
+
+    SELECT count(1)
+    FROM pet
+    WHERE del_flag='0'
+
+  </select>
+
 </mapper>

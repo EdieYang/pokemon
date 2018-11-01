@@ -26,7 +26,7 @@ public class ShoppingAddressServiceImpl implements IShoppingAddressService {
 	public boolean saveAddress(UserShoppingAddress address) {
 		boolean FLAG = false;
 		try {
-			if("1".equals(address.getDefaultFlag())){ //如果此地址是默认地址,先将其他地址的默认地址属性重置为0
+			if("0".equals(address.getDefaultFlag())){ //如果此地址是默认地址,先将其他地址的默认地址属性重置为1
 				userShoppingAddressMapper.resetDefultAddress(address.getUserId());
 			}
 

@@ -1,7 +1,10 @@
 package com.pokepet.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import com.pokepet.service.IPropertyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,6 +31,19 @@ public class ExploreController {
 
 	@Autowired
 	IExploreService exploreService;
+
+	@Autowired
+	IPropertyService propertyService;
+
+	@RequestMapping(value = "/getExploreSwitchStatus", method = RequestMethod.GET, consumes = "application/json")
+	public Map<String,String>  getExploreSwitchStatus() {
+		Map<String,Object> reqMap=new HashMap<>();
+		reqMap.put("confType","1");
+		Map<String,String> map=propertyService.getPropertyStatus(reqMap);
+		map.put("status",map.get("switchStatus"));
+		return map;
+	}
+
 
 	@RequestMapping(value = "/getExplorePoint", method = RequestMethod.POST, consumes = "application/json")
 	public JSONArray getExplorePoint(@RequestBody JSONObject data) {

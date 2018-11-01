@@ -206,9 +206,11 @@ public class RecordController {
 
         int pageNum=request.getParameter("pageNum").equals(null)?0:Integer.parseInt(request.getParameter("pageNum"));
         int pageSize=request.getParameter("pageSize").equals(null)?0:Integer.parseInt(request.getParameter("pageSize"));
+        String city = request.getParameter("city");
+        int dayLimit = null == request.getParameter("dayLimit") ? -1 : Integer.parseInt(request.getParameter("dayLimit"));
         String userId=request.getParameter("userId");
 
-        List<Map<String,Object>> records=recordService.selectCharityList(pageNum,pageSize,userId);
+        List<Map<String,Object>> records=recordService.selectCharityList(pageNum,pageSize,userId,city,dayLimit);
         for(Map<String, Object> petRecord:records){
 
             String type= (String) petRecord.get("type");
@@ -407,10 +409,10 @@ public class RecordController {
                 recordDetail=recordService.selectLongRecordByRecordId(recordId,userId);
                 break;
             case "2": //短文截取文字内容
-                recordDetail=recordService.selectRecordByRecordId(recordId);
+                recordDetail=recordService.selectRecordByRecordId(recordId,userId);
                 break;
             case "3":
-                recordDetail=recordService.selectRecordByRecordId(recordId);
+                recordDetail=recordService.selectRecordByRecordId(recordId,userId);
                 break;
         }
 
@@ -513,7 +515,8 @@ public class RecordController {
     public boolean recordLike(HttpServletRequest request){
         String userId=request.getParameter("userId");
         String recordId=request.getParameter("recordId");
-        boolean flag=recordService.updateRecordLike(userId,recordId);
+        String recordType=request.getParameter("recordType");
+        boolean flag=recordService.updateRecordLike(userId,recordId,recordType);
         return flag;
     }
 

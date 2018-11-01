@@ -92,7 +92,7 @@ public class OrderServiceImpl implements IOrderService {
 				OrderMall orderOrigin = getOrder(outTradeNo);
 
 				// 扣除金币(未判断金币数量是否足够扣除,前端已做过校验)
-				if (orderOrigin.getBuyType().equals("1")) {
+				if (orderOrigin.getBuyType().equals("2")) {
 					String userId = orderOrigin.getUserId();
 					User user = userService.getUserInfo(userId);
 					int leftCoin = user.getChipCount() - orderOrigin.getCoin();

@@ -1,10 +1,11 @@
 package com.pokepet.handler;
 
 import com.alibaba.fastjson.JSONObject;
-import com.pokepet.dao.MessageQueueMapper;
-import com.pokepet.dao.UserPetMapper;
+import com.pokepet.dao.*;
 import com.pokepet.model.MessageQueue;
+import com.pokepet.model.UserLongRecord;
 import com.pokepet.model.UserPet;
+import com.pokepet.model.UserRecord;
 import org.apache.commons.lang.StringUtils;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -29,6 +30,13 @@ public class MessageAspect {
     @Autowired
     private MessageQueueMapper messageQueueMapper;
 
+    @Autowired
+    private UserRecordMapper userRecordMapper;
+
+    @Autowired
+    private UserLongRecordMapper userLongRecordMapper;
+
+
     private static final Logger log= LoggerFactory.getLogger(MessageAspect.class);
 
     //关注宠物切点
@@ -41,7 +49,7 @@ public class MessageAspect {
 
     //用户点赞切单
     @Pointcut("execution(public * com.pokepet.controller.RecordController.recordLike(..))")
-    public void UserLikePointCut(){}
+    public void recordLikePointCut(){}
 
     @Around("followPetPointCut()")
     public Object aroundFollowPetPointCut(ProceedingJoinPoint pjp) {
@@ -70,19 +78,17 @@ public class MessageAspect {
                     messageQueue.setSenderId(userId);
                     messageQueue.setReceiverId(messageNeedInfo.get("userId"));
                     messageQueue.setType("0");
+                    messageQueue.setTargetId(petId);
                     int messageCount=messageQueueMapper.selectMessageCount(messageQueue);
                     if(messageCount==0){
                         JSONObject contentJson=new JSONObject();
                         contentJson.put("photoPath",messageNeedInfo.get("photoPath"));
                         contentJson.put("content",userName+"觉得"+petName+"很可爱并赞了它");
 
-                        messageQueue.setSenderId(userId);
-                        messageQueue.setReceiverId(messageNeedInfo.get("userId"));
                         messageQueue.setMessageContent(contentJson.toJSONString());
                         messageQueue.setCreateTime(new Date());
                         messageQueue.setMessageId(UUID.randomUUID().toString().replace("-",""));
                         messageQueue.setReadState("0");
-                        messageQueue.setType("0");
                         messageQueueMapper.insertSelective(messageQueue);
                     }
 
@@ -123,6 +129,7 @@ public class MessageAspect {
 
                     messageQueue.setSenderId(followUserId);
                     messageQueue.setReceiverId(userId);
+                    messageQueue.setTargetId(userId);
                     messageQueue.setType("1");
                     int messageCount=messageQueueMapper.selectMessageCount(messageQueue);
                     if(messageCount==0){
@@ -130,13 +137,10 @@ public class MessageAspect {
                         contentJson.put("photoPath",photoPath);
                         contentJson.put("content",userName+" 觉得你很棒并开始关注你了");
 
-                        messageQueue.setSenderId(followUserId);
-                        messageQueue.setReceiverId(userId);
                         messageQueue.setMessageContent(contentJson.toJSONString());
                         messageQueue.setCreateTime(new Date());
                         messageQueue.setMessageId(UUID.randomUUID().toString().replace("-",""));
                         messageQueue.setReadState("0");
-                        messageQueue.setType("1");
                         messageQueueMapper.insertSelective(messageQueue);
                     }
 
@@ -155,15 +159,15 @@ public class MessageAspect {
 
 
 
-    @Around("(UserLikePointCut())")
+    @Around("(recordLikePointCut())")
     public Object aroundUserLikePointCut(ProceedingJoinPoint pjp) {
         log.info("{MessageAspect} =>followUser start.....");
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = attributes.getRequest();
         // 记录下请求内容
-        String followUserId=request.getParameter("followUserId");
-        String userId= (String) pjp.getArgs()[0];
-
+        String popLikeUserId=request.getParameter("userId");
+        String recordId= request.getParameter("recordId");
+        String recordType=request.getParameter("recordType");
 
         try {
             Object o =  pjp.proceed();
@@ -171,29 +175,39 @@ public class MessageAspect {
             if(o.equals(true)){
                 //加入消息队列
                 MessageQueue messageQueue=new MessageQueue();
-                messageQueue.setSenderId(followUserId);
-                if(StringUtils.isNotEmpty(userId)){
+                messageQueue.setSenderId(popLikeUserId);
+                if(StringUtils.isNotEmpty(popLikeUserId)){
 
-                    Map<String,String> messageNeedInfo=messageQueueMapper.getMessageNeedFollowUserInfo(followUserId);
+                    Map<String,String> messageNeedInfo=messageQueueMapper.getMessageNeedFollowUserInfo(popLikeUserId);
                     String photoPath=messageNeedInfo.get("photoPath");
                     String userName=messageNeedInfo.get("userName");
+                    String receiverUserId="";
+                    String recordTitle="";
+                    if(recordType.equals("0")||recordType.equals("1") ){
+                        UserLongRecord record=userLongRecordMapper.selectByPrimaryKey(recordId);
+                        receiverUserId=record.getUserId();
+                        recordTitle=record.getTitle();
+                    }else{
+                        UserRecord record=userRecordMapper.selectByPrimaryKey(recordId);
+                        receiverUserId=record.getUserId();
+                        recordTitle=record.getTitle();
 
-                    messageQueue.setSenderId(followUserId);
-                    messageQueue.setReceiverId(userId);
-                    messageQueue.setType("1");
+                    }
+
+                    messageQueue.setSenderId(popLikeUserId);
+                    messageQueue.setReceiverId(receiverUserId);
+                    messageQueue.setTargetId(recordId);
+                    messageQueue.setType("2");
                     int messageCount=messageQueueMapper.selectMessageCount(messageQueue);
                     if(messageCount==0){
                         JSONObject contentJson=new JSONObject();
                         contentJson.put("photoPath",photoPath);
-                        contentJson.put("content",userName+" 觉得你很棒并开始关注你了");
+                        contentJson.put("content",userName+"点赞了 "+recordTitle);
 
-                        messageQueue.setSenderId(followUserId);
-                        messageQueue.setReceiverId(userId);
                         messageQueue.setMessageContent(contentJson.toJSONString());
                         messageQueue.setCreateTime(new Date());
                         messageQueue.setMessageId(UUID.randomUUID().toString().replace("-",""));
                         messageQueue.setReadState("0");
-                        messageQueue.setType("1");
                         messageQueueMapper.insertSelective(messageQueue);
                     }
 

@@ -29,5 +29,9 @@ public interface IPetManageService {
 	
 	boolean bindlingPetToUser(String petId,String userId);
 
+	int updatePetsEnergyToOneHundredPercent();
+
+	int countAllPets();
+
 
 }

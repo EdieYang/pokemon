@@ -114,7 +114,7 @@ public class ExploreServiceImpl implements IExploreService {
 				discountEnergyCoin = 20;
 
 				weaponRate = 3;
-				supplyRate = 3;
+				supplyRate = 6;
 
 				break;
 

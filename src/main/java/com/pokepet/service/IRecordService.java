@@ -34,15 +34,15 @@ public interface IRecordService {
 
     List<Map<String,Object>> selectRecommendList(int pageNum,int pageSize,String userId);
 
-    List<Map<String,Object>> selectCharityList(int pageNum,int pageSize,String userId);
+    List<Map<String,Object>> selectCharityList(int pageNum,int pageSize,String userId,String city,int dayLimit);
 
     List<Map<String,Object>> getPetRecordList(int pageNum,int pageSize,String petId);
 
     Map<String,Object> selectLongRecordByRecordId(String recordId,String userId);
 
-    Map<String,Object> selectRecordByRecordId(String recordId);
+    Map<String,Object> selectRecordByRecordId(String recordId,String userId);
 
-    boolean updateRecordLike(String userId,String recordId);
+    boolean updateRecordLike(String userId,String recordId,String recordType);
 
     boolean updateRecordCollect(String userId,String recordId);
 

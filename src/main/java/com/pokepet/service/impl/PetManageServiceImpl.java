@@ -91,4 +91,15 @@ public class PetManageServiceImpl implements IPetManageService{
 		userPet.setDelFlag("0");
 		return userPetMapper.insertSelective(userPet) == 1;
 	}
+
+	@Override
+	public int updatePetsEnergyToOneHundredPercent() {
+		int effectedRows=petMapper.updatePetsEnergyToOneHundredPercent();
+		return effectedRows;
+	}
+
+	@Override
+	public int countAllPets() {
+		return petMapper.countAllPets();
+	}
 }
