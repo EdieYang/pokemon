@@ -1,5 +1,7 @@
 package com.pokepet.service;
 
+import com.pokepet.model.MessageQueue;
+
 import java.util.List;
 import java.util.Map;
 
@@ -10,4 +12,7 @@ public interface IMessageService {
 
     List<Map<String,String>> getMessageList(int pageNum,int pageSize,String userId);
 
+    int getMessageCount(MessageQueue messageQueue);
+
+    int updateMessageToRead(String userId);
 }

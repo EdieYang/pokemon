@@ -1,6 +1,7 @@
 package com.pokepet.controller;
 
 import com.pokepet.annotation.ResponseResult;
+import com.pokepet.model.MessageQueue;
 import com.pokepet.service.IMessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -29,6 +30,23 @@ public class MessageController {
         return messagelist;
     }
 
+    @RequestMapping(value = "/messageCount/{userId}",method = RequestMethod.GET)
+    public int getMessageCount(@PathVariable("userId")String userId){
+
+        MessageQueue messageQueue=new MessageQueue();
+        messageQueue.setReadState(userId);
+        messageQueue.setReadState("0");
+        int count= IMessageService.getMessageCount(messageQueue);
+        return count;
+    }
+
+
+
+    @RequestMapping(value = "/messageCount/{userId}",method = RequestMethod.POST)
+    public int updateMessageCount(@PathVariable("userId")String userId){
+        int count= IMessageService.updateMessageToRead(userId);
+        return count;
+    }
 
 
 }

@@ -2,6 +2,7 @@ package com.pokepet.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.pokepet.dao.MessageQueueMapper;
+import com.pokepet.model.MessageQueue;
 import com.pokepet.service.IMessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,4 +26,16 @@ public class MessageServiceImpl implements IMessageService {
         PageHelper.startPage(pageNum,pageSize);
         return messageQueueMapper.getMessageList(userId);
     }
+
+    @Override
+    public int getMessageCount(MessageQueue messageQueue) {
+        return messageQueueMapper.selectMessageCount(messageQueue);
+    }
+
+    @Override
+    public int updateMessageToRead(String userId) {
+        return messageQueueMapper.updateMessageToRead(userId);
+    }
+
+
 }

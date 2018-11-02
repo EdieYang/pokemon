@@ -193,10 +193,22 @@
   <select id="selectMessageCount" parameterType="com.pokepet.model.MessageQueue" resultType="java.lang.Integer">
     SELECT  count(1)
     FROM message_queue
-    where receiver_id = #{receiverId}
+    where 1=1
+    <if test="receiverId != null">
+    AND receiver_id = #{receiverId}
+    </if>
+    <if test="senderId != null">
     AND sender_id=#{senderId}
+    </if>
+    <if test="type != null">
     AND type=#{type}
+    </if>
+    <if test="targetId != null">
     AND target_id=#{targetId}
+    </if>
+    <if test="readState != null">
+      AND read_state=#{readState}
+    </if>
 
   </select>
 
@@ -208,6 +220,13 @@
 
 
   </select>
+
+  <update id="updateMessageToRead" parameterType="java.lang.String">
+    update message_queue
+    set read_state = "1"
+    WHERE read_state = "0"
+    AND receiver_id=#{userId}
+  </update>
 
 
 </mapper>

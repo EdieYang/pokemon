@@ -62,4 +62,6 @@ public interface MessageQueueMapper {
     Map<String,String> getMessageNeedFollowUserInfo(String followUserId);
 
     int selectMessageCount(MessageQueue messageQueue);
+
+    int updateMessageToRead(String userId);
 }
