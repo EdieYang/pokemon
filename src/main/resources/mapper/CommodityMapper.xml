@@ -484,7 +484,7 @@
 		t_c.sale_price AS salePrice,
 		t_c.conversion_coin AS conversionCoin,
 		t_c.conversion_price AS conversionPrice,
-		t_c.inventory,
+		t_c.inventory-IFNULL(t_order.orderCount,0) AS inventory,
 		t_c.on_sale AS onSale,
 		CASE t_c.on_sale
 		WHEN '0' THEN '在售'
@@ -509,11 +509,22 @@
 		  COUNT(1) AS saleCount 
 		FROM
 		  order_mall 
-		WHERE order_status = '0' 
+		WHERE order_status in ('1','2','3') 
 		  AND commodity_type = '0' 
 		  AND del_flag = '0' 
 		GROUP BY commodity_id ) t_sale
-	  ON t_c.commodity_id = t_sale.commodity_id
+		ON t_c.commodity_id = t_sale.commodity_id
+	  LEFT JOIN (SELECT 
+		  commodity_id,
+		  COUNT(1) AS orderCount 
+		FROM
+		  order_mall 
+		WHERE order_status = '0' 
+		  AND commodity_type = '0' 
+		  AND effective_time > NOW() 
+		  AND del_flag = '0' 
+		GROUP BY commodity_id ) t_order
+	  ON t_c.commodity_id = t_order.commodity_id
 	WHERE t_c.del_flag = '0' 
     <if test="search != null and search != ''">
     	AND (t_c.commodity_name LIKE BINARY CONCAT('%',#{search},'%')
@@ -550,7 +561,7 @@
 		t_c.sale_price AS salePrice,
 		t_c.conversion_coin AS conversionCoin,
 		t_c.conversion_price AS conversionPrice,
-		t_c.inventory,
+		t_c.inventory-IFNULL(t_order.orderCount,0) AS inventory,
 		t_c.on_sale AS onSale,
 		CASE t_c.on_sale
 		WHEN '0' THEN '在售'
@@ -581,11 +592,22 @@
 		  COUNT(1) AS saleCount 
 		FROM
 		  order_mall 
-		WHERE order_status = '0' 
+		WHERE order_status in ('1','2','3') 
 		  AND commodity_type = '0' 
 		  AND del_flag = '0' 
 		GROUP BY commodity_id ) t_sale
 	  ON t_c.commodity_id = t_sale.commodity_id
+	  LEFT JOIN (SELECT 
+		  commodity_id,
+		  COUNT(1) AS orderCount 
+		FROM
+		  order_mall 
+		WHERE order_status = '0' 
+		  AND commodity_type = '0' 
+		  AND effective_time > NOW() 
+		  AND del_flag = '0' 
+		GROUP BY commodity_id ) t_order
+	  ON t_c.commodity_id = t_order.commodity_id
 	WHERE t_c.commodity_id = #{commodityId,jdbcType=VARCHAR}
   </select>
 </mapper>
