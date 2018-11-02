@@ -148,6 +148,7 @@ public class OrderController {
 				order.setPayType("0");//线上付款
 				order.setCreateTime(new Date());
 				order.setPayTime(new Date());
+				order.setCommodityType("1");
 				orderService.createOrder(order);
 				result.put("status", 200);
 				result.put("msg", "兑换成功!");
@@ -222,6 +223,7 @@ public class OrderController {
 					cal.add(Calendar.MINUTE, EFFECTIVE_MINUTE_FOR_ORDER_TO_PAY);
 					order.setEffectiveTime(cal.getTime());// 订单有效期
 					order.setBuyType("2");//购买方式为换购(现金+金币)
+					order.setCommodityType("0");
 					orderService.createOrder(order);
 					payInfo.put("orderId", orderId);
 
