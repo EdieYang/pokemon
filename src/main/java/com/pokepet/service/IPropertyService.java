@@ -7,6 +7,6 @@ import java.util.Map;
  */
 public interface IPropertyService {
 
-    Map<String,String> getPropertyStatus(Map<String,Object> map);
+    Map<String,Object> getPropertyStatus(Map<String,Object> map);
 
 }

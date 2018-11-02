@@ -19,7 +19,7 @@ public class PropertyServiceImpl implements IPropertyService {
 
 
     @Override
-    public Map<String, String> getPropertyStatus(Map<String, Object> map) {
+    public Map<String, Object> getPropertyStatus(Map<String, Object> map) {
         return propertiesConfigMapper.getPropertyStatus(map);
     }
 }

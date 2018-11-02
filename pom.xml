@@ -4,11 +4,14 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.pokepet</groupId>
+	<!--<artifactId>pokemontest</artifactId>-->
 	<artifactId>pokemon</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
+	<!--<name>pokemontest</name>-->
 	<name>pokemon</name>
+
 	<description>pokeplatform API </description>
 
 	<parent>
