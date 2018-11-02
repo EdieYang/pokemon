@@ -20,6 +20,7 @@ import com.pokepet.dao.PetWeaponConcatMapper;
 import com.pokepet.dao.PetWeaponMapper;
 import com.pokepet.dao.UserExploreHistoryMapper;
 import com.pokepet.dao.UserMapper;
+import com.pokepet.enums.PetLevelEnum;
 import com.pokepet.model.ExplorePoint;
 import com.pokepet.model.GPSLocation;
 import com.pokepet.model.Pet;
@@ -87,6 +88,7 @@ public class ExploreServiceImpl implements IExploreService {
 		JSONObject reward = new JSONObject();
 		List<PetWeapon> newWeaponList = new ArrayList<PetWeapon>();
 		List<PetSupply> newSupplyList = new ArrayList<PetSupply>();
+		JSONObject jsLevel = new JSONObject();
 		//
 		try {
 			// 一次探索装备损耗度
@@ -219,13 +221,45 @@ public class ExploreServiceImpl implements IExploreService {
 			// 扣除活力值
 			Pet pet = petMapper.selectByPrimaryKey(petId);
 			pet.setEnergyCoin(pet.getEnergyCoin() - discountEnergyCoin);
-			petMapper.updateByPrimaryKeySelective(pet);
-			reward.put("energyCoin",discountEnergyCoin);
+			
+			// 获得经验
+			int walkExp = 100;
+			int petLevel = pet.getLevel();
+			int petExp = pet.getExp();
+			while (walkExp >= 0) {
+				
+				int maxExp = PetLevelEnum.getValue(petLevel + 1);// 到达下一级的经验线
+				if (petExp + walkExp >= maxExp) {
+
+					petLevel++;// level up！
+					walkExp = petExp + walkExp - maxExp;// 计算剩余经验值
+					petExp = 0;// 下一级初始经验值
+
+				} else {
+
+					jsLevel.put("startLevel", pet.getLevel());
+					jsLevel.put("endLevel", petLevel);
+					jsLevel.put("exp", 100);
+					jsLevel.put("maxExp", maxExp);
+					jsLevel.put("startExp", petExp);
+					jsLevel.put("endExp", petExp + walkExp);
+
+					petExp = petExp + walkExp;// 最终态经验值
+					walkExp = -1;// 跳出循环
+				}
+
+			}
+			pet.setLevel(petLevel);//设置宠物等级
+			pet.setExp(petExp);//设置当前等级经验值
+			petMapper.updateByPrimaryKeySelective(pet);//更新pet信息
 
 			// 生成奖励物品，保存入庫
-			reward.put("chip", chipCount + chipAddCount);
-			reward.put("weapon", newWeaponList);
-			reward.put("supply", newSupplyList);
+			reward.put("energyCoin",discountEnergyCoin);// 活力值
+			reward.put("chip", chipCount + chipAddCount);//金币
+			reward.put("weapon", newWeaponList);//装备
+			reward.put("supply", newSupplyList);//补给
+			reward.put("level", jsLevel);//等级、经验
+			reward.put("pet", pet);//宠物信息
 
 			// 保存探索记录
 			UserExploreHistory history = new UserExploreHistory();
@@ -241,7 +275,7 @@ public class ExploreServiceImpl implements IExploreService {
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-
+		System.out.println(reward.toJSONString());
 		return reward;
 	}
 

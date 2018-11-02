@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.UUID;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -353,5 +354,9 @@ public class CommonUtil {
 			e.printStackTrace();
 			return null;
 		}
+	}
+	
+	public static String getUuid() {
+		return UUID.randomUUID().toString().replace("-", "");
 	}
 }
