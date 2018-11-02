@@ -509,7 +509,7 @@
 		  COUNT(1) AS saleCount 
 		FROM
 		  order_mall 
-		WHERE order_status = '2' 
+		WHERE order_status = '0' 
 		  AND commodity_type = '0' 
 		  AND del_flag = '0' 
 		GROUP BY commodity_id ) t_sale
@@ -581,7 +581,7 @@
 		  COUNT(1) AS saleCount 
 		FROM
 		  order_mall 
-		WHERE order_status = '2' 
+		WHERE order_status = '0' 
 		  AND commodity_type = '0' 
 		  AND del_flag = '0' 
 		GROUP BY commodity_id ) t_sale
