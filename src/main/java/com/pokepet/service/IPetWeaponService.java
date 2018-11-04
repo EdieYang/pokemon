@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.alibaba.fastjson.JSONObject;
-import com.pokepet.model.Pet;
 import com.pokepet.model.PetWeapon;
 import com.pokepet.model.PetWeaponConcat;
 
