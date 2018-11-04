@@ -191,7 +191,7 @@
 	    1
 	    WHEN NOW() > end_time THEN '已结束' 
 	    WHEN NOW() &lt; start_time THEN '未开始'
-	    WHEN NOW() > start_time && NOW() &lt; end_time THEN '进行中'
+	    WHEN NOW() > start_time &amp;&amp; NOW() &lt; end_time THEN '进行中'
 	    ELSE '无效' 
 	  END AS actStatus
 	FROM

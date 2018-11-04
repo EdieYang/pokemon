@@ -1,5 +1,8 @@
 package com.pokepet.dao;
 
+import java.util.List;
+import java.util.Map;
+
 import com.pokepet.model.ActActivityRegister;
 
 public interface ActActivityRegisterMapper {
@@ -58,4 +61,8 @@ public interface ActActivityRegisterMapper {
      * @mbggenerated Sun Nov 04 13:36:48 GMT+08:00 2018
      */
     int updateByPrimaryKey(ActActivityRegister record);
+    
+    int selectMaxNoForActivity(String activityId);
+    
+    List<Map<String, Object>> getRegisterListByParam(Map<String, Object> param);
 }

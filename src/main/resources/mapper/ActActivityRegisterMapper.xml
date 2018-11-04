@@ -185,4 +185,32 @@
       del_flag = #{delFlag,jdbcType=VARCHAR}
     where register_id = #{registerId,jdbcType=VARCHAR}
   </update>
+  
+  <select id="selectMaxNoForActivity" parameterType="java.lang.String">
+  	select 
+  		IFNULL(MAX(register_no),0)
+  	from act_activity_register
+  	where del_flag = '0'
+  	and activity_id = #{activityId,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="getRegisterListByParam" parameterType="java.util.Map" resultType="java.util.Map">
+  	SELECT 
+	  t_r.register_id AS registerId,
+	  t_r.register_no AS registerNo,
+	  t_r.activity_id AS activityId,
+	  t_r.user_id AS userId,
+	  DATE_FORMAT(t_r.create_time,'%Y-%m-%d %H:%i:%s') AS createTime,
+	  t_r.content,
+	  SUM(1) AS voteCount 
+	FROM
+	  act_activity_register t_r 
+	  LEFT JOIN act_activity_vote t_v 
+	    ON t_r.register_id = t_v.register_id 
+	    AND t_v.del_flag = '0' 
+	WHERE t_r.del_flag = '0' 
+	AND t_r.activity_id = #{activityId,jdbcType=VARCHAR}
+	GROUP BY t_r.register_id 
+	ORDER BY SUM(1) DESC, t_r.register_no ASC
+  </select>
 </mapper>
