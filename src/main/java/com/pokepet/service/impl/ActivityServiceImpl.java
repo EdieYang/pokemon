@@ -13,8 +13,10 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.pokepet.dao.ActActivityMapper;
 import com.pokepet.dao.ActActivityRegisterMapper;
+import com.pokepet.dao.ActActivityVoteMapper;
 import com.pokepet.model.ActActivity;
 import com.pokepet.model.ActActivityRegister;
+import com.pokepet.model.ActActivityVote;
 import com.pokepet.service.IActivityService;
 import com.pokepet.util.CommonUtil;
 
@@ -26,6 +28,9 @@ public class ActivityServiceImpl implements IActivityService {
 
 	@Autowired
 	ActActivityRegisterMapper actActivityRegisterMapper;
+
+	@Autowired
+	ActActivityVoteMapper actActivityVoteMapper;
 
 	@Override
 	public JSONObject getActivityList(int pageNum, int pageSize) {
@@ -51,11 +56,13 @@ public class ActivityServiceImpl implements IActivityService {
 	}
 
 	@Override
-	public JSONObject getActivityRegisterList(String search, String activityId, int pageNum, int pageSize) {
+	public JSONObject getActivityRegisterList(String userId, String search, String activityId, int pageNum,
+			int pageSize) {
 		JSONObject result = new JSONObject();
 		Map<String, Object> param = new HashMap<String, Object>();
 		param.put("search", search);
 		param.put("activityId", activityId);
+		param.put("userId", userId);
 		PageHelper.startPage(pageNum, pageSize);
 		List<Map<String, Object>> list = actActivityRegisterMapper.getRegisterListByParam(param);
 		PageInfo<Map<String, Object>> page = new PageInfo<Map<String, Object>>(list);
@@ -66,30 +73,44 @@ public class ActivityServiceImpl implements IActivityService {
 	}
 
 	@Override
-	public Map<String, Object> getActivityRegister(String registerId) {
-		// TODO Auto-generated method stub
-		return null;
+	public Map<String, Object> getActivityRegister(String registerId, String userId) {
+		return actActivityRegisterMapper.getRegister(registerId, userId);
 	}
 
 	@Override
 	public boolean saveActivityRegister(ActActivityRegister register) {
 		if (null == register.getRegisterId()) {
-			//新建
+			// 新建
 			int maxNo = actActivityRegisterMapper.selectMaxNoForActivity(register.getActivityId());
 			register.setCreateTime(new Date());
 			register.setRegisterId(CommonUtil.getUuid());
 			register.setRegisterNo(maxNo + 1);
 			return actActivityRegisterMapper.insertSelective(register) > 0;
 		} else {
-			//更新
+			// 更新
 			return actActivityRegisterMapper.updateByPrimaryKeySelective(register) > 0;
 		}
 	}
 
 	@Override
-	public boolean voteRegister(String voterId, String registerId) {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean saveVote(ActActivityVote vote) {
+		if (actActivityVoteMapper.getVoteCount(vote.getVoterId(), vote.getRegisterId()) == 0) {
+			vote.setVoteTime(new Date());
+			actActivityVoteMapper.insertSelective(vote);
+		} else {
+			actActivityVoteMapper.updateByPrimaryKeySelective(vote);
+		}
+		return true;
+	}
+
+	@Override
+	public boolean chkVoteStatus(String voterId, String registerId) {
+		return actActivityVoteMapper.getVoteCount(voterId, registerId) > 0;
+	}
+
+	@Override
+	public ActActivityRegister getRegisterByActivityIdAndUserId(String activityId, String userId) {
+		return actActivityRegisterMapper.getRegisterByActivityIdAndUserId(activityId, userId);
 	}
 
 }

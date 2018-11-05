@@ -130,4 +130,13 @@
       del_flag = #{delFlag,jdbcType=VARCHAR}
     where vote_id = #{voteId,jdbcType=INTEGER}
   </update>
+  
+  <select id="getVoteCount" parameterType="java.lang.String" resultType="java.lang.Integer">
+  	select 
+  		COUNT(1) 
+  	from act_activity_vote 
+  	where del_flag = '0'
+  	and voter_id = #{voterId,jdbcType=VARCHAR}
+    and register_id = #{registerId,jdbcType=VARCHAR}
+  </select>
 </mapper>

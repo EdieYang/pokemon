@@ -5,6 +5,7 @@ import java.util.Map;
 import com.alibaba.fastjson.JSONObject;
 import com.pokepet.model.ActActivity;
 import com.pokepet.model.ActActivityRegister;
+import com.pokepet.model.ActActivityVote;
 
 public interface IActivityService {
 	
@@ -32,20 +33,21 @@ public interface IActivityService {
 	
 	/**
 	 * 获取活动参与者列表
+	 * @param userId
 	 * @param search
 	 * @param activityId
 	 * @param pageNum
 	 * @param pageSize
 	 * @return
 	 */
-	JSONObject getActivityRegisterList(String search, String activityId, int pageNum, int pageSize);
+	JSONObject getActivityRegisterList(String userId, String search, String activityId, int pageNum, int pageSize);
 	
 	/**
 	 * 获取参赛者信息
 	 * @param registerId
 	 * @return
 	 */
-	Map<String, Object>  getActivityRegister(String registerId);
+	Map<String, Object> getActivityRegister(String registerId, String userId);
 	
 	/**
 	 * 保存参赛者信息
@@ -55,11 +57,20 @@ public interface IActivityService {
 	boolean saveActivityRegister(ActActivityRegister register);
 	
 	/**
-	 * 投票
-	 * @param voterId
-	 * @param registerId
+	 * 保存投票信息
+	 * @param vote
 	 * @return
 	 */
-	boolean voteRegister(String voterId, String registerId);
+	boolean saveVote(ActActivityVote vote);
+	
+	boolean chkVoteStatus(String voterId, String registerId);
+	
+	/**
+	 * 检验用户有无参加活动
+	 * @param activityId
+	 * @param userId
+	 * @return
+	 */
+	ActActivityRegister getRegisterByActivityIdAndUserId(String activityId, String userId);
 
 }

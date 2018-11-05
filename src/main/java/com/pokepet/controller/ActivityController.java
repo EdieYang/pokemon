@@ -1,5 +1,7 @@
 package com.pokepet.controller;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -12,6 +14,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.pokepet.annotation.ResponseResult;
 import com.pokepet.model.ActActivity;
 import com.pokepet.model.ActActivityRegister;
+import com.pokepet.model.ActActivityVote;
 import com.pokepet.service.IActivityService;
 
 @ResponseResult
@@ -59,15 +62,52 @@ public class ActivityController {
 
 	/**
 	 * 获取活动报名人列表
+	 * 
 	 * @param id
 	 * @param search
 	 * @param pageNum
 	 * @param pageSize
 	 * @return
 	 */
-	@RequestMapping(value = "{id}/resigterList", method = RequestMethod.GET)
-	public JSONObject resigterList(@PathVariable String id, @RequestParam("search") String search,
-			@RequestParam("pageNum") int pageNum, @RequestParam("pageSize") int pageSize) {
-		return activityService.getActivityRegisterList(search, id, pageNum, pageSize);
+	@RequestMapping(value = "{id}/registerList", method = RequestMethod.GET)
+	public JSONObject registerList(@PathVariable String id, @RequestParam("userId") String userId,
+			@RequestParam("search") String search, @RequestParam("pageNum") int pageNum,
+			@RequestParam("pageSize") int pageSize) {
+		return activityService.getActivityRegisterList(userId, search, id, pageNum, pageSize);
+	}
+
+	/**
+	 * 获取参赛人信息，以及当前用户投票状态(true为已投票，false为未投票)
+	 * 
+	 * @param registerId
+	 * @param userId
+	 * @return
+	 */
+	@RequestMapping(value = "/register/{registerId}", method = RequestMethod.GET)
+	public Map<String, Object> getRegister(@PathVariable String registerId, @RequestParam("userId") String userId) {
+		return activityService.getActivityRegister(registerId, userId);
+	}
+
+	/**
+	 * 活动投票
+	 * 
+	 * @param data
+	 * @return
+	 */
+	@RequestMapping(value = "/vote", method = RequestMethod.POST)
+	public boolean saveVote(@RequestBody JSONObject data) {
+		ActActivityVote vote = JSONObject.toJavaObject(data, ActActivityVote.class);
+		return activityService.saveVote(vote);
+	}
+	
+	/**
+	 * 检验用户是否有参与该活动，有为实体类返回，无为null
+	 * @param activityId
+	 * @param userId
+	 * @return
+	 */
+	@RequestMapping(value = "/getUserActivity", method = RequestMethod.GET)
+	public ActActivityRegister getRegisterByActivityIdAndUserId(@RequestParam("activityId") String activityId, @RequestParam("userId") String userId) {
+		return activityService.getRegisterByActivityIdAndUserId(activityId, userId);
 	}
 }

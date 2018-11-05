@@ -1,5 +1,7 @@
 package com.pokepet.dao;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.pokepet.model.ActActivityVote;
 
 public interface ActActivityVoteMapper {
@@ -50,4 +52,6 @@ public interface ActActivityVoteMapper {
      * @mbggenerated Sun Nov 04 13:37:07 GMT+08:00 2018
      */
     int updateByPrimaryKey(ActActivityVote record);
+    
+    int getVoteCount(@Param("voterId") String voterId,@Param("registerId") String registerId);
 }
