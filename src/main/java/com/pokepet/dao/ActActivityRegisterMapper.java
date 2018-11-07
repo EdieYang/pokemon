@@ -57,4 +57,6 @@ public interface ActActivityRegisterMapper {
     Map<String, Object> getRegister(@Param("registerId") String registerId, @Param("userId") String userId);
     
     ActActivityRegister getRegisterByActivityIdAndUserId(@Param("activityId") String activityId, @Param("userId") String userId);
+    
+    Map<String, Object> getRegisterWithRanking(@Param("activityId") String activityId,@Param("registerId") String registerId);
 }

@@ -113,4 +113,10 @@ public class ActivityServiceImpl implements IActivityService {
 		return actActivityRegisterMapper.getRegisterByActivityIdAndUserId(activityId, userId);
 	}
 
+	@Override
+	public int getRegisterRanking(String activityId, String registerId) {
+		Map<String, Object> register = actActivityRegisterMapper.getRegisterWithRanking(activityId, registerId);
+		return (int) register.get("rankingNo");
+	}
+
 }

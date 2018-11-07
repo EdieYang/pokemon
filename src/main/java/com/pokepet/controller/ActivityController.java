@@ -107,7 +107,13 @@ public class ActivityController {
 	 * @return
 	 */
 	@RequestMapping(value = "/getUserActivity", method = RequestMethod.GET)
-	public ActActivityRegister getRegisterByActivityIdAndUserId(@RequestParam("activityId") String activityId, @RequestParam("userId") String userId) {
-		return activityService.getRegisterByActivityIdAndUserId(activityId, userId);
+	public JSONObject getRegisterByActivityIdAndUserId(@RequestParam("activityId") String activityId, @RequestParam("userId") String userId) {
+		ActActivityRegister register = activityService.getRegisterByActivityIdAndUserId(activityId, userId);
+		if(null != register){
+			JSONObject js = JSONObject.parseObject(JSONObject.toJSONString(register));
+			js.put("rankingNo", activityService.getRegisterRanking(activityId, userId));
+			return js;
+		}
+		return null;
 	}
 }

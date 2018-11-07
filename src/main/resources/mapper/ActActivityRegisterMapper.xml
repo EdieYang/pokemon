@@ -293,4 +293,32 @@
     order by register_no desc
     limit 0,1
   </select>
+  
+  <select id="getRegisterWithRanking" parameterType="java.lang.String" resultType="java.util.Map">
+  	SELECT * FROM (
+		SELECT (@i := @i + 1) AS rankingNo,t_v.* FROM 
+		(SELECT 
+		    (@i := 0)) t ,
+		(SELECT 
+		  t_r.register_id AS registerId,
+		  t_r.register_no AS registerNo,
+		  t_r.activity_id AS activityId,
+		  t_r.user_id AS userId,
+		  t_r.nick_name AS nickName,
+		  t_r.memo,
+		  t_r.portrait,
+		  DATE_FORMAT(t_r.create_time,'%Y-%m-%d %H:%i:%s') AS createTime,
+		  t_r.content,
+		  SUM(CASE t_v.register_id IS NULL WHEN 1 THEN 0 ELSE 1 END) AS voteCount
+		FROM
+		  act_activity_register t_r 
+		  LEFT JOIN act_activity_vote t_v 
+		    ON t_r.register_id = t_v.register_id 
+		    AND t_v.del_flag = '0' 
+		WHERE t_r.del_flag = '0' 
+			and activity_id = #{activityId,jdbcType=VARCHAR}
+		GROUP BY t_r.register_id 
+		ORDER BY voteCount DESC, t_r.register_no ASC) t_v) t
+	WHERE t.registerId = #{registerId,jdbcType=VARCHAR};
+  </select>
 </mapper>
