@@ -1,5 +1,7 @@
 package com.pokepet.controller;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +23,8 @@ import com.pokepet.service.IActivityService;
 @RestController
 @RequestMapping("/activity")
 public class ActivityController {
+
+	static final int VOTE_COUNT_ONE_ACTIVITY_ONE_DAY = 3;
 
 	@Autowired
 	IActivityService activityService;
@@ -99,21 +103,41 @@ public class ActivityController {
 		ActActivityVote vote = JSONObject.toJavaObject(data, ActActivityVote.class);
 		return activityService.saveVote(vote);
 	}
-	
+
 	/**
 	 * 检验用户是否有参与该活动，有为实体类返回，无为null
+	 * 
 	 * @param activityId
 	 * @param userId
 	 * @return
 	 */
 	@RequestMapping(value = "/getUserActivity", method = RequestMethod.GET)
-	public JSONObject getRegisterByActivityIdAndUserId(@RequestParam("activityId") String activityId, @RequestParam("userId") String userId) {
+	public JSONObject getRegisterByActivityIdAndUserId(@RequestParam("activityId") String activityId,
+			@RequestParam("userId") String userId) {
 		ActActivityRegister register = activityService.getRegisterByActivityIdAndUserId(activityId, userId);
-		if(null != register){
+		if (null != register) {
 			JSONObject js = JSONObject.parseObject(JSONObject.toJSONString(register));
 			js.put("rankingNo", activityService.getRegisterRanking(activityId, userId));
 			return js;
 		}
 		return null;
+	}
+
+	/**
+	 * 获取该用户今天该次活动剩余票数（默认为每天每人每次活动最多3票）
+	 * @param activityId
+	 * @param userId
+	 * @return
+	 */
+	@RequestMapping(value = "/voteCount", method = RequestMethod.GET)
+	public int getVoteCount(@RequestParam("activityId") String activityId, @RequestParam("userId") String userId) {
+		Date now = new Date();
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+		int voteCount = activityService.getVoteCountByActivityIdAndUserIdAndDate(activityId, userId, df.format(now));
+		if (VOTE_COUNT_ONE_ACTIVITY_ONE_DAY > voteCount) {
+			return VOTE_COUNT_ONE_ACTIVITY_ONE_DAY - voteCount;
+		} else {
+			return 0;
+		}
 	}
 }

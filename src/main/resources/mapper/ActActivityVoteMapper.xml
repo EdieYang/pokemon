@@ -139,4 +139,18 @@
   	and voter_id = #{voterId,jdbcType=VARCHAR}
     and register_id = #{registerId,jdbcType=VARCHAR}
   </select>
+  
+  <select id="getVoteCountByActivityIdAndUserIdAndDate" parameterType="java.lang.String" resultType="java.lang.Integer">
+  	SELECT 
+	  COUNT(1) 
+	FROM
+	  act_activity_vote t_v,
+	  act_activity_register t_r 
+	WHERE t_v.register_id = t_r.register_id 
+	  AND t_r.del_flag = '0' 
+	  AND t_v.del_flag = '0' 
+	  AND t_r.activity_id = #{activityId,jdbcType=VARCHAR}
+	  and t_v.voter_id = #{voterId,jdbcType=VARCHAR} 
+	  and date_format(t_v.vote_time,'%Y-%m-%d') = #{strDate,jdbcType=VARCHAR}
+  </select>
 </mapper>

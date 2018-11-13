@@ -90,4 +90,13 @@ public interface IActivityService {
 	 */
 	int getRegisterRanking(String activityId, String registerId);
 
+	/**
+	 * 获取用户对该次活动今日已投票数量
+	 * @param activityId
+	 * @param userId
+	 * @param strDate
+	 * @return
+	 */
+	int getVoteCountByActivityIdAndUserIdAndDate(String activityId, String userId, String strDate);
+
 }

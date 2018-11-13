@@ -119,4 +119,9 @@ public class ActivityServiceImpl implements IActivityService {
 		return (int) register.get("rankingNo");
 	}
 
+	@Override
+	public int getVoteCountByActivityIdAndUserIdAndDate(String activityId, String userId, String strDate) {
+		return actActivityVoteMapper.getVoteCountByActivityIdAndUserIdAndDate(activityId, userId, strDate);
+	}
+
 }
