@@ -46,6 +46,10 @@ public interface IRecordService {
 
     boolean updateRecordCollect(String userId,String recordId);
 
+    boolean insertRecordShare(String userId,String recordId,String recordType);
+
+    boolean insertRecordVisit(String userId,String recordId,String recordType);
+
 
     /**
      * 根据查询条件获取短文列表（分页）

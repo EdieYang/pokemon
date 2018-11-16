@@ -7,7 +7,7 @@
 
 	<context id="context1">
 		<jdbcConnection driverClass="com.mysql.jdbc.Driver"
-			connectionURL="jdbc:mysql://116.62.60.203:3306/pokedata_test"
+			connectionURL="jdbc:mysql://116.62.60.203:3306/pokedata_produce"
 			userId="root" password="PokePet123456!" />
 		<javaModelGenerator targetPackage="com.pokepet.model"
 			targetProject="pokemon" />
@@ -16,7 +16,7 @@
 		<javaClientGenerator targetPackage="com.pokepet.dao"
 			targetProject="pokemon" type="XMLMAPPER" />
 
-		<table schema="pokemon" tableName="act_activity_register"
+		<table schema="pokemon" tableName="act_activity_guest_login"
 			enableCountByExample="false" enableUpdateByExample="false"
 			enableDeleteByExample="false" enableSelectByExample="false"
 			selectByExampleQueryId="false"></table>

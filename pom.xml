@@ -38,11 +38,6 @@
 			<artifactId>spring-boot-starter-aop</artifactId>
 		</dependency>
 
-		<!--<dependency> -->
-		<!--<groupId>com.zaxxer</groupId> -->
-		<!--<artifactId>HikariCP</artifactId> -->
-		<!--&lt;!&ndash; 版本号可以不用指定，Spring Boot会选用合适的版本 &ndash;&gt; -->
-		<!--</dependency> -->
 		<!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>

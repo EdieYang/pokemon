@@ -1,10 +1,13 @@
 package com.pokepet.service.impl;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.pokepet.dao.ActActivityGuestLoginMapper;
+import com.pokepet.model.ActActivityGuestLogin;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,6 +35,9 @@ public class ActivityServiceImpl implements IActivityService {
 	@Autowired
 	ActActivityVoteMapper actActivityVoteMapper;
 
+	@Autowired
+	ActActivityGuestLoginMapper actActivityGuestLoginMapper;
+
 	@Override
 	public JSONObject getActivityList(int pageNum, int pageSize) {
 		JSONObject result = new JSONObject();
@@ -47,6 +53,12 @@ public class ActivityServiceImpl implements IActivityService {
 	@Override
 	public ActActivity getActivity(String id) {
 		return actActivityMapper.selectByPrimaryKey(id);
+	}
+
+	@Override
+	public Map<String, Object> getActivityStatistics(String id) {
+		Map<String,Object> map=actActivityMapper.getActivityStatistics(id);
+		return map;
 	}
 
 	@Override
@@ -94,19 +106,23 @@ public class ActivityServiceImpl implements IActivityService {
 
 	@Override
 	public boolean saveVote(ActActivityVote vote) {
-		if (actActivityVoteMapper.getVoteCount(vote.getVoterId(), vote.getRegisterId()) == 0) {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		Date now=new Date();
+		String strDate=sdf.format(now);
+		if (actActivityVoteMapper.getVoteCount(vote.getVoterId(), vote.getRegisterId(),strDate) <3) {
 			vote.setVoteTime(new Date());
 			actActivityVoteMapper.insertSelective(vote);
-		} else {
-			actActivityVoteMapper.updateByPrimaryKeySelective(vote);
+			return true;
+
 		}
-		return true;
+
+		return false;
 	}
 
-	@Override
-	public boolean chkVoteStatus(String voterId, String registerId) {
-		return actActivityVoteMapper.getVoteCount(voterId, registerId) > 0;
-	}
+//	@Override
+//	public boolean chkVoteStatus(String voterId, String registerId,String strDate) {
+//		return actActivityVoteMapper.getVoteCount(voterId, registerId,strDate) > 0;
+//	}
 
 	@Override
 	public ActActivityRegister getRegisterByActivityIdAndUserId(String activityId, String userId) {
@@ -116,12 +132,21 @@ public class ActivityServiceImpl implements IActivityService {
 	@Override
 	public int getRegisterRanking(String activityId, String registerId) {
 		Map<String, Object> register = actActivityRegisterMapper.getRegisterWithRanking(activityId, registerId);
-		return (int) register.get("rankingNo");
+		return (int) Math.round((Double) register.get("rankingNo"));
 	}
 
 	@Override
 	public int getVoteCountByActivityIdAndUserIdAndDate(String activityId, String userId, String strDate) {
 		return actActivityVoteMapper.getVoteCountByActivityIdAndUserIdAndDate(activityId, userId, strDate);
+	}
+
+	@Override
+	public boolean countVisitorForAct(String activityId, String userId) {
+		ActActivityGuestLogin actActivityGuestLogin=new ActActivityGuestLogin();
+		actActivityGuestLogin.setUserId(userId);
+		actActivityGuestLogin.setActId(activityId);
+		actActivityGuestLogin.setCreateTime(new Date());
+		return actActivityGuestLoginMapper.insertSelective(actActivityGuestLogin)>0;
 	}
 
 }

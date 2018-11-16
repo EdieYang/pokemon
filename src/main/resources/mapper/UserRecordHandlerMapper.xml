@@ -37,7 +37,7 @@
 
       SELECT recordId,title,content,abbreImg,images,recommend,
             userId,photoPath,nickName,petId,petName,petPhotoPath,createtime,checkState,delFlag,
-            type,memo,location,detailLocation,lat,lng,likeNumber,collectNumber,shareNumber,followPetOrNot,followUserOrNot
+            type,memo,location,detailLocation,lat,lng,visitNo,likeNumber,collectNumber,shareNumber,followPetOrNot,followUserOrNot
       FROM
         (
       (SELECT
@@ -62,6 +62,7 @@
                NULL            AS detailLocation,
                NULL            AS lat,
                NULL            AS lng,
+              (select count(1) FROM record_visit rv WHERE rv.record_id=ulr.record_id and rv.del_flag='0') as visitNo,
               (select count(1) FROM record_like rl WHERE rl.record_id=ulr.record_id and rl.del_flag='0') as likeNumber,
               (select count(1) FROM record_collect rc where rc.record_id=ulr.record_id and rc.del_flag='0') as collectNumber,
               (SELECT count(1) from record_share rs where rs.record_id=ulr.record_id  and rs.del_flag='0') as shareNumber,
@@ -100,6 +101,7 @@
             detail_location AS detailLocation,
             lat,
             lng,
+            (select count(1) FROM record_visit rv WHERE rv.record_id=ur.record_id and rv.del_flag='0') as visitNo,
             (select count(1) FROM record_like rl WHERE rl.record_id=ur.record_id and rl.del_flag='0') as likeNumber,
             (select count(1) FROM record_collect rc where rc.record_id=ur.record_id and rc.del_flag='0') as collectNumber,
             (SELECT count(1) from record_share rs where rs.record_id=ur.record_id and rs.del_flag='0') as shareNumber,
@@ -124,7 +126,7 @@
 
       SELECT recordId,title,content,abbreImg,images,recommend,
             userId,photoPath,nickName,petId,petName,petPhotoPath,createtime,checkState,delFlag,
-            type,memo,location,detailLocation,lat,lng,likeNumber,collectNumber,shareNumber,followPetOrNot,followUserOrNot
+            type,memo,location,detailLocation,lat,lng,visitNo,likeNumber,collectNumber,shareNumber,followPetOrNot,followUserOrNot
       FROM
       record_collect rc
       LEFT JOIN
@@ -151,6 +153,7 @@
                NULL            AS detailLocation,
                NULL            AS lat,
                NULL            AS lng,
+              (select count(1) FROM record_visit rv WHERE rv.record_id=ulr.record_id and rv.del_flag='0') as visitNo,
               (select count(1) FROM record_like rl WHERE rl.record_id=ulr.record_id and rl.del_flag='0') as likeNumber,
               (select count(1) FROM record_collect rc where rc.record_id=ulr.record_id and rc.del_flag='0') as collectNumber,
               (SELECT count(1) from record_share rs where rs.record_id=ulr.record_id  and rs.del_flag='0') as shareNumber,
@@ -189,6 +192,7 @@
             detail_location AS detailLocation,
             lat,
             lng,
+            (select count(1) FROM record_visit rv WHERE rv.record_id=ur.record_id and rv.del_flag='0') as visitNo,
             (select count(1) FROM record_like rl WHERE rl.record_id=ur.record_id and rl.del_flag='0') as likeNumber,
             (select count(1) FROM record_collect rc where rc.record_id=ur.record_id and rc.del_flag='0') as collectNumber,
             (SELECT count(1) from record_share rs where rs.record_id=ur.record_id and rs.del_flag='0') as shareNumber,
@@ -226,6 +230,7 @@
         check_state     AS checkState,
         ulr.del_flag    AS delFlag,
         type,
+        (select count(1) FROM record_visit rv WHERE rv.record_id=ulr.record_id and rv.del_flag='0') as visitNo,
         (select count(1) FROM record_like rl WHERE rl.record_id=ulr.record_id and rl.del_flag='0') as likeNumber,
         (SELECT count(1) FROM record_like rl2 WHERE rl2.record_id=ulr.record_id  and rl2.del_flag='0') as likeOrNot,
         (select count(1) FROM record_collect rc where rc.record_id=ulr.record_id and rc.del_flag='0') as collectNumber,
@@ -271,6 +276,7 @@
           detailLocation,
           lat,
           lng,
+          visitNo,
           likeNumber,
           likeOrNot,
           collectNumber,
@@ -305,6 +311,7 @@
                NULL            AS detailLocation,
                NULL            AS lat,
                NULL            AS lng,
+              (select count(1) FROM record_visit rv WHERE rv.record_id=ulr.record_id and rv.del_flag='0') as visitNo,
               (select count(1) FROM record_like rl WHERE rl.record_id=ulr.record_id and rl.del_flag='0') as likeNumber,
               (SELECT count(1) FROM record_like rl2 WHERE rl2.record_id=ulr.record_id and rl2.user_id=#{userId} and rl2.del_flag='0') as likeOrNot,
               (select count(1) FROM record_collect rc where rc.record_id=ulr.record_id and rc.del_flag='0') as collectNumber,
@@ -320,6 +327,7 @@
             LEFT JOIN pet p
             ON ulr.pet_id = p.pet_id
             WHERE check_state = '1' AND ulr.del_flag = '0' AND (ulr.type = '0' OR ulr.type = '1')
+            AND ulr.recommend='0'
           )
 
         UNION ALL
@@ -348,6 +356,7 @@
             detail_location AS detailLocation,
             lat,
             lng,
+            (select count(1) FROM record_visit rv WHERE rv.record_id=ur.record_id and rv.del_flag='0') as visitNo,
             (select count(1) FROM record_like rl WHERE rl.record_id=ur.record_id and rl.del_flag='0') as likeNumber,
             (SELECT count(1) FROM record_like rl2 WHERE rl2.record_id=ur.record_id and rl2.user_id=#{userId} and rl2.del_flag='0') as likeOrNot,
             (select count(1) FROM record_collect rc where rc.record_id=ur.record_id and rc.del_flag='0') as collectNumber,
@@ -360,6 +369,7 @@
             LEFT JOIN user u
             ON ur.user_id=u.user_id
             WHERE type = '2' AND check_state='1' AND ur.del_flag='0'
+            AND ur.recommend='0'
           )
         ) AS allunion
         ORDER BY createtime DESC
@@ -370,7 +380,7 @@
 
         SELECT recordId,title,content,abbreImg,images,recommend,
         userId,nickName,photoPath,petId,petName,createtime,checkState,delFlag,
-        type,memo,location,detailLocation,lat,lng,likeNumber,likeOrNot,
+        type,memo,location,detailLocation,lat,lng,visitNo,likeNumber,likeOrNot,
         collectNumber,collectOrNot,shareNumber,shareOrNot
         FROM
         (SELECT
@@ -394,6 +404,7 @@
         detail_location AS detailLocation,
         lat,
         lng,
+        (select count(1) FROM record_visit rv WHERE rv.record_id=ur.record_id and rv.del_flag='0') as visitNo,
         (select count(1) FROM record_like rl WHERE rl.record_id=ur.record_id and rl.del_flag='0') as likeNumber,
         (SELECT count(1) FROM record_like rl2 WHERE rl2.record_id=ur.record_id and rl2.user_id=#{userId} and rl2.del_flag='0') as likeOrNot,
         (select count(1) FROM record_collect rc where rc.record_id=ur.record_id and rc.del_flag='0') as collectNumber,
@@ -435,6 +446,7 @@
              check_state AS checkState,
              ulr.del_flag   AS delFlag,
              type,
+             (select count(1) FROM record_visit rv WHERE rv.record_id=#{recordId} and rv.del_flag='0') as visitNo,
              (SELECT count(1) from record_like rl where rl.record_id=#{recordId} and rl.del_flag='0') as likeNumber,
              (SELECT count(1) from record_like rl2 where rl2.record_id=#{recordId} and rl2.user_id=#{userId} and rl2.del_flag='0') as likeOrNot,
              (SELECT count(1) from record_collect rc where rc.record_id=#{recordId} and rc.del_flag='0') as collectNumber,
@@ -476,6 +488,7 @@
               detail_location AS detailLocation,
               lat,
               lng,
+              (SELECT count(1) FROM record_visit rv WHERE rv.record_id=#{recordId} and rv.del_flag='0') as visitNo,
               (SELECT count(1) from record_like rl where rl.record_id=#{recordId} and rl.del_flag='0') as likeNumber,
               (SELECT count(1) from record_like rl2 where rl2.record_id=#{recordId} and rl2.user_id=#{userId} and rl2.del_flag='0') as likeOrNot,
               (SELECT count(1) from record_collect rc where rc.record_id=#{recordId} and rc.del_flag='0') as collectNumber,

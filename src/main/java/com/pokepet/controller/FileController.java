@@ -1,11 +1,18 @@
 package com.pokepet.controller;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
+import com.pokepet.util.wxConfig.Token;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -41,6 +48,8 @@ public class FileController {
 //	private static final String petsPortrait="petsPortrait/state.png";
 
 	private final static String portraitObjNamePrefix="images/";
+
+	private final static String activityPicObjNamePrefix="ac_html/";
 
 
 	@Autowired
@@ -155,5 +164,80 @@ public class FileController {
 		}
 
 	}
+
+
+
+	@RequestMapping("/savePicture")
+	public static Map<String,Object> savePicture(@RequestParam("mediaId") String mediaId){
+		Map<String,Object> map=new HashMap<>();
+		String fileObjName=null;
+		String url = "https://api.weixin.qq.com/cgi-bin/media/get";
+		String accessToken=Token.getToken();
+		String params = "access_token=" + accessToken + "&media_id=" + mediaId;
+		InputStream inputStream = null;
+		// 创建OSSClient实例。
+		OSSClient client = new OSSClient(endpoint, accessKeyId, accessKeySecret);
+		HttpURLConnection http=null;
+		try {
+			String urlNameString = url + "?" + params;
+			System.out.println(urlNameString);
+			URL urlGet = new URL(urlNameString);
+			http= (HttpURLConnection) urlGet.openConnection();
+			http.setRequestMethod("GET"); // 必须是get方式请求
+			http.setRequestProperty("Content-Type","application/x-www-form-urlencoded");
+			http.setDoOutput(true);
+			http.setDoInput(true);
+			http.connect();
+			// 获取文件转化为byte流
+			inputStream = http.getInputStream();
+			String picId=UUID.randomUUID().toString();
+			fileObjName=activityPicObjNamePrefix+"acPic/"+picId+getFileexpandedName(http.getContentType());
+			client.putObject(bucketName,fileObjName,inputStream);
+
+		} catch (OSSException oe) {
+			System.out.println("Error Message: " + oe.getErrorCode());
+		} catch (ClientException ce) {
+			System.out.println("Error Message: " + ce.getMessage());
+		}catch (Exception e) {
+			e.printStackTrace();
+		}finally {
+			if (client != null) {
+				client.shutdown();
+			}
+			if(http!=null){
+				http.disconnect();
+			}
+			map.put("fileObjName",fileObjName);
+			return map;
+		}
+
+
+	}
+
+
+
+	/**
+	 * 根据内容类型判断文件扩展名
+	 *
+	 * @param contentType 内容类型
+	 * @return
+	 */
+	public static String getFileexpandedName(String contentType) {
+		String fileEndWitsh = "";
+		if ("image/jpeg".equals(contentType))
+			fileEndWitsh = ".jpg";
+		else if ("audio/mpeg".equals(contentType))
+			fileEndWitsh = ".mp3";
+		else if ("audio/amr".equals(contentType))
+			fileEndWitsh = ".amr";
+		else if ("video/mp4".equals(contentType))
+			fileEndWitsh = ".mp4";
+		else if ("video/mpeg4".equals(contentType))
+			fileEndWitsh = ".mp4";
+		return fileEndWitsh;
+	}
+
+
+
 
 }

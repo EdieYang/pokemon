@@ -530,6 +530,34 @@ public class RecordController {
 
     }
 
+
+
+
+    @RequestMapping(value = "/share",method = RequestMethod.POST)
+    public boolean recordShare(HttpServletRequest request){
+        String userId=request.getParameter("userId");
+        String recordId=request.getParameter("recordId");
+        String recordType=request.getParameter("recordType");
+
+        boolean flag=recordService.insertRecordShare(userId,recordId,recordType);
+        return flag;
+
+    }
+
+
+
+
+    @RequestMapping(value = "/visit",method = RequestMethod.POST)
+    public boolean recordVisit(HttpServletRequest request){
+        String userId=request.getParameter("userId");
+        String recordId=request.getParameter("recordId");
+        String recordType=request.getParameter("recordType");
+
+        boolean flag=recordService.insertRecordVisit(userId,recordId,recordType);
+        return flag;
+
+    }
+
 	/**
 	 * 长文列表（分页）
 	 * @param search	搜索"标题/昵称"

@@ -225,7 +225,7 @@
     where register_id = #{registerId,jdbcType=VARCHAR}
   </update>
   
-  <select id="selectMaxNoForActivity" parameterType="java.lang.String">
+  <select id="selectMaxNoForActivity" parameterType="java.lang.String" resultType="java.lang.Integer">
   	select 
   		IFNULL(MAX(register_no),0)
   	from act_activity_register

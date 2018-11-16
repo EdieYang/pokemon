@@ -48,9 +48,30 @@ public class ActivityController {
 	 * @return
 	 */
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
-	public ActActivity getActivity(@PathVariable String id) {
-		return activityService.getActivity(id);
+	public JSONObject getActivity(@PathVariable String id) {
+		Map<String,Object> map=activityService.getActivityStatistics(id);
+		ActActivity actActivity=activityService.getActivity(id);
+		Date startDate=actActivity.getStartTime();
+		Date endDate=actActivity.getEndTime();
+		SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		String startTime=simpleDateFormat.format(startDate);
+		String endTime=simpleDateFormat.format(endDate);
+
+		JSONObject jsonObject=new JSONObject();
+		jsonObject.put("activity",actActivity);
+		jsonObject.put("startTime",startTime);
+		jsonObject.put("endTime",endTime);
+		jsonObject.put("activityStatistics",map);
+		return jsonObject;
 	}
+
+	@RequestMapping(value = "/{id}/visit", method = RequestMethod.POST)
+	public boolean getActivity(@PathVariable String id,@RequestBody JSONObject data) {
+		String userId=data.getString("userId");
+		return activityService.countVisitorForAct(id,userId);
+	}
+
+
 
 	/**
 	 * 活动报名
@@ -58,7 +79,7 @@ public class ActivityController {
 	 * @param data
 	 * @return
 	 */
-	@RequestMapping(value = "/regist", method = RequestMethod.POST)
+	@RequestMapping(value = "/register", method = RequestMethod.POST)
 	public boolean registActivity(@RequestBody JSONObject data) {
 		ActActivityRegister register = JSONObject.toJavaObject(data, ActActivityRegister.class);
 		return activityService.saveActivityRegister(register);
@@ -88,8 +109,11 @@ public class ActivityController {
 	 * @return
 	 */
 	@RequestMapping(value = "/register/{registerId}", method = RequestMethod.GET)
-	public Map<String, Object> getRegister(@PathVariable String registerId, @RequestParam("userId") String userId) {
-		return activityService.getActivityRegister(registerId, userId);
+	public Map<String, Object> getRegister(@PathVariable String registerId, @RequestParam("userId") String userId,@RequestParam("activityId")String activityId) {
+		Map<String,Object> map= activityService.getActivityRegister(registerId, userId);
+		int rankNo=activityService.getRegisterRanking(activityId,registerId);
+		map.put("rankNo",rankNo);
+		return map;
 	}
 
 	/**
@@ -117,7 +141,7 @@ public class ActivityController {
 		ActActivityRegister register = activityService.getRegisterByActivityIdAndUserId(activityId, userId);
 		if (null != register) {
 			JSONObject js = JSONObject.parseObject(JSONObject.toJSONString(register));
-			js.put("rankingNo", activityService.getRegisterRanking(activityId, userId));
+			js.put("rankingNo", activityService.getRegisterRanking(activityId, register.getRegisterId()));
 			return js;
 		}
 		return null;
@@ -140,4 +164,6 @@ public class ActivityController {
 			return 0;
 		}
 	}
+
+
 }

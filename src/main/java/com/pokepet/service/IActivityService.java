@@ -26,6 +26,14 @@ public interface IActivityService {
 	 */
 	ActActivity getActivity(String id);
 
+
+	/**
+	 * 获取活动统计数据
+	 * @param id
+	 * @return
+     */
+	Map<String,Object> getActivityStatistics(String id);
+
 	/**
 	 * 保存活动信息
 	 * 
@@ -70,7 +78,7 @@ public interface IActivityService {
 	 */
 	boolean saveVote(ActActivityVote vote);
 
-	boolean chkVoteStatus(String voterId, String registerId);
+//	boolean chkVoteStatus(String voterId, String registerId);
 
 	/**
 	 * 检验用户有无参加活动
@@ -98,5 +106,8 @@ public interface IActivityService {
 	 * @return
 	 */
 	int getVoteCountByActivityIdAndUserIdAndDate(String activityId, String userId, String strDate);
+
+
+	boolean countVisitorForAct(String activityId,String userId);
 
 }

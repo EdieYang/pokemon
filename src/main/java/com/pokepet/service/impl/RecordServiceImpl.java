@@ -3,14 +3,11 @@ package com.pokepet.service.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
 import com.pokepet.dao.*;
-import com.pokepet.model.RecordCollect;
-import com.pokepet.model.RecordLike;
+import com.pokepet.model.*;
 import com.github.pagehelper.PageInfo;
 import com.pokepet.dao.UserLongRecordMapper;
 import com.pokepet.dao.UserRecordHandlerMapper;
 import com.pokepet.dao.UserRecordMapper;
-import com.pokepet.model.UserLongRecord;
-import com.pokepet.model.UserRecord;
 import com.pokepet.service.IRecordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -39,10 +36,14 @@ public class RecordServiceImpl implements IRecordService {
     @Autowired
     private RecordLikeMapper recordLikeMapper;
 
-
     @Autowired
     private RecordCollectMapper recordCollectMapper;
 
+    @Autowired
+    private RecordShareMapper recordShareMapper;
+
+    @Autowired
+    private RecordVisitMapper recordVisitMapper;
 
     @Override
     public int updateLongRecord(UserLongRecord longRecord) {
@@ -154,6 +155,29 @@ public class RecordServiceImpl implements IRecordService {
         return recordCollectMapper.updateByPrimaryKey(recordCollect)>0;
     }
 
+    @Override
+    public boolean insertRecordShare(String userId, String recordId,String recordType) {
+        RecordShare recordShare=new RecordShare();
+        recordShare.setUserId(userId);
+        recordShare.setRecordId(recordId);
+        recordShare.setRecordType(recordType);
+        recordShare.setCreateTime(new Date());
+        recordShare.setDelFlag("0");
+        recordShare.setId(UUID.randomUUID().toString().replace("-",""));
+        return recordShareMapper.insertSelective(recordShare)>0;
+    }
+
+    @Override
+    public boolean insertRecordVisit(String userId, String recordId, String recordType) {
+        RecordVisit recordVisit=new RecordVisit();
+        recordVisit.setRecordId(recordId);
+        recordVisit.setUserId(userId);
+        recordVisit.setRecordType(recordType);
+        recordVisit.setCreateTime(new Date());
+        recordVisit.setDelFlag("0");
+        recordVisit.setId(UUID.randomUUID().toString().replace("-",""));
+        return recordVisitMapper.insertSelective(recordVisit)>0;
+    }
 
 
     @Override

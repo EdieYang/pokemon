@@ -53,7 +53,7 @@ public interface ActActivityVoteMapper {
      */
     int updateByPrimaryKey(ActActivityVote record);
     
-    int getVoteCount(@Param("voterId") String voterId,@Param("registerId") String registerId);
+    int getVoteCount(@Param("voterId") String voterId,@Param("registerId") String registerId,@Param("strDate") String strDate);
     
     int getVoteCountByActivityIdAndUserIdAndDate(@Param("activityId") String activityId, @Param("voterId") String voterId, @Param("strDate") String strDate);
 }

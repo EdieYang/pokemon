@@ -265,7 +265,7 @@
 
   </update>
 
-  <select id="countAllPets">
+  <select id="countAllPets"  resultType="java.lang.Integer">
 
     SELECT count(1)
     FROM pet

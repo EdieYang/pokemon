@@ -43,4 +43,6 @@ public interface ActActivityMapper {
 	int updateByPrimaryKey(ActActivity record);
 
 	List<Map<String, Object>> getActivityList();
+
+	Map<String,Object> getActivityStatistics(String id);
 }

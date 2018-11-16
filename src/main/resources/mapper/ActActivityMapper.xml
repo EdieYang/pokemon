@@ -199,4 +199,25 @@
 	WHERE del_flag = '0'
 	ORDER BY FIELD(actStatus,'进行中','未开始','已结束','无效'),create_time DESC
   </select>
+
+
+  <select id="getActivityStatistics" parameterType="java.lang.String" resultType="map">
+
+    SELECT
+      (SELECT count(1)
+      from act_activity_register
+      where activity_id=#{id}) as registerNo,
+      (SELECT count(1)
+      from act_activity_register ar,act_activity_vote av
+      where ar.register_id=av.register_id
+      and ar.activity_id=#{id}) as voterNo,
+      (SELECT count(1)
+      from act_activity_guest_login
+      where act_id=#{id}) as visitNo
+
+  </select>
+
+
+
+
 </mapper>
