@@ -2,21 +2,19 @@ package com.pokepet.configure;
 
 import javax.sql.DataSource;
 
-import com.zaxxer.hikari.HikariDataSource;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.mybatis.spring.mapper.MapperScannerConfigurer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+
+import com.zaxxer.hikari.HikariDataSource;
 
 /**
  * Created by Fade on 2016/12/22.
@@ -32,7 +30,7 @@ public class MyBatisConfiguration{
     @Bean(value = "datasource")
     public DataSource dataSource(){
         HikariDataSource hikariDataSource=new HikariDataSource();
-        hikariDataSource.setJdbcUrl("jdbc:mysql://116.62.60.203:3306/pokedata_produce?characterEncoding=utf8&useSSL=false&autoReconnect=true");
+        hikariDataSource.setJdbcUrl("jdbc:mysql://116.62.60.203:3306/pokedata_test?characterEncoding=utf8&useSSL=false&autoReconnect=true");
         hikariDataSource.setUsername("root");
         hikariDataSource.setPassword("PokePet123456!");
         hikariDataSource.setReadOnly(false);

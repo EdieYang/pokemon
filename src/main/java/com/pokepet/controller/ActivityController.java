@@ -64,9 +64,15 @@ public class ActivityController {
 		jsonObject.put("activityStatistics",map);
 		return jsonObject;
 	}
+	
+	@RequestMapping(value = "/saveActivity", method = RequestMethod.POST)
+	public boolean saveActivity(@RequestBody ActActivity act){
+		
+		return activityService.saveActivity(act);
+	}
 
 	@RequestMapping(value = "/{id}/visit", method = RequestMethod.POST)
-	public boolean getActivity(@PathVariable String id,@RequestBody JSONObject data) {
+	public boolean getActivityVisitCount(@PathVariable String id,@RequestBody JSONObject data) {
 		String userId=data.getString("userId");
 		return activityService.countVisitorForAct(id,userId);
 	}
