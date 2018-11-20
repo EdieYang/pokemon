@@ -65,7 +65,7 @@ public class RecordController {
             record.setUserId(userId);
             record.setPetId(petId);
             record.setCreateTime(new Date());
-            record.setCheckState("0");
+            record.setCheckState("1");
             record.setDelFlag("0");
             record.setType(type);
             recordService.updateLongRecord(record);
@@ -77,7 +77,7 @@ public class RecordController {
             record.setUserId(userId);
             record.setPetId(petId);
             record.setCreateTime(new Date());
-            record.setCheckState("0");
+            record.setCheckState("1");
             record.setDelFlag("0");
             record.setType(type);
             recordService.insertLongRecord(record);
@@ -115,7 +115,7 @@ public class RecordController {
             record.setImages(images);
             record.setUserId(userId);
             record.setCreateTime(new Date());
-            record.setCheckState("0");
+            record.setCheckState("1");
             record.setDelFlag("0");
             record.setRecommend(recommendState);
             record.setType(type);
@@ -131,7 +131,7 @@ public class RecordController {
             record.setImages(images);
             record.setUserId(userId);
             record.setCreateTime(new Date());
-            record.setCheckState("0");
+            record.setCheckState("1");
             record.setDelFlag("0");
             record.setRecommend(recommendState);
             record.setType(type);

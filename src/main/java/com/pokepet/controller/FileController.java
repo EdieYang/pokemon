@@ -12,6 +12,7 @@ import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.pokepet.util.UUIDUtils;
 import com.pokepet.util.wxConfig.Token;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -51,6 +52,7 @@ public class FileController {
 
 	private final static String activityPicObjNamePrefix="ac_html/";
 
+	private final static String onlineImagePrefix="https://melody.memorychilli.com/";
 
 	@Autowired
 	private PetMapper petMapper;
@@ -164,6 +166,68 @@ public class FileController {
 		}
 
 	}
+
+
+	@PostMapping
+	@RequestMapping(value = "/uploadFile/image",method = RequestMethod.POST)
+	public JSONObject uploadFile(@RequestParam("file") MultipartFile file, @RequestParam JSONObject data) throws IOException {
+		JSONObject resJson=new JSONObject();
+		String type=data.getString("data");
+		String objName="";
+		//存储对象实例命名
+		switch (type){
+			case "activity": objName+=activityPicObjNamePrefix+"/acPic/"+ UUIDUtils.randomUUID();
+				break;
+			default:break;
+		}
+
+		//拼文件格式
+
+		if(file==null || file.isEmpty()){
+			resJson.put("returnUrl",null);
+			return resJson;
+		}
+
+		String fileName = file.getOriginalFilename();
+		String suffix = fileName.substring(fileName.lastIndexOf("."));
+		String fileObjName=objName+suffix;
+
+		// 创建OSSClient实例。
+		OSSClient client = new OSSClient(endpoint, accessKeyId, accessKeySecret);
+
+
+		try {
+
+			// 上传文件流。
+			InputStream inputStream = file.getInputStream();
+
+			client.putObject(bucketName,fileObjName,inputStream);
+		} catch (OSSException oe) {
+			System.out.println("Caught an OSSException, which means your request made it to OSS, "
+					+ "but was rejected with an error response for some reason.");
+			System.out.println("Error Message: " + oe.getErrorCode());
+			System.out.println("Error Code:       " + oe.getErrorCode());
+			System.out.println("Request ID:      " + oe.getRequestId());
+			System.out.println("Host ID:           " + oe.getHostId());
+		} catch (ClientException ce) {
+			System.out.println("Caught an ClientException, which means the client encountered "
+					+ "a serious internal problem while trying to communicate with OSS, "
+					+ "such as not being able to access the network.");
+			System.out.println("Error Message: " + ce.getMessage());
+		} finally {
+
+			if (client != null) {
+				client.shutdown();
+			}
+
+			resJson.put("returnUrl",onlineImagePrefix+fileObjName);
+			return resJson;
+		}
+
+	}
+
+
+
 
 
 

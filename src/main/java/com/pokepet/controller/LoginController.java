@@ -2,32 +2,34 @@ package com.pokepet.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.pokepet.dao.UserMapper;
+import com.github.pagehelper.util.StringUtil;
+import com.pokepet.algorithm.WXCore;
+import com.pokepet.enums.DefaultSettingCode;
 import com.pokepet.model.User;
+import com.pokepet.model.UserTemp;
+import com.pokepet.service.IUserService;
+import com.pokepet.util.UUIDUtils;
 import com.pokepet.utils.HttpClientUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 /**
- * Created by CharlieX-Man on 2018/6/20.
+ * Created by ryan on 2018/6/20.
  * 处理小程序登录
  */
-
-
-//@ResponseResult
 @RestController
-@RequestMapping("/system")
+@RequestMapping("/miniSystem")
 public class LoginController {
 
     @Value("${temporary.login.ticket.url}")
@@ -39,95 +41,106 @@ public class LoginController {
     @Value("${linkPet.appSecret}")
     private String appSecret;
 
+    @Autowired
+    private IUserService userService;
 
     @Autowired
-    private UserMapper userMapper;
+    private StringRedisTemplate stringRedisTemplate;
+
 
     private static final Logger log= LoggerFactory.getLogger(LoginController.class);
 
 
     @RequestMapping("/login")
-    public Map<String,Object> login(HttpServletRequest request){
-
-        String code=request.getParameter("code");
-        log.info(">>>>>>>>>>>>>>>>>获取到的code为:"+code);
-
-        if(StringUtils.isEmpty(code)){
-            log.info(">>>>>>>>>>>>>>>>>获取到的code为空");
-            return null;
-        }
-        String openId="";
-        //先获取缓存中的code
-        Object codeObj=request.getSession().getAttribute(code);
-
-        if(codeObj!=null){
-            openId=codeObj.toString();
-        }
-
-        log.info(">>>>>>>>>>>>>>>>>获取到用户缓存的openId为:"+openId);
-        if(StringUtils.isEmpty(openId)){
-            //请求wx获取openId
-            log.info("=================通过code获取openId======================");
-
-            String requestCodeUrl=codeTicketUrl+"?appid="+appId+"&secret="+appSecret+"&js_code="+code+"&grant_type=authorization_code";
-            String response= HttpClientUtils.httpGet(requestCodeUrl);
-            log.info(response);
-
-            JSONObject resJsonObj= JSON.parseObject(response);
-            openId=resJsonObj.getString("openid");
-            log.info(">>>>>>>>>>>>>>>>>获取到用户的openId为:"+openId);
-
-            if(!StringUtils.isEmpty(openId)){
-                request.getSession().setAttribute(code,openId);
-            }
-        }
-
-
-
+    public Map<String,Object> login(@RequestParam(value = "code") String code,HttpServletRequest request){
         Map<String,Object> map=new HashMap<>();
-        log.info(">>>>>>>>>>>>>>>>判断用户是否注册>>>>>>>>>>>>>");
+        String openId="";
+        String sessionKey="";
+        log.info("[通过code获取openId]");
+        String requestCodeUrl=codeTicketUrl+"?appid="+appId+"&secret="+appSecret+"&js_code="+code+"&grant_type=authorization_code";
+        String response= HttpClientUtils.httpGet(requestCodeUrl);
+        try {
+            JSONObject resJsonObj = JSON.parseObject(response);
+            openId = resJsonObj.getString("openid");
+            sessionKey=resJsonObj.getString("session_key");
+        }catch (Exception e){
+            e.printStackTrace();
+            log.info("{openId}===>"+openId);
+        }finally{
+            if(StringUtils.isEmpty(openId)){
+                map.put("userId","");
+                return map;
+            }
 
+            //查询临时用户
+            UserTemp userTemp=userService.getTempUserByOpenId(openId);
+            if(userTemp==null){
+                //注册平台用户
+                UserTemp newUser=new UserTemp();
+                String userTempId= UUIDUtils.randomUUID();
+                newUser.setUserTempId(userTempId);
+                newUser.setOpenId(openId);
+                newUser.setCreateTime(new Date());
+                newUser.setDelFlag(DefaultSettingCode.getCode("DEFAULT_FLAG"));
+                userService.insertUserTemp(newUser);
+                map.put("userId",userTempId);
 
-        //用户是否注册
-        User user=userMapper.getUserByOpenId(openId);
-        if(user==null && !StringUtils.isEmpty(openId)){
-            User newUser=new User();
-            String userId=UUID.randomUUID().toString();
-            newUser.setOpenId(openId);
-            newUser.setCreateDatetime(new Date());
-            newUser.setUserId(userId);
-            userMapper.insertSelective(newUser);
-            log.info(">>>>>>>>>>>>>>>>>获取到用户的userId为:"+userId);
-            map.put("userId",userId);
-        }else if(user!=null &&  !StringUtils.isEmpty(openId)){
-            log.info(">>>>>>>>>>>>>>>>>获取到用户的userId为:"+user.getUserId());
-            map.put("userId",user.getUserId());
-        }else{
-            map.put("userId","");
+            }else{
+                map.put("userId",userTemp.getUserTempId());
+            }
+            //保存sessionKey和userId
+            stringRedisTemplate.opsForValue().set(map.get("userId").toString(),sessionKey);
+            return map;
         }
-
-        map.put("openId",openId);
-        return map;
-
     }
 
 
-
-    @RequestMapping("/userId")
-    public Map<String,Object> getUserIdByOpenId(HttpServletRequest request){
-
-        String openId=request.getParameter("openId");
-
-
+    @RequestMapping("/checkIfUserAuthorized")
+    public Map<String,Object>  checkIfUserAuthorized(@RequestParam("userId")String userId){
         Map<String,Object> map=new HashMap<>();
-
-        //用户是否注册
-        User user=userMapper.getUserByOpenId(openId);
-
-        map.put("userId",user.getUserId());
-
+        //find authorized user by userId
+        User user=userService.getUserInfo(userId);
+        if(user!=null && StringUtil.isNotEmpty(user.getUnionId())){
+            map.put("authorized",true);
+            map.put("userInfo",user);
+        }else{
+            map.put("authorized",false);
+            map.put("userInfo",null);
+        }
         return map;
+    }
 
+    @RequestMapping("/authorizeUser/{userId}")
+    public Map<String,Object> authorizeUserAndReturnUserInfo(@RequestBody JSONObject data, @PathVariable("userId") String userId,HttpServletRequest request){
+        Map<String,Object> map=new HashMap<>();
+        String encryptedData=data.getString("encryptedData");
+        String iv=data.getString("iv");
+        String sessionKey=stringRedisTemplate.opsForValue().get( userId);
+        String decryptData=WXCore.decrypt(appId,encryptedData,sessionKey,iv);
+        if(StringUtil.isNotEmpty(decryptData)){
+            JSONObject jsonObject=JSON.parseObject(decryptData);
+            String unionId=jsonObject.getString("unionId");
+            String nickName=jsonObject.getString("nickName");
+            String avatarUrl=jsonObject.getString("avatarUrl");
+            //register authorized  user
+            User user=new User();
+            user.setUserId(userId);
+            user.setNickName(nickName);
+            user.setPhotoPath(avatarUrl);
+            user.setUnionId(unionId);
+            user.setCreateDatetime(new Date());
+            user.setDelFlag(DefaultSettingCode.getCode("DEFAULT_FLAG"));
+            boolean saveAuthorization=userService.insertUser(user);
+            if(saveAuthorization){
+                User userInfo=userService.getUserInfo(userId);
+                map.put("userInfo",userInfo);
+                map.put("authorized",true);
+                return map;
+            }
+        }
+        map.put("userInfo",null);
+        map.put("authorized",false);
+        return map;
     }
 
 

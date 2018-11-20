@@ -4,6 +4,8 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
+import com.pokepet.dao.UserTempMapper;
+import com.pokepet.model.UserTemp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +27,9 @@ public class UserServiceImpl implements IUserService {
 
 	@Autowired
 	private UserMapper userMapper;
+
+	@Autowired
+	private UserTempMapper userTempMapper;
 
 	@Override
 	public String createUserId(String areaId) {
@@ -63,6 +68,21 @@ public class UserServiceImpl implements IUserService {
 		result.put("records", page.getTotal());
 		result.put("rows", list);
 		return result;
+	}
+
+	@Override
+	public UserTemp getTempUserByOpenId(String openId) {
+		return userTempMapper.getTempUserByOpenId(openId);
+	}
+
+	@Override
+	public boolean insertUserTemp(UserTemp userTemp) {
+		return userTempMapper.insertSelective(userTemp)>0;
+	}
+
+	@Override
+	public boolean insertUser(User user) {
+		return  userMapper.insertSelective(user)>0;
 	}
 
 }

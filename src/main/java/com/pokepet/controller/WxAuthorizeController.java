@@ -66,7 +66,7 @@ public class WxAuthorizeController {
 
             User newUser=new User();
             String userId= UUID.randomUUID().toString();
-            newUser.setOpenId(openId);
+//            newUser.(openId);
             newUser.setCreateDatetime(new Date());
             newUser.setUserId(userId);
             newUser.setNickName(nickName);

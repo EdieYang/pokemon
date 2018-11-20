@@ -4,6 +4,7 @@ import java.util.Map;
 
 import com.alibaba.fastjson.JSONObject;
 import com.pokepet.model.User;
+import com.pokepet.model.UserTemp;
 
 public interface IUserService {
 
@@ -27,5 +28,11 @@ public interface IUserService {
 	 * @return
 	 */
 	JSONObject getUserList(Map<String, Object> param, int pageNum, int pageSize);
+
+	UserTemp getTempUserByOpenId(String openId);
+
+	boolean insertUserTemp(UserTemp userTemp);
+
+	boolean insertUser(User user);
 
 }
