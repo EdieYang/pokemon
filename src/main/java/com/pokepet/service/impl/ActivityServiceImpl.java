@@ -6,18 +6,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.pokepet.dao.ActActivityGuestLoginMapper;
-import com.pokepet.model.ActActivityGuestLogin;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.pokepet.dao.ActActivityGuestLoginMapper;
 import com.pokepet.dao.ActActivityMapper;
 import com.pokepet.dao.ActActivityRegisterMapper;
 import com.pokepet.dao.ActActivityVoteMapper;
 import com.pokepet.model.ActActivity;
+import com.pokepet.model.ActActivityGuestLogin;
 import com.pokepet.model.ActActivityRegister;
 import com.pokepet.model.ActActivityVote;
 import com.pokepet.service.IActivityService;
@@ -63,8 +63,14 @@ public class ActivityServiceImpl implements IActivityService {
 
 	@Override
 	public boolean saveActivity(ActActivity act) {
-		// TODO Auto-generated method stub
-		return false;
+		if(null != act.getId()){
+			actActivityMapper.updateByPrimaryKeySelective(act);
+		}else{
+			act.setId(CommonUtil.getUuid());
+			act.setCreateTime(new Date());
+			actActivityMapper.insertSelective(act);
+		}
+		return true;
 	}
 
 	@Override

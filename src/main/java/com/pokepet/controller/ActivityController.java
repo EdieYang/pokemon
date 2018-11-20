@@ -64,6 +64,12 @@ public class ActivityController {
 		jsonObject.put("activityStatistics",map);
 		return jsonObject;
 	}
+	
+	@RequestMapping(value = "/saveActivity", method = RequestMethod.POST)
+	public boolean saveActivity(@RequestBody ActActivity act){
+		
+		return activityService.saveActivity(act);
+	}
 
 	@RequestMapping(value = "/saveActivity", method = RequestMethod.POST)
 	public boolean saveActivity(@RequestBody ActActivity act){
