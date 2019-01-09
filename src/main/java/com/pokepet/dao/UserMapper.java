@@ -53,4 +53,8 @@ public interface UserMapper {
 
 	List<Map<String, Object>> selectUserList(Map<String,Object> map);
 
+	User getUserByUnionId(String unionId);
+
+	List<Map<String,String>> getUserInfoByUserId(List<String> userIds);
+
 }

@@ -23,4 +23,8 @@ public class RandomStringGenerator {
         }
         return sb.toString();
     }
+
+    public static void main(String[] args) {
+        System.out.println(getRandomStringByLength(32));
+    }
 }

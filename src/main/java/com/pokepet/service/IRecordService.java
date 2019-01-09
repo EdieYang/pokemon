@@ -97,4 +97,10 @@ public interface IRecordService {
      * @return
      */
     boolean uptShortRecord(UserRecord record);
+
+    boolean vanishRedisPoint(String recordId);
+
+    List<Map<String,String>> getCollectEmergencyPointCityList();
+
+    List<String> getCollectCityList();
 }

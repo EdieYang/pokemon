@@ -43,4 +43,8 @@ public interface UserRecordMapper {
 	int updateByPrimaryKey(UserRecord record);
 
 	List<Map<String, Object>> selectRecordList(Map<String,Object> map);
+
+	List<Map<String,String>> getCollectEmergencyPointCityList();
+
+	List<String> getCollectCityList();
 }

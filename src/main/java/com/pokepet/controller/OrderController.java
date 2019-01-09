@@ -170,6 +170,10 @@ public class OrderController {
 			data.put("money", (int) (money * 100)); //将金额转为分
 			String title = data.getString("commodityName");
 			String openId = data.getString("openId");
+			String userId=data.getString("userId");
+			if(StringUtils.isEmpty(openId)){
+				openId=userService.getOpenIdByUserId(userId);
+			}
 
 			try {
 				String orderId = RandomStringGenerator.getRandomStringByLength(32);

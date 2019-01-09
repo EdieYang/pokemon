@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.github.pagehelper.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -51,6 +52,18 @@ public class ActivityServiceImpl implements IActivityService {
 	}
 
 	@Override
+	public JSONObject getRealActivityList(int pageNum, int pageSize) {
+		JSONObject result = new JSONObject();
+		PageHelper.startPage(pageNum, pageSize);
+		List<Map<String, Object>> list = actActivityMapper.getRealActivityList();
+		PageInfo<Map<String, Object>> page = new PageInfo<Map<String, Object>>(list);
+		result.put("page", page.getPageNum());
+		result.put("records", page.getTotal());
+		result.put("rows", list);
+		return result;
+	}
+
+	@Override
 	public ActActivity getActivity(String id) {
 		return actActivityMapper.selectByPrimaryKey(id);
 	}
@@ -63,7 +76,7 @@ public class ActivityServiceImpl implements IActivityService {
 
 	@Override
 	public boolean saveActivity(ActActivity act) {
-		if(null != act.getId()){
+		if(StringUtil.isNotEmpty(act.getId())){
 			actActivityMapper.updateByPrimaryKeySelective(act);
 		}else{
 			act.setId(CommonUtil.getUuid());

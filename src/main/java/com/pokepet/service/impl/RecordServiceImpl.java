@@ -1,5 +1,6 @@
 package com.pokepet.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
 import com.pokepet.dao.*;
@@ -10,6 +11,8 @@ import com.pokepet.dao.UserRecordHandlerMapper;
 import com.pokepet.dao.UserRecordMapper;
 import com.pokepet.service.IRecordService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.ListOperations;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -44,6 +47,10 @@ public class RecordServiceImpl implements IRecordService {
 
     @Autowired
     private RecordVisitMapper recordVisitMapper;
+
+    @Autowired
+    private RedisTemplate<String,String> redisTemplate;
+
 
     @Override
     public int updateLongRecord(UserLongRecord longRecord) {
@@ -247,4 +254,42 @@ public class RecordServiceImpl implements IRecordService {
 	public boolean uptShortRecord(UserRecord record) {
 		return userRecordMapper.updateByPrimaryKeySelective(record) > 0;
 	}
+
+    @Override
+    public boolean vanishRedisPoint(String recordId) {
+        UserRecord userRecord=userRecordMapper.selectByPrimaryKey(recordId);
+        String city=userRecord.getCity();
+        ListOperations<String, String> oper =  redisTemplate.opsForList();
+        List<String> emergencylist=oper.range("emergencyMap:"+city,0,-1);
+        int index=-1;
+        for(int i=0;i<emergencylist.size();i++){
+            JSONObject itemO= JSON.parseObject(emergencylist.get(i));
+            if(recordId.equals(itemO.getString("recordId"))){
+                index=i;
+                break;
+            }
+        }
+        if (index==0){
+            oper.leftPop("emergencyMap:"+city);
+        } else if(index==emergencylist.size()-1){
+            oper.rightPop("emergencyMap:"+city);
+        } else{
+            oper.trim("emergencyMap:"+city,0,index-1);
+            oper.trim("emergencyMap:"+city,index+1,-1);
+        }
+
+        return true;
+    }
+
+
+    public List<Map<String,String>> getCollectEmergencyPointCityList(){
+        return userRecordMapper.getCollectEmergencyPointCityList();
+    }
+
+    @Override
+    public List<String> getCollectCityList() {
+        return userRecordMapper.getCollectCityList();
+    }
+
+
 }

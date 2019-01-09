@@ -42,6 +42,19 @@ public class ActivityController {
 	}
 
 	/**
+	 * 获取活动列表
+	 *
+	 * @param pageNum
+	 * @param pageSize
+	 * @return
+	 */
+	@RequestMapping(value = "/realActivityList", method = RequestMethod.GET)
+	public JSONObject getRealActivityList(@RequestParam("pageNum") int pageNum, @RequestParam("pageSize") int pageSize) {
+		return activityService.getRealActivityList(pageNum, pageSize);
+	}
+
+
+	/**
 	 * 获取活动详情
 	 * 
 	 * @param id
@@ -51,17 +64,21 @@ public class ActivityController {
 	public JSONObject getActivity(@PathVariable String id) {
 		Map<String,Object> map=activityService.getActivityStatistics(id);
 		ActActivity actActivity=activityService.getActivity(id);
-		Date startDate=actActivity.getStartTime();
-		Date endDate=actActivity.getEndTime();
-		SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		String startTime=simpleDateFormat.format(startDate);
-		String endTime=simpleDateFormat.format(endDate);
-
 		JSONObject jsonObject=new JSONObject();
 		jsonObject.put("activity",actActivity);
-		jsonObject.put("startTime",startTime);
-		jsonObject.put("endTime",endTime);
 		jsonObject.put("activityStatistics",map);
+
+		if(actActivity!=null){
+			Date startDate=actActivity.getStartTime();
+			Date endDate=actActivity.getEndTime();
+			SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			String startTime=simpleDateFormat.format(startDate);
+			String endTime=simpleDateFormat.format(endDate);
+
+			jsonObject.put("startTime",startTime);
+			jsonObject.put("endTime",endTime);
+		}
+
 		return jsonObject;
 	}
 	

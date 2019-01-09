@@ -69,6 +69,7 @@ public class LoginController {
         }finally{
             if(StringUtils.isEmpty(openId)){
                 map.put("userId","");
+                map.put("sessionKey",sessionKey);
                 return map;
             }
 
@@ -88,9 +89,19 @@ public class LoginController {
             }else{
                 map.put("userId",userTemp.getUserTempId());
             }
-            //保存sessionKey和userId
-            stringRedisTemplate.opsForValue().set(map.get("userId").toString(),sessionKey);
-            return map;
+            map.put("sessionKey",sessionKey);
+            map.put("openId",openId);
+            try{
+                //保存sessionKey和userId
+                stringRedisTemplate.opsForValue().set(map.get("userId").toString(),sessionKey);
+            }catch (Exception e){
+                e.printStackTrace();
+                log.error("redis error:"+e.getMessage());
+                //调度中心解决connection timeout 问题
+
+            }finally {
+                return map;
+            }
         }
     }
 
@@ -115,32 +126,59 @@ public class LoginController {
         Map<String,Object> map=new HashMap<>();
         String encryptedData=data.getString("encryptedData");
         String iv=data.getString("iv");
-        String sessionKey=stringRedisTemplate.opsForValue().get( userId);
-        String decryptData=WXCore.decrypt(appId,encryptedData,sessionKey,iv);
-        if(StringUtil.isNotEmpty(decryptData)){
-            JSONObject jsonObject=JSON.parseObject(decryptData);
-            String unionId=jsonObject.getString("unionId");
-            String nickName=jsonObject.getString("nickName");
-            String avatarUrl=jsonObject.getString("avatarUrl");
-            //register authorized  user
-            User user=new User();
-            user.setUserId(userId);
-            user.setNickName(nickName);
-            user.setPhotoPath(avatarUrl);
-            user.setUnionId(unionId);
-            user.setCreateDatetime(new Date());
-            user.setDelFlag(DefaultSettingCode.getCode("DEFAULT_FLAG"));
-            boolean saveAuthorization=userService.insertUser(user);
-            if(saveAuthorization){
-                User userInfo=userService.getUserInfo(userId);
-                map.put("userInfo",userInfo);
-                map.put("authorized",true);
-                return map;
+        String sessionKey="";
+        try{
+            sessionKey=stringRedisTemplate.opsForValue().get( userId);
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            if(StringUtils.isEmpty(sessionKey)){
+                sessionKey=data.getString("sessionKey");
             }
+            String decryptData=WXCore.decrypt(appId,encryptedData,sessionKey,iv);
+            if(StringUtil.isNotEmpty(decryptData)){
+                JSONObject jsonObject=JSON.parseObject(decryptData);
+                String unionId=jsonObject.getString("unionId");
+                String nickName=jsonObject.getString("nickName");
+                String avatarUrl=jsonObject.getString("avatarUrl");
+                //register authorized  user
+                User user=new User();
+                user.setUserId(userId);
+                user.setNickName(nickName);
+                user.setPhotoPath(avatarUrl);
+                user.setUnionId(unionId);
+                user.setCreateDatetime(new Date());
+                user.setDelFlag(DefaultSettingCode.getCode("DEFAULT_FLAG"));
+
+                //获取正式用户记录
+                User userExist=userService.getUserByUnionId(unionId);
+                if(userExist!=null){
+                    userId=userExist.getUserId();
+                    user.setUserId(userId);
+                    int flag=userService.modifyUser(user);
+                    if(flag>0){
+                        User userInfo=userService.getUserInfo(userId);
+
+                        map.put("userInfo",userInfo);
+                        map.put("authorized",true);
+                        return map;
+                    }
+                }else{
+                    boolean saveAuthorization=userService.insertUser(user);
+                    if(saveAuthorization){
+                        User userInfo=userService.getUserInfo(userId);
+                        map.put("userInfo",userInfo);
+                        map.put("authorized",true);
+                        return map;
+                    }
+                }
+
+            }
+            map.put("userInfo",null);
+            map.put("authorized",false);
+            return map;
         }
-        map.put("userInfo",null);
-        map.put("authorized",false);
-        return map;
+
     }
 
 

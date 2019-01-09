@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import com.pokepet.util.UUIDUtils;
 import org.apache.catalina.servlet4preview.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,13 +40,13 @@ public class RecordController {
 
 
     @RequestMapping(value = "/longRecord/{userId}",method = RequestMethod.POST)
-    public boolean  createPetRecord(HttpServletRequest request, @PathVariable("userId")String userId){
-        String recordId=request.getParameter("recordId");
-        String petId=request.getParameter("petId");
-        String title=request.getParameter("title");
-        String content=request.getParameter("content");
-        String abbreImgArr=request.getParameter("abbreImgArr");
-        String type=request.getParameter("type");
+    public boolean  createPetRecord(@RequestBody JSONObject data, @PathVariable("userId")String userId){
+        String recordId=data.getString("recordId");
+        String petId=data.getString("petId");
+        String title=data.getString("title");
+        String content=data.getString("content");
+        String abbreImgArr=data.getString("abbreImgArr");
+        String type=data.getString("type");
 
         //处理缩略图片
         String abbreImg="";
@@ -70,7 +71,7 @@ public class RecordController {
             record.setType(type);
             recordService.updateLongRecord(record);
         }else{
-            record.setRecordId(UUID.randomUUID().toString());
+            record.setRecordId(UUIDUtils.randomUUID());
             record.setTitle(title);
             record.setContent(content);
             record.setAbbreImg(abbreImg);
@@ -80,6 +81,7 @@ public class RecordController {
             record.setCheckState("1");
             record.setDelFlag("0");
             record.setType(type);
+            record.setRecommend("0");
             recordService.insertLongRecord(record);
         }
 
@@ -89,26 +91,29 @@ public class RecordController {
 
     /**
      * 上传短文
-     * @param request
+     * @param data
      * @param userId
      * @return
      */
     @RequestMapping(value = "/shortRecord/{userId}",method = RequestMethod.POST)
-    public boolean  createUserRecord(HttpServletRequest request, @PathVariable("userId")String userId){
-        String recordId=request.getParameter("recordId");
-        String title=request.getParameter("title");
-        String content=request.getParameter("content");
-        String images=request.getParameter("images");
-        String recommendState=request.getParameter("recommendState");
-        String location=request.getParameter("location");
-        String detailLocation=request.getParameter("detailLocation");
-        String lat=request.getParameter("lat");
-        String lng=request.getParameter("lng");
-        String type=request.getParameter("type");
-
+    public JSONObject  createUserRecord(@RequestBody JSONObject data, @PathVariable("userId")String userId){
+        JSONObject resData=new JSONObject();
+        String recordId=data.getString("recordId");
+        String title=data.getString("title");
+        String content=data.getString("content");
+        String images=data.getString("images");
+        String recommendState=data.getString("recommendState");
+        String location=data.getString("location");
+        String detailLocation=data.getString("detailLocation");
+        String lat=data.getString("lat");
+        String lng=data.getString("lng");
+        String type=data.getString("type");
+        String city=data.getString("city");
+        String operateType="";
 
         UserRecord record=new UserRecord();
         if(StringUtils.isNotEmpty(recordId)){ //编辑已有故事
+            operateType="update";
             record.setRecordId(recordId);
             record.setTitle(title);
             record.setContent(content);
@@ -123,9 +128,12 @@ public class RecordController {
             record.setDetailLocation(detailLocation);
             record.setLat(lat);
             record.setLng(lng);
+            record.setCity(city);
             recordService.updateRecord(record);
         }else{
-            record.setRecordId(UUID.randomUUID().toString());
+            operateType="insert";
+            recordId=UUIDUtils.randomUUID();
+            record.setRecordId(recordId);
             record.setTitle(title);
             record.setContent(content);
             record.setImages(images);
@@ -139,11 +147,26 @@ public class RecordController {
             record.setDetailLocation(detailLocation);
             record.setLat(lat);
             record.setLng(lng);
+            record.setCity(city);
             recordService.insertRecord(record);
         }
+        resData.put("recordId",recordId);
+        resData.put("type",type);
+        resData.put("operateType",operateType);
+        resData.put("operateResult",true);
+        resData.put("lat",lat);
+        resData.put("lng",lng);
+        resData.put("city",city);
+        resData.put("content",content);
+        return resData;
+    }
 
-        return true;
 
+    @RequestMapping(value = "/vanishRedisPoint",method = RequestMethod.POST)
+    public boolean vanishRedisPoint(@RequestBody JSONObject data){
+        String recordId=data.getString("recordId");
+        boolean result=recordService.vanishRedisPoint(recordId);
+        return result;
     }
 
 
@@ -218,21 +241,6 @@ public class RecordController {
             switch (type){
                 case "3":
                     petRecord.put("images",JSON.parseArray(images));
-                    String content2=petRecord.get("content").toString();
-                    String abbrContent="";
-                    String leftContent="";
-                    boolean extend=false;
-                    if(content2.length()>40){
-                        abbrContent= content2.substring(0,40);
-                        leftContent=content2.substring(40);
-                        extend=true;
-
-                    }
-
-                    petRecord.put("abbrContent",abbrContent);
-                    petRecord.put("leftContent",leftContent);
-                    petRecord.put("extend",extend);
-                    petRecord.put("images",JSON.parseArray(images));
                     break;
             }
 
@@ -302,7 +310,6 @@ public class RecordController {
 
         int pageNum=request.getParameter("pageNum").equals(null)?0:Integer.parseInt(request.getParameter("pageNum"));
         int pageSize=request.getParameter("pageSize").equals(null)?0:Integer.parseInt(request.getParameter("pageSize"));
-
         List<Map<String,Object>> records=recordService.selectUserCheckedRecordList(userId,pageNum,pageSize);
         for(Map<String, Object> petRecord:records){
 
@@ -310,25 +317,21 @@ public class RecordController {
             String abbreImg=(String) petRecord.get("abbreImg");
             String images=(String) petRecord.get("images");
             switch (type){
-                case "1": //科普长文截取文字内容
+                case "0": //传记
                     petRecord.put("abbreImg",JSON.parseArray(abbreImg));
                     petRecord.put("content",generateAbbreContent(petRecord));
                     break;
-                case "2": //短文截取文字内容
+                case "1": //科普
+                    petRecord.put("abbreImg",JSON.parseArray(abbreImg));
+                    petRecord.put("content",generateAbbreContent(petRecord));
+                    break;
+                case "2"://日记
                     String content=petRecord.get("content").toString();
                     if(content.length()>40){
                         content= content.substring(0,40)+"...";
                     }
                     petRecord.put("images",JSON.parseArray(images));
                     petRecord.put("content",content);
-                    break;
-                case "3":
-                    petRecord.put("images",JSON.parseArray(images));
-                    String content2=petRecord.get("content").toString();
-                    if(content2.length()>40){
-                        content2= content2.substring(0,40)+"...";
-                    }
-                    petRecord.put("content",content2);
                     break;
             }
 
@@ -417,7 +420,7 @@ public class RecordController {
         }
 
         if(recordDetail!=null){
-            SimpleDateFormat format=new SimpleDateFormat("yyy-MM-dd hh:mm");
+            SimpleDateFormat format=new SimpleDateFormat("yyy-MM-dd HH:mm");
             recordDetail.put("createtime",format.format(recordDetail.get("createtime")));
         }
 
@@ -491,11 +494,8 @@ public class RecordController {
                     break;
                 case "3":
                     petRecord.put("images",JSON.parseArray(images));
-                    String content2=petRecord.get("content").toString();
-                    if(content2.length()>40){
-                        content2= content2.substring(0,40)+"...";
-                    }
-                    petRecord.put("content",content2);
+                    JSONObject content2=JSON.parseObject(petRecord.get("content").toString());
+                    petRecord.put("content",content2.getString("detailInfo"));
                     break;
             }
 

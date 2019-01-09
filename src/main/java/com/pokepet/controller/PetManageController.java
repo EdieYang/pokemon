@@ -108,7 +108,7 @@ public class PetManageController {
 
 		Pet pet=new Pet();
 		//转换生日格式
-		SimpleDateFormat format=new SimpleDateFormat("yyyy-mm-dd");
+		SimpleDateFormat format=new SimpleDateFormat("yyyy-MM-dd");
 		try {
 			Date birthDate=format.parse(birthday);
 			pet.setBirthday(birthDate);

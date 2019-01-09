@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.ListOperations;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -59,6 +61,9 @@ public class ExploreServiceImpl implements IExploreService {
 
 	@Autowired
 	UserExploreHistoryMapper userExploreHistoryMapper;
+
+	@Autowired
+	private RedisTemplate<String,String> redisTemplate;
 
 	@Override
 	public JSONArray getExplorePoint(GPSLocation location, double distance, int pointStar, int pointCount) {
@@ -287,6 +292,13 @@ public class ExploreServiceImpl implements IExploreService {
 	@Override
 	public int getExploreCountForUserToday(String userId) {
 		return userExploreHistoryMapper.getExploreCountForUserToday(userId);
+	}
+
+	@Override
+	public List<String> getEmergencyPoints(String city) {
+		ListOperations<String,String> oper= redisTemplate.opsForList();
+		List<String> resList=oper.range("emergencyMap:"+city,0,-1);
+		return resList;
 	}
 
 }

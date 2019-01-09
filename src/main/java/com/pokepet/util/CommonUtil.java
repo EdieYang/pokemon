@@ -53,6 +53,7 @@ public class CommonUtil {
 	 * @date 2018年5月25日
 	 */
 	public static String getAgeByBirthday(Date birthday) {
+		String age="";
 		Calendar cal = Calendar.getInstance();
 
 		if (cal.before(birthday)) {
@@ -81,11 +82,13 @@ public class CommonUtil {
 			month = (month+12)%12;
 			year--;
 		}
-		System.out.println("年龄："+year+"年"+month+"月"+day+"天");
-		double ageD=year+month/12.0+	day/30.0*0.1;
-		DecimalFormat df = new DecimalFormat("0.00");
-		String age=df.format(ageD);
-		System.out.println(age);
+		if(year!=0){
+			age=year+"岁"+month+"月"+day+"天";
+		}else if(month!=0){
+			age=month+"月"+day+"天";
+		}else{
+			age=day+"天";
+		}
 
 		return age;
 	}

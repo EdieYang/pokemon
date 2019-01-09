@@ -56,5 +56,11 @@ public interface IUserFollowService {
      */
     boolean crdFollowRelationWithPet(Map<String,String> map);
 
+
+    /**
+     * 用户关注 (增删)
+     * @param map
+     * @return
+     */
     boolean crdFollowRelationWithUser(Map<String,String> map);
 }

@@ -36,33 +36,35 @@ public class ShareBusinessController {
         Date effectiveTime=data.getDate("effectiveTime");
         List<Map<String,Object>> topRecords=shareBusinessService.getTopShareRecords(userId,effectiveTime);
 
-        ShareRecord hasRecord=shareBusinessService.getTargetShareRecord(userId,targetUserId,effectiveTime);
-
 
 
         if(topRecords.size()>=3){
             result.put("data",topRecords.subList(0,3));
             result.put("status",200);
+            result.put("reward",false);
             return result;
         }
 
         if(targetUserId.equals(userId)){
             result.put("data",topRecords);
             result.put("status",200);
+            result.put("reward",false);
             return result;
         }
 
+        ShareRecord hasRecord=shareBusinessService.getTargetShareRecord(userId,targetUserId,effectiveTime);
 
         if(hasRecord!=null){
             result.put("data",topRecords);
             result.put("status",200);
+            result.put("reward",false);
             return result;
         }
 
         List<Map<String,Object>> records=shareBusinessService.getShareRecords(userId,targetUserId,effectiveTime);
         if(records==null || records!=null && records.size()<3){
 
-           //占位
+            //占位
             ShareRecord shareRecord=new ShareRecord();
             shareRecord.setCreateTime(new Date());
             shareRecord.setRecordId(UUID.randomUUID().toString().replace("-",""));
@@ -87,10 +89,12 @@ public class ShareBusinessController {
                         obj.setChipCount(obj.getChipCount()+3);
                         userService.modifyUser(obj);
                     }
+                    result.put("reward",true);
                 }
             }
             result.put("data",newTopRecords);
             result.put("status",200);
+            result.put("reward",false);
             return result;
 
         }

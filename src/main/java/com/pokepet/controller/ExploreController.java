@@ -4,11 +4,7 @@ import java.util.List;
 
 import com.pokepet.service.IPropertyService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -75,5 +71,13 @@ public class ExploreController {
 		GPSLocation end = JSONObject.toJavaObject(data.getJSONObject("end"), GPSLocation.class);
 		return LocationUtils.GetDistance(start, end);
 	}
+
+
+	@RequestMapping(value = "/emergencyPoints", method = RequestMethod.GET)
+	public List<String> getEmergencyPoints(@RequestParam("city") String city) {
+		return exploreService.getEmergencyPoints(city);
+	}
+
+
 
 }

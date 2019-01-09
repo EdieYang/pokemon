@@ -18,6 +18,8 @@ public interface IActivityService {
 	 */
 	JSONObject getActivityList(int pageNum, int pageSize);
 
+	JSONObject getRealActivityList(int pageNum, int pageSize);
+
 	/**
 	 * 获取活动详情
 	 * 

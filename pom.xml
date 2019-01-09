@@ -4,13 +4,13 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.pokepet</groupId>
-	<!--<artifactId>pokemontest</artifactId>-->
-	<artifactId>pokemon</artifactId>
+	<artifactId>pokemontest</artifactId>
+	<!--<artifactId>pokemon</artifactId>-->
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<!--<name>pokemontest</name>-->
-	<name>pokemon</name>
+	<name>pokemontest</name>
+	<!--<name>pokemon</name>-->
 
 	<description>pokeplatform API </description>
 
@@ -156,16 +156,27 @@
 		<!-- add by Bean at 2018-5-29 for ftp upload -->
 
 		<!-- add by Bean at 2018-5-31 for redis -->
+
+
+		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-pool2 -->
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-pool2</artifactId>
+			<version>2.6.0</version>
+		</dependency>
+
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-redis</artifactId>
 		</dependency>
 
-
 		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-pool2</artifactId>
+			<groupId>io.lettuce</groupId>
+			<artifactId>lettuce-core</artifactId>
+			<version>5.1.2.RELEASE</version>
 		</dependency>
+
 
 		<!-- add by Bean at 2018-8-7 for websocket -->
 		<dependency>

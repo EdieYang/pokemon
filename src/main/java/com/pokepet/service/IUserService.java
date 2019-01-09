@@ -35,4 +35,10 @@ public interface IUserService {
 
 	boolean insertUser(User user);
 
+	User getUserByUnionId(String unionId);
+
+	boolean modifyUserTemp(String userId);
+
+	String getOpenIdByUserId(String userId);
+
 }

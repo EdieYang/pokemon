@@ -34,4 +34,6 @@ public interface IExploreService {
 	
 	int getExploreCountForUserToday(String userId);
 
+	List<String> getEmergencyPoints(String city);
+
 }

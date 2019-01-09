@@ -140,6 +140,7 @@ public class UserFollowServiceImpl implements IUserFollowService {
     public boolean crdFollowRelationWithUser(Map<String, String> map) {
         String userId=map.get("userId");
         String followUserId=map.get("followUserId");
+        String followState=map.get("followState");
         UserFollow userFollow=new UserFollow();
         userFollow.setUserId(userId);
         userFollow.setFollowUserId(followUserId);
@@ -151,6 +152,9 @@ public class UserFollowServiceImpl implements IUserFollowService {
             return userFollowMapper.insertSelective(userFollow)>0;
         }else{
             String delFlag=existUserFollow.getDelFlag();
+            if(delFlag.equals(followState)){
+              return true;
+            }
             if(delFlag.equals("0")){
                 existUserFollow.setDelFlag("1");
             }else{

@@ -32,7 +32,7 @@ public class MyBatisConfiguration{
     @Bean(value = "datasource")
     public DataSource dataSource(){
         HikariDataSource hikariDataSource=new HikariDataSource();
-        hikariDataSource.setJdbcUrl("jdbc:mysql://116.62.60.203:3306/datacenter__dev?characterEncoding=utf8&useSSL=false&autoReconnect=true");
+        hikariDataSource.setJdbcUrl("jdbc:mysql://116.62.60.203:3306/pokedata_test?useSSL=false&autoReconnect=true");
         hikariDataSource.setUsername("root");
         hikariDataSource.setPassword("PokePet123456!");
         hikariDataSource.setReadOnly(false);
@@ -41,6 +41,7 @@ public class MyBatisConfiguration{
         hikariDataSource.setDriverClassName("com.mysql.jdbc.Driver");
         hikariDataSource.setMinimumIdle(5);
         hikariDataSource.setAutoCommit(true);
+
         hikariDataSource.setConnectionTestQuery("SELECT 1");
         hikariDataSource.setMaximumPoolSize(15);
         hikariDataSource.setMaxLifetime(1800000);

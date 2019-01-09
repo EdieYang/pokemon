@@ -184,10 +184,10 @@
   <select id="getMessageList" parameterType="java.lang.String" resultType="java.util.Map">
     select
     message_id as messageId, type, sender_id as senderId, receiver_id as receiverId, message_content as messageContent, read_state as readState,
-     DATE_FORMAT(create_time,'%Y-%m-%d') as createTime
+     DATE_FORMAT(create_time,'%Y-%m-%d %H:%i') as createTime
     from message_queue
     where receiver_id = #{userId}
-    AND read_state='0'
+    order by create_time desc
   </select>
 
   <select id="selectMessageCount" parameterType="com.pokepet.model.MessageQueue" resultType="java.lang.Integer">

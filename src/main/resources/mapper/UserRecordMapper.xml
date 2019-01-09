@@ -336,4 +336,38 @@
 	ORDER BY t_r.create_time DESC
   </select>
 
+
+
+  <select id="getCollectEmergencyPointCityList" resultType="java.util.Map">
+    SELECT record_id as recordId,
+           type,
+           title,
+           content,
+           images,
+           recommend,
+           user_id as userId,
+           memo,
+           city,
+           location,
+           detail_location as detailLocation,
+           lat,
+           lng
+    FROM user_record
+    WHERE type='3'
+    AND recommend='0'
+    AND check_state='1'
+    AND del_flag='0'
+    ORDER BY city
+
+  </select>
+
+  <select id="getCollectCityList" resultType="java.lang.String">
+    SELECT DISTINCT(city) as city
+    FROM user_record
+    WHERE type='3'
+    AND recommend='0'
+    AND check_state='1'
+    AND del_flag='0'
+  </select>
+
 </mapper>

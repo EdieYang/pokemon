@@ -201,4 +201,20 @@
 		 ORDER BY t_u.create_datetime DESC
   </select>
 
+  <select id="getUserInfoByUserId" parameterType="java.util.List">
+    SELECT
+		  t_u.user_id AS userId,
+		  IFNULL(t_u.nick_name,'') AS nickName,
+		  t_u.chip_count AS chipCount,
+         t_p.open_id AS openId
+		FROM
+       user t_u
+		LEFT JOIN user_temp t_p
+       ON t_p.user_temp_id = t_u.user_id
+		WHERE t_u.user_id IN
+      <foreach collection="userIds" index="index" item="item" open="(" separator="," close=")">
+         #{item}
+      </foreach>
+  </select>
+
 </mapper>

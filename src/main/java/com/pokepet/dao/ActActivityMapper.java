@@ -45,4 +45,6 @@ public interface ActActivityMapper {
 	List<Map<String, Object>> getActivityList();
 
 	Map<String,Object> getActivityStatistics(String id);
+
+	List<Map<String,Object>> getRealActivityList();
 }

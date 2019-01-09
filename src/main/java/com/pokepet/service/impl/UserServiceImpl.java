@@ -85,4 +85,21 @@ public class UserServiceImpl implements IUserService {
 		return  userMapper.insertSelective(user)>0;
 	}
 
+	@Override
+	public User getUserByUnionId(String unionId) {
+		return userMapper.getUserByUnionId(unionId);
+	}
+
+	@Override
+	public boolean modifyUserTemp(String userId) {
+		UserTemp userTemp=new UserTemp();
+		userTemp.setUserTempId(userId);
+		return userTempMapper.updateByPrimaryKeySelective(userTemp)>0;
+	}
+
+	@Override
+	public String getOpenIdByUserId(String userId) {
+		return userTempMapper.selectByPrimaryKey(userId).getOpenId();
+	}
+
 }

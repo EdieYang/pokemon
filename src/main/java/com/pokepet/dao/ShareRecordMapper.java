@@ -65,4 +65,6 @@ public interface ShareRecordMapper {
     List<Map<String,Object>> getTopShareRecords(@Param("userId") String userId, @Param("effectiveTime") Date effectiveTime);
 
 
+    List<Map<String,String>> selectTargetIdsByUserIdOnDate();
+
 }

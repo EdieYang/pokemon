@@ -1,14 +1,15 @@
 package com.pokepet.util;
  
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
- 
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.pokepet.controller.FileController;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -22,6 +23,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
@@ -72,14 +74,14 @@ public class HttpUtil {
 	 */
 	public static String doPost(String url, Map params){
 		
-		BufferedReader in = null;  
-        try {  
-            // 定义HttpClient  
+		BufferedReader in = null;
+        try {
+            // 定义HttpClient
             HttpClient client = new DefaultHttpClient();  
             // 实例化HTTP方法  
-            HttpPost request = new HttpPost();  
+            HttpPost request = new HttpPost();
             request.setURI(new URI(url));
-            
+
             //设置参数
             List<NameValuePair> nvps = new ArrayList<NameValuePair>(); 
             for (Iterator iter = params.keySet().iterator(); iter.hasNext();) {
@@ -118,6 +120,54 @@ public class HttpUtil {
         	return null;
         }
 	}
+
+    /**
+     * post请求(返回二进制数据)
+     * @param url
+     * @param params
+     * @return
+     */
+    public static String postInputStream(String url, Map params){
+
+        try {
+            CloseableHttpClient  httpClient = HttpClientBuilder.create().build();
+
+            HttpPost httpPost = new HttpPost(url);  // 接口
+            httpPost.addHeader(HTTP.CONTENT_TYPE, "application/json");
+            String body = JSON.toJSONString(params);           //必须是json模式的 post
+            StringEntity entity;
+            entity = new StringEntity(body);
+            entity.setContentType("image/jpeg");
+
+            httpPost.setEntity(entity);
+            HttpResponse response;
+
+            response = httpClient.execute(httpPost);
+
+
+
+
+            int code = response.getStatusLine().getStatusCode();
+            if(code == 200){	//请求成功
+
+                InputStream inputStream =response.getEntity().getContent();
+                String fileName="tempImage/wxaCode/"+UUIDUtils.randomUUID()+".jpeg";
+                //上传至oss
+                FileController.generateImage(fileName,inputStream);
+                return fileName;
+            }
+            else{	//
+                System.out.println("状态码：" + code);
+                return null;
+            }
+        }
+        catch(Exception e){
+            e.printStackTrace();
+            return null;
+        }finally {
+
+        }
+    }
 	
 	/**
 	 * post请求（用于请求json格式的参数）

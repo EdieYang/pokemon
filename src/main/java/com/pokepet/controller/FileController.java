@@ -167,16 +167,45 @@ public class FileController {
 
 	}
 
+	public static void generateImage(String fileObjName,InputStream inputStream){
+
+		// 创建OSSClient实例。
+		OSSClient client = new OSSClient(endpoint, accessKeyId, accessKeySecret);
+
+		try {
+
+			client.putObject(bucketName,fileObjName,inputStream);
+		} catch (OSSException oe) {
+			System.out.println("Caught an OSSException, which means your request made it to OSS, "
+					+ "but was rejected with an error response for some reason.");
+			System.out.println("Error Message: " + oe.getErrorCode());
+			System.out.println("Error Code:       " + oe.getErrorCode());
+			System.out.println("Request ID:      " + oe.getRequestId());
+			System.out.println("Host ID:           " + oe.getHostId());
+		} catch (ClientException ce) {
+			System.out.println("Caught an ClientException, which means the client encountered "
+					+ "a serious internal problem while trying to communicate with OSS, "
+					+ "such as not being able to access the network.");
+			System.out.println("Error Message: " + ce.getMessage());
+		} finally {
+
+			if (client != null) {
+				client.shutdown();
+			}
+		}
+	}
+
 
 	@PostMapping
 	@RequestMapping(value = "/uploadFile/image",method = RequestMethod.POST)
-	public JSONObject uploadFile(@RequestParam("file") MultipartFile file, @RequestParam JSONObject data) throws IOException {
+	public JSONObject uploadFile(@RequestParam("file") MultipartFile file, @RequestParam("type") String type) throws IOException {
 		JSONObject resJson=new JSONObject();
-		String type=data.getString("data");
 		String objName="";
 		//存储对象实例命名
 		switch (type){
-			case "activity": objName+=activityPicObjNamePrefix+"/acPic/"+ UUIDUtils.randomUUID();
+			case "activity": objName+=activityPicObjNamePrefix+"acPic/activity/"+ UUIDUtils.randomUUID();
+				break;
+			case "logo":objName+=activityPicObjNamePrefix+"acPic/logo/"+ UUIDUtils.randomUUID();
 				break;
 			default:break;
 		}

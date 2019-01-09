@@ -18,7 +18,7 @@ import java.util.UUID;
 
 
 @RestController
-@RequestMapping("/statistics")
+@RequestMapping("/activity/statistics")
 public class StatisticsController {
 
 
@@ -54,20 +54,24 @@ public class StatisticsController {
         JSONObject object=new JSONObject();
         String userId=request.getParameter("userId");
         String type=request.getParameter("type");
+        String activityId=request.getParameter("activityId");
 
         if(StringUtils.isEmpty(userId)){
             object.put("result",false);
             return object;
         }
+
         ActivityStatistic activityStatistic=new ActivityStatistic();
         activityStatistic.setId(UUID.randomUUID().toString());
         activityStatistic.setUserId(userId);
-        activityStatistic.setActivityId(ACID);
+        activityStatistic.setActivityId(activityId);
         activityStatistic.setType(type);
         activityMapper.insertSelective(activityStatistic);
         object.put("result",true);
         return object;
     }
+
+
 
 
 }

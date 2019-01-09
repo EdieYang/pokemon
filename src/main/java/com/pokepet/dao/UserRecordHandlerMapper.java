@@ -19,7 +19,7 @@ public interface UserRecordHandlerMapper {
 
     List<Map<String,Object>> selectUserCollectRecordList(String userId);
 
-    List<Map<String,Object>> selectUserCheckedRecordList(String userId);
+    List<Map<String,Object>> selectUserCheckedRecordList(@Param("userId") String userId);
 
     List<Map<String,Object>> selectRecommendList(String userId);
 

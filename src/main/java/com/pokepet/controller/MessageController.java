@@ -32,9 +32,8 @@ public class MessageController {
 
     @RequestMapping(value = "/messageCount/{userId}",method = RequestMethod.GET)
     public int getMessageCount(@PathVariable("userId")String userId){
-
         MessageQueue messageQueue=new MessageQueue();
-        messageQueue.setReadState(userId);
+        messageQueue.setReceiverId(userId);
         messageQueue.setReadState("0");
         int count= IMessageService.getMessageCount(messageQueue);
         return count;

@@ -153,7 +153,7 @@
     FROM share_record sr
     LEFT JOIN user u
     on sr.target_user_id=u.user_id
-    where sr.create_time &lt;= #{effectiveTime}
+    where DATEDIFF(sr.create_time, #{effectiveTime})=0
     and sr.user_id=#{userId}
     and sr.target_user_id!=#{targetUserId}
 
@@ -163,7 +163,7 @@
 
     SELECT <include refid="Base_Column_List" />
     FROM share_record
-    where create_time &lt;= #{effectiveTime}
+    where DATEDIFF(create_time, #{effectiveTime})=0
     and user_id=#{userId}
     and target_user_id=#{targetUserId}
 
@@ -177,9 +177,18 @@
     FROM share_record sr
     LEFT JOIN user u
     on sr.target_user_id=u.user_id
-    where sr.create_time &lt;= #{effectiveTime}
+    where DATEDIFF(sr.create_time, #{effectiveTime})=0
     and sr.user_id=#{userId}
+    and sr.target_user_id!=sr.user_id
     ORDER BY sr.create_time ASC
+  </select>
+
+  <select id="selectTargetIdsByUserIdOnDate" resultType="java.util.Map">
+    SELECT user_id,CONTACT(target_user_id) as targetUserIds
+    FROM share_record
+    GROUP BY user_id
+    where DATEDIFF(sr.create_time, NOW())=1
+    ORDER BY create_time ASC
   </select>
 
 

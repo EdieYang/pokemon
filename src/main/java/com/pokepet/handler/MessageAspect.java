@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.alibaba.fastjson.JSON;
 import org.apache.commons.lang.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -61,6 +62,11 @@ public class MessageAspect {
 	// 探索点切点
 	@Pointcut("execution(public * com.pokepet.service.IExploreService.expolrePoint(..))")
 	public void expolrePointPointCut() {
+	}
+
+	//开启宝箱切点
+	@Pointcut("execution(public * com.pokepet.controller.ShareBusinessController.getShareRecords(..))")
+	public void shareBoxPointCut() {
 	}
 
 	@Around("followPetPointCut()")
@@ -191,10 +197,13 @@ public class MessageAspect {
 						receiverUserId = record.getUserId();
 						recordTitle = record.getTitle();
 					} else {
+						if(recordType.equals("2")){
+							recordTitle= "一篇日记";
+						}else{
+							recordTitle="一篇寻宠信息";
+						}
 						UserRecord record = userRecordMapper.selectByPrimaryKey(recordId);
 						receiverUserId = record.getUserId();
-						recordTitle = record.getTitle();
-
 					}
 
 					messageQueue.setSenderId(popLikeUserId);
@@ -301,44 +310,44 @@ public class MessageAspect {
 		}
 	}
 
-	// @Before("followPetPointCut()")
-	// public void deBefore(JoinPoint joinPoint) throws Throwable {
-	// // 接收到请求，记录请求内容
-	//// ServletRequestAttributes attributes = (ServletRequestAttributes)
-	// RequestContextHolder.getRequestAttributes();
-	//// HttpServletRequest request = attributes.getRequest();
-	//// // 记录下请求内容
-	//// String petId=request.getParameter("userId");
-	//// System.out.println("petId:"+petId);
-	//// System.out.println("URL : " + request.getRequestURL().toString());
-	//// System.out.println("HTTP_METHOD : " + request.getMethod());
-	//// System.out.println("IP : " + request.getRemoteAddr());
-	//// System.out.println("CLASS_METHOD : " +
-	// joinPoint.getSignature().getDeclaringTypeName() + "." +
-	// joinPoint.getSignature().getName());
-	//// System.out.println("ARGS : " + Arrays.toString(joinPoint.getArgs()));
-	//
-	// }
-	//
-	// @AfterReturning(returning = "ret", pointcut = "followPetPointCut()")
-	// public void doAfterReturning(JoinPoint joinPoint,Object ret) throws
-	// Throwable {
-	// // 处理完请求，返回内容
-	// System.out.println("方法的返回值 : " + ret);
-	// if(ret.equals(true)){
-	//
-	// }
-	// }
-	//
-	// //后置异常通知
-	// @AfterThrowing("followPetPointCut()")
-	// public void throwss(JoinPoint jp){
-	// System.out.println("方法异常时执行.....");
-	// }
-	//
-	// //后置最终通知,final增强，不管是抛出异常或者正常退出都会执行
-	// @After("followPetPointCut()")
-	// public void after(JoinPoint jp){
-	// System.out.println("方法最后执行.....");
-	// }
+	@Around("(shareBoxPointCut())")
+	public Object aroundShareBoxPointCut(ProceedingJoinPoint pjp) {
+		log.info("{MessageAspect} =>openShareBox start.....");
+
+		try {
+			Object o = pjp.proceed();
+			System.out.println("方法环绕proceed，结果是 :" + o);
+			JSONObject js = JSONObject.parseObject(JSONObject.toJSONString(o));
+			JSONArray data=JSONArray.parseArray(js.getString("data"));
+			Object reward= JSON.parse(js.getString("reward"));
+			if(data!=null && data.size()==3 && reward!=null && (boolean)reward){
+				String userId="";
+				//分发成功开启宝箱用户
+				for(Object ob:data){
+					Map<String,Object> map= (Map<String, Object>) ob;
+					userId=String.valueOf(map.get("userId"));
+					String targetUserId= String.valueOf(map.get("targetUserId"));
+					MessageQueue messageQueue = new MessageQueue();
+					messageQueue.setReceiverId(targetUserId);
+					messageQueue.setType("3");// 1：用户关注 2：文章点赞 3：系统消息
+					messageQueue.setMessageContent("恭喜您成功开启宝箱并获取3枚金币");
+					messageQueue.setCreateTime(new Date());
+					messageQueue.setMessageId(CommonUtil.getUuid());
+					messageQueueMapper.insertSelective(messageQueue);
+				}
+				MessageQueue messageQueue = new MessageQueue();
+				messageQueue.setReceiverId(userId);
+				messageQueue.setType("3");// 1：用户关注 2：文章点赞 3：系统消息
+				messageQueue.setMessageContent("恭喜您成功开启宝箱并获取10枚金币");
+				messageQueue.setCreateTime(new Date());
+				messageQueue.setMessageId(CommonUtil.getUuid());
+				messageQueueMapper.insertSelective(messageQueue);
+
+			}
+			return o;
+		} catch (Throwable e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 }
