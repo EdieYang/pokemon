@@ -31,4 +31,9 @@ public class DonateServiceImpl implements IDonateService{
 		return userDonateMapper.insertSelective(record) > 0;
 	}
 
+	@Override
+	public List<Map<String, Object>> getDonateStatistics(Map<String, Object> param) {
+		return userDonateMapper.getDonateStatistics(param);
+	}
+
 }

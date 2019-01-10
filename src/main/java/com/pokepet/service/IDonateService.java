@@ -13,4 +13,5 @@ public interface IDonateService {
 	
 	boolean insertRecord(UserDonate record);
 
+	List<Map<String, Object>> getDonateStatistics(Map<String, Object> param);
 }

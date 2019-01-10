@@ -185,4 +185,21 @@
 		</if>
     order by donate_time desc
   </select>
+  
+  <select id="getDonateStatistics" parameterType="java.lang.String" resultType="java.util.Map">
+    SELECT 
+	  CASE donate_type
+		  WHEN '1' THEN '现金'
+		  WHEN '2' THEN '金币'
+		  WHEN '3' THEN '狗粮'
+		  WHEN '4' THEN '猫粮'
+		  ELSE '其他' END AS donateType,
+	  SUM(donate_amount)/1000 AS donateAmount 
+	FROM
+	  user_donate 
+	  WHERE del_flag = '0'
+	  AND donate_activity = #{donateActivity,jdbcType=VARCHAR}
+	GROUP BY donate_type 
+	ORDER BY donate_type
+  </select>
 </mapper>

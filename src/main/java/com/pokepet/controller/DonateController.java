@@ -68,5 +68,22 @@ public class DonateController {
 		result.put("data", donateService.getDonateList(param));
 		return result;
 	}
+	
+	/**
+	 * 查询捐款统计
+	 * @param userId
+	 * @return
+	 */
+	@RequestMapping(value = "/donateStatistics", method = RequestMethod.GET)
+	public JSONObject getDonateStatistics(@RequestParam("donateActivity") String donateActivity) {
+		JSONObject result = new JSONObject();
+		// 查询
+		Map<String, Object> param = new HashMap<String, Object>();
+		param.put("donateActivity", donateActivity);
+		
+		result.put("success", true);
+		result.put("data", donateService.getDonateStatistics(param));
+		return result;
+	}
 
 }

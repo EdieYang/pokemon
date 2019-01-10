@@ -57,4 +57,6 @@ public interface UserDonateMapper {
     UserDonate getLastDonate(Map<String, Object> param);
 	
 	List<Map<String, Object>> getDonateList(Map<String, Object> param);
+	
+	List<Map<String, Object>> getDonateStatistics(Map<String, Object> param);
 }
