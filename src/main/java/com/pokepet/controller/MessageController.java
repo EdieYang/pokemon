@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.pokepet.annotation.ResponseResult;
 import com.pokepet.model.MessageQueue;
 import com.pokepet.service.IMessageService;
+import org.apache.catalina.servlet4preview.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
