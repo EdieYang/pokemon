@@ -37,11 +37,17 @@ public class WxAuthorizeController {
 
 
 
-    @Value("${wx.appId}")
-    private String appId;
+    @Value("${wx.service.appId}")
+    private String s_appId;
 
-    @Value("${wx.secret}")
-    private String secret;
+    @Value("${wx.service.secret}")
+    private String s_secret;
+
+    @Value("${wx.subscribe.appId}")
+    private String sub_appId;
+
+    @Value("${wx.subscribe.secret}")
+    private String sub_secret;
 
 
     @Value("${linkPet.appId}")
@@ -62,11 +68,10 @@ public class WxAuthorizeController {
         String res=HttpClientUtils.httpGet(reqUrl);
         JSONObject resJ= JSON.parseObject(res);
         String accessToken=resJ.getString("access_token");
-        map.put("scene",request.getParameter("scene"));
-        map.put("page","pages/exploredetail/exploredetail");
-        map.put("width",50);
+        String scene=request.getParameter("scene");
+        map.put("path","pages/exploredetail/exploredetail?scene="+scene+"&type=3");
         map.put("is_hyaline",true);
-        String imageUrl=HttpUtil.postInputStream("https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token="+accessToken,map);
+        String imageUrl=HttpUtil.postInputStream("https://api.weixin.qq.com/wxa/getwxacode?access_token="+accessToken,map);
 
         JSONObject returnObj=new JSONObject();
         returnObj.put("wxImageUrl",imageUrl);
@@ -75,9 +80,25 @@ public class WxAuthorizeController {
 
 
     @RequestMapping(value = "/authUserInfo",method = RequestMethod.GET)
-    public Map<String,String> authUserInfo(@RequestParam("code")String code){
+    public Map<String,String> authUserInfo(@RequestParam("code")String code,@RequestParam("plateForm")String plateForm){
         Map<String,String> map=new HashMap<>();
         //获取accessToken & openId
+        String secret="";
+        String appId="";
+        switch (plateForm){
+            case "serviceAccount":
+                appId=s_appId;
+                secret=s_secret;
+                break;
+            case "subscribeAccount":
+                appId=sub_appId;
+                secret=sub_secret;
+                break;
+        }
+        if(StringUtils.isEmpty(appId) && StringUtils.isEmpty(secret)){
+            map.put("userId","");
+            return map;
+        }
         String reqUrl="https://api.weixin.qq.com/sns/oauth2/access_token?appid="+appId+"&secret="+secret+"&code="+code+"&grant_type=authorization_code";
         String res=HttpClientUtils.httpGet(reqUrl);
         JSONObject resJ= JSON.parseObject(res);
@@ -119,9 +140,17 @@ public class WxAuthorizeController {
 
 
     @RequestMapping("/configWxEnvironment")
-    public Map<String,Object> configWxEv(@RequestParam("url") String url){
+    public Map<String,Object> configWxEv(@RequestParam("url") String url,@RequestParam("plateForm")String plateForm){
         Map<String,Object> map=new HashMap<>();
-
+        String appId="";
+        switch (plateForm){
+            case "serviceAccount":
+                appId=s_appId;
+                break;
+            case "subscribeAccount":
+                appId=sub_appId;
+                break;
+        }
         String ticket = Token.getTicket();
         String noncestr = RandomStringGenerator.getRandomStringByLength(32);
         long timestamp = new Date().getTime()/1000;
@@ -140,6 +169,21 @@ public class WxAuthorizeController {
         }
 
         return map;
+    }
+
+
+    public static void main(String[] args) {
+        Map<String,Object> map=new HashMap<>();
+        String reqUrl="https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=wxb716f1f37b7ef914&secret=1808ec52bc34d929810794f7ee0368bb";
+        String res=HttpClientUtils.httpGet(reqUrl);
+        JSONObject resJ= JSON.parseObject(res);
+        String accessToken=resJ.getString("access_token");
+        map.put("scene","springFesDinner");
+        map.put("page","pages/activity/activityentrance/activityentrance");
+        map.put("width",100);
+        map.put("is_hyaline",false);
+        String imageUrl=HttpUtil.postInputStream("https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token="+accessToken,map);
+        System.out.println("二维码生成:"+imageUrl);
     }
 
 }

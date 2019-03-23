@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.UUID;
 
 import com.pokepet.util.UUIDUtils;
-import org.apache.catalina.servlet4preview.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,6 +24,8 @@ import com.pokepet.annotation.ResponseResult;
 import com.pokepet.model.UserLongRecord;
 import com.pokepet.model.UserRecord;
 import com.pokepet.service.IRecordService;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Created by Fade on 2018/9/11.

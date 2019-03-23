@@ -9,7 +9,6 @@ import java.util.UUID;
 
 import com.pokepet.model.*;
 import com.pokepet.service.*;
-import org.apache.catalina.servlet4preview.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,6 +24,8 @@ import com.pokepet.annotation.ResponseResult;
 import com.pokepet.enums.PetLevelEnum;
 import com.pokepet.enums.StarSignEnum;
 import com.pokepet.util.CommonUtil;
+
+import javax.servlet.http.HttpServletRequest;
 
 @ResponseResult
 @RestController

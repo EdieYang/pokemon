@@ -3,12 +3,12 @@ package com.pokepet.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.pokepet.dao.ActivityMapper;
 import com.pokepet.model.ActivityStatistic;
-import org.apache.catalina.servlet4preview.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.UUID;
 
 /**
@@ -70,8 +70,5 @@ public class StatisticsController {
         object.put("result",true);
         return object;
     }
-
-
-
 
 }

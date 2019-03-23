@@ -4,6 +4,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,6 +22,8 @@ import com.pokepet.model.ActActivityRegister;
 import com.pokepet.model.ActActivityVote;
 import com.pokepet.service.IActivityService;
 
+
+@Api(tags = "活动接口", description = "活动的增、改、查，选项获取")
 @ResponseResult
 @RestController
 @RequestMapping("/activity")
@@ -36,8 +41,12 @@ public class ActivityController {
 	 * @param pageSize
 	 * @return
 	 */
+	@ApiOperation(value = "获取活动列表")
 	@RequestMapping(value = "/activityList", method = RequestMethod.GET)
-	public JSONObject getActivityList(@RequestParam("pageNum") int pageNum, @RequestParam("pageSize") int pageSize) {
+	public JSONObject getActivityList(	@ApiParam(value = "页码")
+										  	@RequestParam("pageNum") int pageNum,
+									     	@ApiParam(value = "每页多少条数据")
+											@RequestParam("pageSize") int pageSize ) {
 		return activityService.getActivityList(pageNum, pageSize);
 	}
 
@@ -48,6 +57,11 @@ public class ActivityController {
 	 * @param pageSize
 	 * @return
 	 */
+	@ApiOperation(value = "获取活动列表")
+	@ApiImplicitParams({
+			@ApiImplicitParam(paramType="query", name = "pageNum", value = "pageNum", required = false, dataType = "Integer"),
+			@ApiImplicitParam(paramType = "query",name="pageSize",value="pageSize",required= false, dataType="Integer")
+	})
 	@RequestMapping(value = "/realActivityList", method = RequestMethod.GET)
 	public JSONObject getRealActivityList(@RequestParam("pageNum") int pageNum, @RequestParam("pageSize") int pageSize) {
 		return activityService.getRealActivityList(pageNum, pageSize);
@@ -64,7 +78,16 @@ public class ActivityController {
 	public JSONObject getActivity(@PathVariable String id) {
 		Map<String,Object> map=activityService.getActivityStatistics(id);
 		ActActivity actActivity=activityService.getActivity(id);
+		String banner=actActivity.getBanner();
+		JSONArray bannerObj= JSON.parseArray(banner);
+		String sponsorLogo=actActivity.getSponsorLogo();
+		JSONArray sponsorLogoObj= JSON.parseArray(sponsorLogo);
+		String pic=actActivity.getPic();
+		JSONArray picObj= JSON.parseArray(pic);
 		JSONObject jsonObject=new JSONObject();
+		jsonObject.put("banner",bannerObj);
+		jsonObject.put("sponsorLogo",sponsorLogoObj);
+		jsonObject.put("pic",picObj);
 		jsonObject.put("activity",actActivity);
 		jsonObject.put("activityStatistics",map);
 
@@ -74,9 +97,12 @@ public class ActivityController {
 			SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			String startTime=simpleDateFormat.format(startDate);
 			String endTime=simpleDateFormat.format(endDate);
-
 			jsonObject.put("startTime",startTime);
 			jsonObject.put("endTime",endTime);
+
+			SimpleDateFormat simpleDateFormatSlash=new SimpleDateFormat("yyyy/MM/dd");
+			String createTime=simpleDateFormatSlash.format(actActivity.getCreateTime());
+			jsonObject.put("createTime",createTime);
 		}
 
 		return jsonObject;

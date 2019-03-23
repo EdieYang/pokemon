@@ -71,7 +71,7 @@ public class DonateController {
 	
 	/**
 	 * 查询捐款统计
-	 * @param userId
+	 * @param donateActivity
 	 * @return
 	 */
 	@RequestMapping(value = "/donateStatistics", method = RequestMethod.GET)
