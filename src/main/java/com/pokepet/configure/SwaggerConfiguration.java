@@ -2,6 +2,7 @@ package com.pokepet.configure;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
@@ -43,7 +44,14 @@ public class SwaggerConfiguration {
      * @return
      */
     private ApiInfo apiInfo() {
-        return new ApiInfo("邻宠Pokemon服务Api文档", "", "1.0.0", "",
-                new Contact("charlie","","haojie_look@163.com"), "", "");
+        return new ApiInfoBuilder()
+                .title("邻宠pokemon服务Api文档")
+                .description("")
+                .license("")
+                .licenseUrl("")
+                .termsOfServiceUrl("")
+                .contact(new Contact("SteveYang", "", "haojie_look@163.com"))
+                .version("1.0.0")
+                .build();
     }
 }
