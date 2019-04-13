@@ -70,7 +70,14 @@ public class WxAuthorizeController {
         String accessToken=resJ.getString("access_token");
         String scene=request.getParameter("scene");
         map.put("path","pages/exploredetail/exploredetail?scene="+scene+"&type=3");
-        map.put("is_hyaline",true);
+        map.put("auto_color",false);
+        JSONObject jsonObject=new JSONObject();
+        jsonObject.put("r","255");
+        jsonObject.put("g","255");
+        jsonObject.put("b","255");
+
+        map.put("line_color",jsonObject);
+        map.put("is_hyaline",false);
         String imageUrl=HttpUtil.postInputStream("https://api.weixin.qq.com/wxa/getwxacode?access_token="+accessToken,map);
 
         JSONObject returnObj=new JSONObject();
